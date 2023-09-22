@@ -53,3 +53,7 @@ dkms.conf
 
 # Shell scripts
 *.sh
+
+# Config folders
+.idea
+.vscode
