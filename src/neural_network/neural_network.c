@@ -1,48 +1,62 @@
 #include "neural_network.h"
 #include "neural_network_utils.h"
 #include "activations.h"
+#include "matrix.h"
 #include <stdlib.h>
 
 // The neural network constructor with only one hidden layer
 Neural_Network *create_new_neural_network() {
     struct Neural_Network *nn = malloc(sizeof(struct Neural_Network));
 
-    for (size_t i = 0; i < HIDDEN_LAYER_SIZE; i++) {
-        nn->weights1[i] = generate_random_double();
-        nn->biases1[i] = generate_random_double();
-    }
-
-    for (size_t i = 0; i < OUTPUT_LAYER_SIZE; i++) {
-        nn->weights2[i] = generate_random_double();
-        nn->biases2[i] = generate_random_double();
-    }
+    // create the matrix of weights, biases and activations with the correct dimensions and initial values
+    nn->weights1 = create_new_random_matrix(HIDDEN_LAYER_SIZE, INPUT_LAYER_SIZE);
+    nn->weights2 = create_new_random_matrix(OUTPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE);
+    nn->biases1 = create_new_random_matrix(HIDDEN_LAYER_SIZE, 1);
+    nn->biases2 = create_new_random_matrix(OUTPUT_LAYER_SIZE, 1);
+    nn->activations1 = create_new_zeros_matrix(HIDDEN_LAYER_SIZE, 1);
+    nn->activations2 = create_new_zeros_matrix(OUTPUT_LAYER_SIZE, 1);
 
     return nn;
 }
 
-void forward_propagation(Neural_Network *nn, const double inputs[INPUT_LAYER_SIZE], double outputs[OUTPUT_LAYER_SIZE]) {
-    // propagate to the hidden layer
-    double hidden_layer_output[HIDDEN_LAYER_SIZE] = {0};
+// get the outputs of some inputs throw the current neural network
+void forward_propagation(Neural_Network *nn, Matrix *inputs, Matrix *outputs) {
+    // Propagate to the hidden layer
+    matrix_dot_multiply(nn->weights1, inputs, nn->activations1);
+    matrix_add(nn->activations1, nn->biases1, nn->activations1);
+    // apply the activation function
+    for (size_t i = 0; i < HIDDEN_LAYER_SIZE; i++)
+        *(nn->activations1->data + i) = sigmoid(*(nn->activations1->data + i));
 
-    for (size_t hidden_layer_index = 0; hidden_layer_index < HIDDEN_LAYER_SIZE; hidden_layer_index++) {
-        for (size_t input_layer_index = 0; input_layer_index < INPUT_LAYER_SIZE; input_layer_index++) {
-            hidden_layer_output[hidden_layer_index] += inputs[input_layer_index] * nn->weights1[hidden_layer_index];
-        }
-        hidden_layer_output[hidden_layer_index] += nn->biases1[hidden_layer_index];
-        hidden_layer_output[hidden_layer_index] = sigmoid(hidden_layer_output[hidden_layer_index]);
-    }
+    // Propagate to the output layer
+    matrix_dot_multiply(nn->weights2, nn->activations1, nn->activations2);
+    matrix_add(nn->activations2, nn->biases2, nn->activations2);
+    // apply the activation function
+    for (size_t i = 0; i < OUTPUT_LAYER_SIZE; i++)
+        *(nn->activations2->data + i) = sigmoid(*(nn->activations2->data + i));
 
-    // propagate to the output layer
-    for (size_t output_layer_index = 0; output_layer_index < OUTPUT_LAYER_SIZE; output_layer_index++) {
-        for (size_t hidden_layer_index = 0; hidden_layer_index < HIDDEN_LAYER_SIZE; hidden_layer_index++) {
-            outputs[output_layer_index] += hidden_layer_output[hidden_layer_index] * nn->weights2[output_layer_index];
-        }
-        outputs[output_layer_index] += nn->biases2[output_layer_index];
-        outputs[output_layer_index] = sigmoid(outputs[output_layer_index]);
-    }
+    // copy the activations2 matrix into the output
+    for (size_t i = 0; i < outputs->line_count * outputs->column_count; i++)
+        *(outputs->data + i) = *(nn->activations2->data + i);
 }
 
+//void backward_propagation(Neural_Network *nn, const double targets[OUTPUT_LAYER_SIZE]) {
+//    double dZ2[OUTPUT_LAYER_SIZE] = {0};
+//    double dW2[OUTPUT_LAYER_SIZE] = {0};
+//    double db2[OUTPUT_LAYER_SIZE] = {0};
+//
+//    for (size_t i = 0; i < OUTPUT_LAYER_SIZE; i++)
+//        dZ2[i] = nn->activations2[i] - targets[i];
+//
+//}
+
 // Free the neural network resources
-void neural_network_destructor(Neural_Network *neural_network) {
-    free(neural_network);
+void neural_network_destructor(Neural_Network *nn) {
+    matrix_destructor(nn->weights1);
+    matrix_destructor(nn->weights2);
+    matrix_destructor(nn->biases1);
+    matrix_destructor(nn->biases2);
+    matrix_destructor(nn->activations1);
+    matrix_destructor(nn->activations2);
+    free(nn);
 }
