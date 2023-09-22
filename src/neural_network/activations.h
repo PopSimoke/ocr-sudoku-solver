@@ -1,0 +1,7 @@
+
+#ifndef NEURAL_NETWORK_ACTIVATIONS_H
+#define NEURAL_NETWORK_ACTIVATIONS_H
+
+double sigmoid(double input);
+
+#endif //NEURAL_NETWORK_ACTIVATIONS_H
