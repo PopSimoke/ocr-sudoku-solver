@@ -26,7 +26,17 @@ void set_matrix_element(Matrix *matrix, size_t line, size_t column, double eleme
 
 void matrix_dot_multiply(Matrix *m1, Matrix *m2, Matrix *result);
 
+void matrix_multiply(Matrix *m1, Matrix *m2, Matrix *result);
+
+void matrix_multiply_by_double(Matrix *m1, double factor, Matrix *result);
+
 void matrix_add(Matrix *m1, Matrix *m2, Matrix *result);
+
+void matrix_subtract(Matrix *m1, Matrix *m2, Matrix *result);
+
+void matrix_transpose(Matrix *m, Matrix *result);
+
+void matrix_copy(Matrix *m1, Matrix *m2);
 
 void matrix_destructor(Matrix *matrix);
 

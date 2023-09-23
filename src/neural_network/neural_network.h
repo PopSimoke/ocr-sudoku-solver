@@ -15,15 +15,21 @@ struct Neural_Network {
     Matrix *biases2;
     Matrix *activations1;
     Matrix *activations2;
+    double learning_rate;
 };
 
 typedef struct Neural_Network Neural_Network;
 
-Neural_Network *create_new_neural_network();
+Neural_Network *create_new_neural_network(double learning_rate);
 
-void forward_propagation(Neural_Network *nn, Matrix *inputs, Matrix *outputs);
+void forward_propagation(Neural_Network *nn, Matrix *inputs);
 
-void backward_propagation(Neural_Network *nn, const double targets[OUTPUT_LAYER_SIZE]);
+void backward_propagation(Neural_Network *nn, Matrix *inputs, Matrix *targets);
+
+void train(Neural_Network *nn, const double inputs[INPUT_LAYER_SIZE], const double targets[OUTPUT_LAYER_SIZE],
+           size_t iteration_count);
+
+void predict(Neural_Network *nn, const double inputs[INPUT_LAYER_SIZE], double outputs[OUTPUT_LAYER_SIZE]);
 
 void neural_network_destructor(Neural_Network *neural_network);
 

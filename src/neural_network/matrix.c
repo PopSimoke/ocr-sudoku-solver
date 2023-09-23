@@ -71,6 +71,24 @@ void matrix_dot_multiply(Matrix *m1, Matrix *m2, Matrix *result) {
         }
 }
 
+// Multiply two matrix with the same dimensions
+void matrix_multiply(Matrix *m1, Matrix *m2, Matrix *result) {
+
+    if (m1->line_count != m2->line_count || m1->column_count != m2->column_count)
+        errx(1, "Can't multiply two matrix of different dimensions: m1(%lu,%lu) and m2(%lu,%lu)",
+             m1->line_count, m1->column_count, m2->line_count, m2->column_count);
+
+    for (size_t i = 0; i < m1->column_count * m1->line_count; i++)
+        *(result->data + i) = *(m1->data + i) * *(m2->data + i);
+}
+
+// Multiply a matrix with a double
+void matrix_multiply_by_double(Matrix *m1, double factor, Matrix *result) {
+
+    for (size_t i = 0; i < m1->column_count * m1->line_count; i++)
+        *(result->data + i) = *(m1->data + i) * factor;
+}
+
 // Add two matrix with the same dimension
 void matrix_add(Matrix *m1, Matrix *m2, Matrix *result) {
 
@@ -80,6 +98,35 @@ void matrix_add(Matrix *m1, Matrix *m2, Matrix *result) {
 
     for (size_t i = 0; i < m1->column_count * m1->line_count; i++)
         *(result->data + i) = *(m1->data + i) + *(m2->data + i);
+}
+
+// Subtract two matrix with the same dimension
+void matrix_subtract(Matrix *m1, Matrix *m2, Matrix *result) {
+
+    if (m1->line_count != m2->line_count || m1->column_count != m2->column_count)
+        errx(1, "Can't subtract two matrix of different dimensions: m1(%lu,%lu) and m2(%lu,%lu)",
+             m1->line_count, m1->column_count, m2->line_count, m2->column_count);
+
+    for (size_t i = 0; i < m1->column_count * m1->line_count; i++)
+        *(result->data + i) = *(m1->data + i) - *(m2->data + i);
+}
+
+// Transpose matrix
+void matrix_transpose(Matrix *m, Matrix *result) {
+    for (size_t col = 0; col < m->column_count; col++)
+        for (size_t row = 0; row < m->line_count; row++)
+            set_matrix_element(result, col, row, *get_matrix_element(m, row, col));
+}
+
+// Copy m1 to m2
+void matrix_copy(Matrix *m1, Matrix *m2) {
+
+    if (m1->line_count != m2->line_count || m1->column_count != m2->column_count)
+        errx(1, "Can't copy a matrix to another one with different dimensions: m1(%lu,%lu) and m2(%lu,%lu)",
+             m1->line_count, m1->column_count, m2->line_count, m2->column_count);
+
+    for (size_t i = 0; i < m1->column_count * m1->line_count; i++)
+        *(m2->data + i) = *(m1->data + i);
 }
 
 void matrix_destructor(Matrix *matrix) {
