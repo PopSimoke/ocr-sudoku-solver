@@ -3,6 +3,7 @@
 #include "matrix.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <err.h>
 
 // The neural network constructor with only one hidden layer
 Neural_Network *create_new_neural_network(double learning_rate) {
@@ -133,6 +134,68 @@ void predict(Neural_Network *nn, const double inputs[INPUT_LAYER_SIZE], double o
         outputs[i] = *(nn->activations2->data + i);
 
     matrix_destructor(inputs_matrix);
+}
+
+// Save the given neural network in a file at the given path
+void save_neural_network(Neural_Network *nn, char *path) {
+    // Define and assign the file pointer
+    FILE *fptr;
+    // We only need to write in bytes in the file
+    fptr = fopen(path, "wb");
+
+    // Save all the parameters of the current neural network
+    // weights 1
+    size_t size_weights1 = nn->weights1->line_count * nn->weights1->column_count;
+    fwrite(nn->weights1->data, 8, size_weights1, fptr);
+
+    // biases 1
+    fwrite(nn->biases1->data, 8, nn->biases1->line_count, fptr);
+
+    // weights 2
+    size_t size_weights2 = nn->weights2->line_count * nn->weights2->column_count;
+    fwrite(nn->weights2->data, 8, size_weights2, fptr);
+
+    // biases 2
+    fwrite(nn->biases2->data, 8, nn->biases2->line_count, fptr);
+
+    fclose(fptr);
+}
+
+Neural_Network *load_neural_network(char *path, double learning_rate) {
+    // Define and assign the file pointer
+    FILE *fptr;
+    // We only need to read in bytes in the file
+    fptr = fopen(path, "rb");
+
+    struct Neural_Network *nn = malloc(sizeof(struct Neural_Network));
+
+    // create the matrix of weights, biases and activations with the correct dimensions and the loaded values
+    nn->weights1 = create_new_zeros_matrix(HIDDEN_LAYER_SIZE, INPUT_LAYER_SIZE);
+    nn->weights2 = create_new_zeros_matrix(OUTPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE);
+    nn->biases1 = create_new_zeros_matrix(HIDDEN_LAYER_SIZE, 1);
+    nn->biases2 = create_new_zeros_matrix(OUTPUT_LAYER_SIZE, 1);
+    nn->activations1 = create_new_zeros_matrix(HIDDEN_LAYER_SIZE, 1);
+    nn->activations2 = create_new_zeros_matrix(OUTPUT_LAYER_SIZE, 1);
+    nn->learning_rate = learning_rate;
+
+    // Load all the parameters to new neural network
+    // weights 1
+    size_t size_weights1 = nn->weights1->line_count * nn->weights1->column_count;
+    fread(nn->weights1->data, 8, size_weights1, fptr);
+
+    // biases 1
+    fread(nn->biases1->data, 8, nn->biases1->line_count, fptr);
+
+    // weights 2
+    size_t size_weights2 = nn->weights2->line_count * nn->weights2->column_count;
+    fread(nn->weights2->data, 8, size_weights2, fptr);
+
+    // biases 2
+    fread(nn->biases2->data, 8, nn->biases2->line_count, fptr);
+
+    fclose(fptr);
+
+    return nn;
 }
 
 // Free the neural network resources

@@ -31,6 +31,10 @@ void train(Neural_Network *nn, const double inputs[INPUT_LAYER_SIZE], const doub
 
 void predict(Neural_Network *nn, const double inputs[INPUT_LAYER_SIZE], double outputs[OUTPUT_LAYER_SIZE]);
 
+void save_neural_network(Neural_Network *nn, char *path);
+
+Neural_Network *load_neural_network(char *path, double learning_rate);
+
 void neural_network_destructor(Neural_Network *neural_network);
 
 #endif
