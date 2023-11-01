@@ -1,95 +1,48 @@
 #include <gtk/gtk.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <math.h>
+
 
 GdkPixbuf *pixbufImage;
+GdkPixbuf *pixbufImageRotated;
 int loaded_image = 0;
 
 GtkBuilder *builder;
 gchar *filename;
+gchar *filenameRotated;
 GtkWidget *window = NULL;
 GtkStack *stack;
 GtkStack *stack_2;
-
-double clamp(double d, double min, double max) {
-  const double t = d < min ? min : d;
-  return t > max ? max : t;
-}
-
-GdkPixbuf *surface_to_pixbuf(SDL_Surface *surface)
+SDL_Surface *global_rotated = NULL;
+ 
+GdkPixbuf* surface_to_pixbuf(SDL_Surface* surface) 
 {
-    GdkPixbuf *pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB,
-                                       SDL_ISPIXELFORMAT_ALPHA(surface->format->format),
-                                       8, surface->w, surface->h);
-
-    guchar *pixels = gdk_pixbuf_get_pixels(pixbuf);
-    int rowstride = gdk_pixbuf_get_rowstride(pixbuf);
-
-    for (int y = 0; y < surface->h; y++)
+    GdkPixbuf* pixbuf = NULL;
+    if (surface != NULL) 
     {
-        for (int x = 0; x < surface->w; x++)
-        {
-            Uint8 r, g, b, a;
-            Uint32 pixel = ((Uint32 *)surface->pixels)[y * surface->w + x];
-            SDL_GetRGBA(pixel, surface->format, &r, &g, &b, &a);
-
-            pixels[y * rowstride + x * 4 + 0] = r;
-            pixels[y * rowstride + x * 4 + 1] = g;
-            pixels[y * rowstride + x * 4 + 2] = b;
-            pixels[y * rowstride + x * 4 + 3] = a;
-        }
+        pixbuf = gdk_pixbuf_new_from_data(surface->pixels,
+                                          GDK_COLORSPACE_RGB,
+                                          surface->format->BytesPerPixel == 4,
+                                          8,
+                                          surface->w,
+                                          surface->h,
+                                          surface->pitch,
+                                          NULL,
+                                          NULL);
     }
 
     return pixbuf;
 }
 
 
-void set_selected_image(GdkPixbuf *pixbuf, char *GtkimageID)
+void change_image(GdkPixbuf *pixbuf, char *GtkimageID)
 {
     GtkImage *imageWidget =
         GTK_IMAGE(gtk_builder_get_object(builder, GtkimageID)); // get image
 
-    GtkStack *panel = GTK_STACK(gtk_builder_get_object(builder, "upper_panel"));
-
-    int width = clamp(gtk_widget_get_allocated_width(GTK_WIDGET(panel)), 0,
-                      1000); // TODO: fix this
-    int height =
-        clamp(gtk_widget_get_allocated_height(GTK_WIDGET(panel)), 0, 1000);
-
-    // get image size
-    int image_width = gdk_pixbuf_get_width(pixbuf);
-    int image_height = gdk_pixbuf_get_height(pixbuf);
-
-    // get scale factor
-    double scale_factor = 1;
-    if (image_width > width || image_height > height)
-    {
-        scale_factor = (double)width / image_width;
-        if (scale_factor * image_height > height)
-            scale_factor = (double)height / image_height;
-    }
-    int new_width = image_width * scale_factor;
-    int new_height = image_height * scale_factor;
-
-    printf("%f %d %d\n", scale_factor, width, height);
-    // resize the image
-    GdkPixbuf *resized_image = gdk_pixbuf_scale_simple(
-        pixbuf, new_width, new_height, GDK_INTERP_BILINEAR); // resize image
-
-    // set the image
-    gtk_image_set_from_pixbuf(imageWidget, resized_image);
-
-    // free
-    g_object_unref(pixbuf);
-    g_object_unref(resized_image);
+    gtk_image_set_from_pixbuf(imageWidget, pixbuf); 
 }
-
-void change_image(GdkPixbuf *pixbuf, char *GtkimageID)
-{
-    set_selected_image(pixbuf, GtkimageID);
-}
-
-
 
 char *get_filename_ext(const char *filename)
 {
@@ -98,6 +51,90 @@ char *get_filename_ext(const char *filename)
     if (!dot || dot == filename)
         return "";
     return dot + 1;
+}
+
+SDL_Surface* resize(SDL_Surface* surface, int newWidth, int newHeight) 
+{
+    // Create a new SDL_Surface with the desired size
+    SDL_Surface* resizedSurface = SDL_CreateRGBSurface(0, newWidth, newHeight, 32, 0, 0, 0, 0);
+
+    // Fill the new surface with white color
+    SDL_FillRect(resizedSurface, NULL, SDL_MapRGB(resizedSurface->format, 255, 255, 255));
+
+    // Calculate the position to blit the original image
+    int xOffset = (newWidth - surface->w) / 2;
+    int yOffset = (newHeight - surface->h) / 2;
+
+    // Blit the original image onto the new surface
+    SDL_Rect sourceRect = {0, 0, surface->w, surface->h};
+    SDL_Rect destRect = {xOffset, yOffset, surface->w, surface->h};
+    SDL_BlitSurface(surface, &sourceRect, resizedSurface, &destRect);
+
+    return resizedSurface;
+}
+
+SDL_Surface* rotate(SDL_Surface* source, double angle) {
+    SDL_Surface* rotated = SDL_CreateRGBSurface(0, source->w*1.5, source->h*1.5, 32, 0, 0, 0, 0);
+
+    SDL_Renderer* renderer = SDL_CreateSoftwareRenderer(rotated);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);  // Fond blanc
+    SDL_RenderClear(renderer);
+
+    SDL_Rect dstRect = {150, 150, source->w, source->h};
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, source);
+    SDL_RenderCopyEx(renderer, texture, NULL, &dstRect, angle, NULL, SDL_FLIP_NONE);
+    SDL_DestroyTexture(texture);  // Libérer la texture
+    SDL_RenderPresent(renderer);
+
+    SDL_DestroyRenderer(renderer);
+    return rotated;
+}
+
+
+
+void on_rotate(GtkWidget *widget, gpointer data)
+{
+
+        if (pixbufImage)
+        {
+            (void)widget;
+            GtkScale *scale = GTK_SCALE(data);
+
+            // get the degree
+            double angle = gtk_range_get_value(GTK_RANGE(scale));
+            printf("    🔄 Rotating image by %f degrees\n", angle);
+
+            // rotate image
+            SDL_Surface *image = IMG_Load(filename);
+            SDL_Surface *resized = resize(image, image->w*1.05, image->h*1.05);
+            global_rotated = rotate(resized, angle);
+            
+            pixbufImageRotated = surface_to_pixbuf(global_rotated);
+
+            change_image(pixbufImageRotated, "selected_image2");
+
+            SDL_FreeSurface(resized);
+            SDL_FreeSurface(image);
+        }
+        else
+        {
+            GtkWidget *dialog = gtk_message_dialog_new(
+                GTK_WINDOW(window), GTK_DIALOG_DESTROY_WITH_PARENT,
+                GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "No image loaded");
+            gtk_dialog_run(GTK_DIALOG(dialog)); // run dialog
+            gtk_widget_destroy(dialog); // destroy dialog
+        }
+        
+}
+
+void rotate_screen()
+{
+    if (pixbufImageRotated)
+        change_image(pixbufImageRotated, "selected_image2");
+    else if (pixbufImage)
+        change_image(pixbufImage, "selected_image2");
+    
+    gtk_stack_set_visible_child_name(stack_2, "rotationPage");   
 }
 
 void on_file_set(GtkFileChooserButton *file_chooser, gpointer data)
@@ -116,7 +153,7 @@ void on_file_set(GtkFileChooserButton *file_chooser, gpointer data)
         GError *error = NULL;
 
         pixbufImage = gdk_pixbuf_new_from_file(filename, &error);
-
+        
         if (error) {
             g_printerr("Error loading file: %s\n", error->message);
             g_clear_error(&error);
@@ -125,17 +162,28 @@ void on_file_set(GtkFileChooserButton *file_chooser, gpointer data)
 
         printf("    🎨 Loaded %s\n", filename);
 
-        // Display image
-        change_image(pixbufImage, "selected_image");
-
-        loaded_image = 1;
-
         // update label
         GtkLabel *label =
             GTK_LABEL(gtk_builder_get_object(builder, "image_path"));
         gtk_label_set_text(label, filename);
 
-        gtk_stack_set_visible_child_name(stack_2, "page2"); // show page 2
+        // Display image
+        const char *visible_child_name = gtk_stack_get_visible_child_name(GTK_STACK(stack_2));
+        if (visible_child_name == NULL || strcmp(visible_child_name, "page1") == 0)
+        {
+            change_image(pixbufImage, "selected_image");
+            gtk_stack_set_visible_child_name(stack_2, "page2"); // show page 2
+        }
+        else if (strcmp(visible_child_name, "page2") == 0)
+        {
+            change_image(pixbufImage, "selected_image");
+        }
+        else if (strcmp(visible_child_name, "rotationPage") == 0)
+        {
+            change_image(pixbufImage, "selected_image2");
+        }
+
+        loaded_image = 1;
         
     }
     else
@@ -149,14 +197,50 @@ void on_file_set(GtkFileChooserButton *file_chooser, gpointer data)
     }
 }
 
-
-
-void set_lowerPannel_status(gboolean status)
+void on_cancel_rotate(GtkWidget *widget, gpointer data)
 {
-    // set the  lower pannel status
-    GtkWidget *lowerPannel =
-        GTK_WIDGET(gtk_builder_get_object(builder, "lower_panel"));
-    gtk_widget_set_sensitive(lowerPannel, status);
+    (void)widget;
+    (void)data;
+    
+    if (pixbufImage)
+        change_image(pixbufImage, "selected_image");
+
+    gtk_stack_set_visible_child_name(stack_2, "page2"); // show page 2
+}
+
+void on_save_rotate(GtkWidget *widget, gpointer data)
+{
+    if (pixbufImageRotated)
+    {
+        (void)widget;
+        (void)data;
+
+        // save image
+        char *ext = get_filename_ext(filename);
+        filenameRotated = g_strdup_printf("%s_rotated.%s", filename, ext);
+        
+        GError *error = NULL;
+        gdk_pixbuf_save(pixbufImageRotated, filenameRotated, ext, &error, NULL);
+        printf("    💾 Saving image at %s\n", filenameRotated);
+
+        if (error) {
+            g_printerr("Error saving file: %s\n", error->message);
+            g_clear_error(&error);
+            return;
+        }
+
+        GtkWidget *dialog = gtk_message_dialog_new(
+            GTK_WINDOW(window), GTK_DIALOG_DESTROY_WITH_PARENT,
+            GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE, "Image saved at %s", filenameRotated);
+        gtk_dialog_run(GTK_DIALOG(dialog)); // run dialog
+        gtk_widget_destroy(dialog); // destroy dialog
+
+        change_image(pixbufImageRotated, "selected_image");
+    }
+    else
+        change_image(pixbufImage, "selected_image");
+
+    gtk_stack_set_visible_child_name(stack_2, "page2"); // show page 2
 }
 
 
@@ -203,12 +287,24 @@ void open_file(GtkWidget *widget, gpointer data)
 
 void quit()
 {
+    
+    // Free all memory
+    g_object_unref(builder);
+    if (filename)
+        g_free(filename);
+    if (filenameRotated)
+        g_free(filenameRotated);
+    if (pixbufImage)
+        g_object_unref(pixbufImage);
+    if (pixbufImageRotated)
+        g_object_unref(pixbufImageRotated);
+    if (global_rotated) 
+        SDL_FreeSurface(global_rotated);
+    
     // quit the program
     gtk_main_quit();
 
-    // Free builder
-    g_object_unref(builder);
-    g_object_unref(pixbufImage);
+    
 }
 
 
@@ -289,6 +385,11 @@ int main(int argc, char *argv[])
 
     // on resize window
     g_signal_connect(window, "size-allocate", G_CALLBACK(on_resize), NULL);
+
+    GtkWidget *scale = GTK_WIDGET(gtk_builder_get_object(builder, "rotate_scale"));
+    gtk_range_set_range(GTK_RANGE(scale), 0, 360); // set range
+    gtk_range_set_value(GTK_RANGE(scale), 0); // set default value
+
 
     // load UI
     gtk_window_fullscreen(GTK_WINDOW(window)); // fullscreen

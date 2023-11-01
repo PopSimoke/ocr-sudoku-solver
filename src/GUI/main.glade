@@ -3,12 +3,6 @@
 <interface>
   <requires lib="gtk+" version="3.22"/>
   <!-- interface-css-provider-path style.css -->
-  <object class="GtkAdjustment" id="adjustment1">
-    <property name="lower">-360</property>
-    <property name="upper">360</property>
-    <property name="step-increment">1</property>
-    <property name="page-increment">10</property>
-  </object>
   <object class="GtkWindow" id="window">
     <property name="can-focus">False</property>
     <signal name="destroy" handler="quit" swapped="no"/>
@@ -189,7 +183,6 @@ Optical Cramptés
                         <property name="can-focus">False</property>
                         <property name="halign">center</property>
                         <property name="valign">center</property>
-                        <property name="stock">gtk-missing-image</property>
                         <style>
                           <class name="sudoku_image"/>
                         </style>
@@ -204,6 +197,7 @@ Optical Cramptés
                       <object class="GtkButtonBox">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="halign">center</property>
                         <property name="spacing">12</property>
                         <property name="layout-style">start</property>
                         <child>
@@ -212,7 +206,7 @@ Optical Cramptés
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
-                            <signal name="clicked" handler="cancel_edit_option" object="page2" swapped="no"/>
+                            <signal name="clicked" handler="on_cancel_rotate" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">True</property>
@@ -222,16 +216,30 @@ Optical Cramptés
                         </child>
                         <child>
                           <object class="GtkButton">
-                            <property name="label" translatable="yes">OK</property>
+                            <property name="label" translatable="yes">Rotate</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
-                            <signal name="clicked" handler="on_rotation_finished" object="page2" swapped="no"/>
+                            <signal name="clicked" handler="on_rotate" object="rotate_scale" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">True</property>
                             <property name="fill">True</property>
                             <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton">
+                            <property name="label" translatable="yes">Save</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                            <signal name="clicked" handler="on_save_rotate" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
+                            <property name="position">2</property>
                           </packing>
                         </child>
                       </object>
@@ -243,18 +251,15 @@ Optical Cramptés
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkScale">
+                      <object class="GtkScale" id="rotate_scale">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="hexpand">False</property>
                         <property name="vexpand">False</property>
-                        <property name="adjustment">adjustment1</property>
-                        <property name="round-digits">1</property>
+                        <property name="fill-level">360</property>
+                        <property name="round-digits">0</property>
+                        <property name="digits">0</property>
                         <property name="has-origin">False</property>
-                        <signal name="value-changed" handler="rotate_img" object="selected_image2" swapped="no"/>
-                        <style>
-                          <class name="progress"/>
-                        </style>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -304,7 +309,6 @@ Optical Cramptés
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
-                            <signal name="clicked" handler="end_process" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -326,7 +330,6 @@ Optical Cramptés
                         <property name="can-focus">False</property>
                         <property name="halign">center</property>
                         <property name="valign">center</property>
-                        <property name="stock">gtk-missing-image</property>
                         <style>
                           <class name="sudoku_image"/>
                         </style>
@@ -342,120 +345,6 @@ Optical Cramptés
                     <property name="name">page_result</property>
                     <property name="title" translatable="yes">page0</property>
                     <property name="position">3</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkBox" id="resizePage">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="orientation">vertical</property>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="halign">start</property>
-                            <property name="label" translatable="yes">Resize image</property>
-                            <property name="ellipsize">start</property>
-                            <attributes>
-                              <attribute name="font-desc" value="Sans Bold 10"/>
-                              <attribute name="scale" value="2"/>
-                              <attribute name="gravity" value="east"/>
-                            </attributes>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkButtonBox">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="spacing">12</property>
-                            <property name="layout-style">start</property>
-                            <child>
-                              <object class="GtkButton">
-                                <property name="label" translatable="yes">Cancel</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">True</property>
-                                <signal name="clicked" handler="cancel_edit_option" object="page2" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton">
-                                <property name="label" translatable="yes">OK</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">True</property>
-                                <signal name="clicked" handler="on_resize_finished" object="page2" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="pack-type">end</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkImage" id="selected_image3">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="halign">center</property>
-                        <property name="valign">center</property>
-                        <property name="stock">gtk-connect</property>
-                        <style>
-                          <class name="sudoku_image"/>
-                        </style>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkDrawingArea" id="drawing_area">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="hexpand">True</property>
-                        <property name="vexpand">True</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">3</property>
-                      </packing>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="name">resizePage</property>
-                    <property name="title" translatable="yes">page3</property>
-                    <property name="position">4</property>
                   </packing>
                 </child>
               </object>
@@ -543,10 +432,11 @@ Optical Cramptés
                         </child>
                         <child>
                           <object class="GtkButton" id="rotate">
-                            <property name="label" translatable="yes">Rotate</property>
+                            <property name="label" translatable="yes">Rotation page</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
+                            <signal name="clicked" handler="rotate_screen" object="rotationPage" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -626,13 +516,5 @@ Optical Cramptés
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkFileFilter" id="filefilter1">
-    <mime-types>
-      <mime-type>jpg</mime-type>
-      <mime-type>bmp</mime-type>
-      <mime-type>jpeg</mime-type>
-      <mime-type>png</mime-type>
-    </mime-types>
   </object>
 </interface>
