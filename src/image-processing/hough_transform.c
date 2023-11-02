@@ -90,3 +90,47 @@ HoughLine *HoughTransform(SDL_Surface *image, int *numLines)
 
     return lines;
 }
+
+void MergeSimilarLines(HoughLine *lines, int *numLines, double rhoTolerance, double thetaTolerance) {
+    int numMergedLines = *numLines;
+    
+    for (int i = 0; i < numMergedLines; i++) {
+        if (lines[i].rho == 0.0 && lines[i].theta == 0.0) {
+            continue; // La ligne a déjà été fusionnée
+        }
+        
+        for (int j = i + 1; j < numMergedLines; j++) {
+            if (fabs(lines[i].rho - lines[j].rho) <= rhoTolerance &&
+                fabs(lines[i].theta - lines[j].theta) <= thetaTolerance) {
+                // Les lignes i et j sont suffisamment proches, fusionner j dans i
+                lines[i].rho = (lines[i].rho + lines[j].rho) / 2.0;
+                lines[i].theta = (lines[i].theta + lines[j].theta) / 2.0;
+                // Marquer la ligne j comme fusionnée
+                lines[j].rho = 0.0;
+                lines[j].theta = 0.0;
+            }
+        }
+    }
+    
+    // Compter les lignes non fusionnées
+    int numRemainingLines = 0;
+    for (int i = 0; i < numMergedLines; i++) {
+        if (lines[i].rho != 0.0 || lines[i].theta != 0.0) {
+            numRemainingLines++;
+        }
+    }
+    
+    // Remettre les lignes non fusionnées au début du tableau
+    int currentIndex = 0;
+    for (int i = 0; i < numMergedLines; i++) {
+        if (lines[i].rho != 0.0 || lines[i].theta != 0.0) {
+            if (currentIndex != i) {
+                lines[currentIndex] = lines[i];
+            }
+            currentIndex++;
+        }
+    }
+    
+    // Mettre à jour le nombre de lignes restantes
+    *numLines = numRemainingLines;
+}

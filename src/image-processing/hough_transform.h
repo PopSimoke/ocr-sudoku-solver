@@ -16,5 +16,6 @@ typedef struct
 } HoughLine;
 
 HoughLine *HoughTransform(SDL_Surface *image, int *numLines);
+void MergeSimilarLines(HoughLine *lines, int *numLines, double rhoTolerance, double thetaTolerance);
 
 #endif
