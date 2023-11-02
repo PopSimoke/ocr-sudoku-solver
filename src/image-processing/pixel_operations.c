@@ -1,6 +1,7 @@
 #include "pixel_operations.h"
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 Uint32 getPixel(SDL_Surface *image, int x, int y)
 {
@@ -20,4 +21,24 @@ void setPixel(SDL_Surface *image, int x, int y, Uint32 newPixel)
     {
         pixels[y * width + x] = newPixel;
     }
+}
+
+int compareIntensity(const void *a, const void *b)
+{
+    return (*(Uint8 *)a - *(Uint8 *)b);
+}
+
+// Renvoie la valeur d'intensité au point (x, y) de l'image.
+Uint8 getIntensity(SDL_Surface *image, int x, int y)
+{
+    Uint8 intensity;
+    if (x >= 0 && x < image->w && y >= 0 && y < image->h)
+    {
+        SDL_GetRGB(getPixel(image, x, y), image->format, &intensity, &intensity, &intensity);
+    }
+    else
+    {
+        intensity = 0; // Valeur par défaut en dehors de l'image.
+    }
+    return intensity;
 }
