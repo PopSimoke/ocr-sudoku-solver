@@ -15,15 +15,16 @@ HoughLine *HoughTransform(SDL_Surface *image, int *numLines)
     int height = image->h;
 
     int diagonalLength = (int)sqrt(width * width + height * height);
+    diagonalLength+=diagonalLength;
 
     int numThetas = 180;
     
-    int *accumulator = (int *)calloc(diagonalLength * numThetas, sizeof(int));
+    int *accumulator = (int *)calloc(diagonalLength * numThetas*2, sizeof(int));
 
     // Parcourir tous les pixels de l'image
-    for (int y = 0; y < height; y++)
+    for (int x = 0; x < height; x++)
     {
-        for (int x = 0; x < width; x++)
+        for (int y = 0; y < width; y++)
         {
             Uint8 intensity;
             SDL_GetRGB(getPixel(image, x, y), image->format, &intensity, &intensity, &intensity);
@@ -40,7 +41,12 @@ HoughLine *HoughTransform(SDL_Surface *image, int *numLines)
                     // Vérifier les limites du tableau
                     if (rhoIndex >= 0 && rhoIndex < diagonalLength)
                     {
-                        accumulator[rhoIndex * numThetas + thetaIndex]++;
+                        accumulator[(rhoIndex+diagonalLength) * numThetas + thetaIndex]++;
+                    }
+                    
+                    if (rhoIndex < 0 && rhoIndex > -diagonalLength)
+                    {
+                        accumulator[(rhoIndex+diagonalLength) * numThetas + thetaIndex]++;
                     }
                 }
             }
@@ -49,7 +55,7 @@ HoughLine *HoughTransform(SDL_Surface *image, int *numLines)
 
     // Trouver les lignes avec le plus grand nombre de votes
     int maxVotes = 0;
-    for (int i = 0; i < diagonalLength * numThetas; i++)
+    for (int i = 0; i < diagonalLength * numThetas*2; i++)
     {
         if (accumulator[i] > maxVotes)
         {
@@ -57,24 +63,24 @@ HoughLine *HoughTransform(SDL_Surface *image, int *numLines)
         }
     }
 
-    int threshold = (int)(maxVotes * NOISE_TRESHOLD);
+    int threshold = (int)(maxVotes * 0.5);
 
     // Créer une liste de lignes détectées
     HoughLine *lines = (HoughLine *)malloc(sizeof(HoughLine) * diagonalLength * numThetas);
     int numLinesFound = 0;
 
     // Parcourir tous les indices de l'accumulateur
-    for (int rhoIndex = 0; rhoIndex < diagonalLength; rhoIndex++)
+    for (int rhoIndex = 0; rhoIndex < diagonalLength*2; rhoIndex++)
     {
         for (int thetaIndex = 0; thetaIndex < numThetas; thetaIndex++)
         {
             int votes = accumulator[rhoIndex * numThetas + thetaIndex];
 
             // Si le nombre de votes est supérieur au treshold, ajouter la ligne à la liste
-            if (votes > threshold)
+            if (votes > threshold )
             {
                 HoughLine line;
-                line.rho = (double)(rhoIndex - diagonalLength / 2);
+                line.rho = (double)(rhoIndex-diagonalLength - diagonalLength / 2);
                 line.theta = (double)thetaIndex * M_PI / numThetas;
                 lines[numLinesFound] = line;
                 numLinesFound++;
@@ -85,7 +91,7 @@ HoughLine *HoughTransform(SDL_Surface *image, int *numLines)
     // Libérer la mémoire de l'accumulateur
     free(accumulator);
 
-    // Définir le nombre de lignes détectées pour print après pour debug
+    // Définir le nombre de lignes détectées
     *numLines = numLinesFound;
 
     return lines;
