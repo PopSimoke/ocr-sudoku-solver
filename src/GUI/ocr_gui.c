@@ -59,7 +59,7 @@ SDL_Surface* resize(SDL_Surface* surface, int newWidth, int newHeight)
     SDL_Surface* resizedSurface = SDL_CreateRGBSurface(0, newWidth, newHeight, 32, 0, 0, 0, 0);
 
     // Fill the new surface with white color
-    SDL_FillRect(resizedSurface, NULL, SDL_MapRGB(resizedSurface->format, 255, 255, 255));
+    SDL_FillRect(resizedSurface, NULL, SDL_MapRGB(resizedSurface->format, 240, 240, 240));
 
     // Calculate the position to blit the original image
     int xOffset = (newWidth - surface->w) / 2;
@@ -106,7 +106,7 @@ void on_rotate(GtkWidget *widget, gpointer data)
 
             // rotate image
             SDL_Surface *image = IMG_Load(filename);
-            SDL_Surface *resized = resize(image, image->w*1.05, image->h*1.05);
+            SDL_Surface *resized = resize(image, image->w*1.3, image->h*1.3);
             global_rotated = rotate(resized, angle);
             
             pixbufImageRotated = surface_to_pixbuf(global_rotated);
