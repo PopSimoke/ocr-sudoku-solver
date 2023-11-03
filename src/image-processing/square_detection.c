@@ -7,7 +7,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-void save_cells(SDL_Surface *sudokuImage) {
+void saveSquares(SDL_Surface *sudokuImage) {
     //si le dossier "saved_images" n'existe pas, on le crée
     const char *outputDir = "saved_images";
     if (mkdir(outputDir, 0777) == -1) {

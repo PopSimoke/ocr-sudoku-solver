@@ -8,6 +8,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-void save_cells(SDL_Surface *sudokuImage);
+void saveSquares(SDL_Surface *sudokuImage);
 
 #endif
