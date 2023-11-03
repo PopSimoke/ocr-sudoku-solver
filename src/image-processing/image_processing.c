@@ -142,7 +142,7 @@ void invertColors(SDL_Surface *image)
     }
 }
 
-// le filtre flou pas fou
+// le filtre flou pas fou qu'on va pas utiliser mais  au cas-où
 void applyAverageFilter(SDL_Surface *image, int kernelSize)
 {
     int width = image->w;
@@ -181,10 +181,8 @@ void applyAverageFilter(SDL_Surface *image, int kernelSize)
         }
     }
 
-    // Copier le résultat de l'image temporaire dans l'image d'origine
     SDL_BlitSurface(tempImage, NULL, image, NULL);
 
-    // Libérer l'image temporaire
     SDL_FreeSurface(tempImage);
 }
 
@@ -193,7 +191,6 @@ void applySobelFilter(SDL_Surface *image)
     int width = image->w;
     int height = image->h;
 
-    // Création d'une image temporaire pour stocker les résultats du filtre de Sobel
     SDL_Surface *tempImage = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
     if (tempImage == NULL)
     {
@@ -245,10 +242,8 @@ void applySobelFilter(SDL_Surface *image)
         }
     }
 
-    // Copier les résultats du filtre de Sobel dans l'image d'origine
     SDL_BlitSurface(tempImage, NULL, image, NULL);
 
-    // Libérer l'image temporaire
     SDL_FreeSurface(tempImage);
 }
 
@@ -276,19 +271,19 @@ void applyCannyFilter(SDL_Surface *image, Uint8 lowThreshold, Uint8 highThreshol
             Uint8 intensity;
             SDL_GetRGB(getPixel(image, x, y), image->format, &intensity, &intensity, &intensity);
 
-            // Si l'intensité est inférieure au seuil bas, considérez-le comme un pixel de fond
+            // Si l'intensité est inférieure au seuil bas, pixel de fond
             if (intensity < lowThreshold)
             {
                 intensity = 0;
             }
-            // Si l'intensité est supérieure au seuil haut, considérez-le comme un pixel de contour
+            // Si l'intensité est supérieure au seuil haut, pixel de contour
             else if (intensity >= highThreshold)
             {
                 intensity = 255;
             }
             else
             {
-                // Vérifiez les pixels voisins pour la suppression des non-maximums
+                // Vérification des pixels voisins pour la suppression des non-maximums
                 Uint8 neighbors[8];
                 neighbors[0] = getIntensity(image, x - 1, y - 1);
                 neighbors[1] = getIntensity(image, x, y - 1);
@@ -299,7 +294,7 @@ void applyCannyFilter(SDL_Surface *image, Uint8 lowThreshold, Uint8 highThreshol
                 neighbors[6] = getIntensity(image, x, y + 1);
                 neighbors[7] = getIntensity(image, x + 1, y + 1);
 
-                // Comparez l'intensité actuelle avec les voisins
+                // comparaison de l'intensité actuelle avec les voisins
                 int isMaximum = 1;
                 for (int i = 0; i < 8; i++)
                 {
@@ -325,10 +320,9 @@ void applyCannyFilter(SDL_Surface *image, Uint8 lowThreshold, Uint8 highThreshol
         }
     }
 
-    // Copier les résultats dans l'image d'origine
     SDL_BlitSurface(tempImage, NULL, image, NULL);
 
-    // Suivi des contours (hystérésis)
+    // Suivi des contours
     for (int y = 0; y < height; y++)
     {
         for (int x = 0; x < width; x++)
@@ -358,10 +352,8 @@ void applyCannyFilter(SDL_Surface *image, Uint8 lowThreshold, Uint8 highThreshol
         }
     }
 
-    // Copier les résultats finaux dans l'image d'origine
     SDL_BlitSurface(tempImage, NULL, image, NULL);
 
-    // Libérer l'image temporaire
     SDL_FreeSurface(tempImage);
 }
 
@@ -403,10 +395,8 @@ void applyDilation(SDL_Surface *image, int kernelSize, int iterations)
             }
         }
 
-        // Copier les résultats dans l'image d'origine
         SDL_BlitSurface(tempImage, NULL, image, NULL);
 
-        // Libérer l'image temporaire
         SDL_FreeSurface(tempImage);
     }
 }
@@ -449,10 +439,8 @@ void applyErosion(SDL_Surface *image, int kernelSize, int iterations)
             }
         }
 
-        // Copier les résultats dans l'image d'origine
         SDL_BlitSurface(tempImage, NULL, image, NULL);
 
-        // Libérer l'image temporaire
         SDL_FreeSurface(tempImage);
     }
 }

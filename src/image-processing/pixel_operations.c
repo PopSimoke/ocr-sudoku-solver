@@ -28,7 +28,6 @@ int compareIntensity(const void *a, const void *b)
     return (*(Uint8 *)a - *(Uint8 *)b);
 }
 
-// Renvoie la valeur d'intensité au point (x, y) de l'image.
 Uint8 getIntensity(SDL_Surface *image, int x, int y)
 {
     Uint8 intensity;

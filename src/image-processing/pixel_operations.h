@@ -13,7 +13,6 @@ void setPixel(SDL_Surface *image, int x, int y, Uint32 newPixel);
 // Compare deux valeurs d'intensité.
 int compareIntensity(const void *a, const void *b);
 
-
 // Renvoie la valeur d'intensité au point (x, y) de l'image.
 Uint8 getIntensity(SDL_Surface *image, int x, int y);
 

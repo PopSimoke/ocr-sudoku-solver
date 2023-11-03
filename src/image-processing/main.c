@@ -38,7 +38,7 @@ void preprocessImage(SDL_Surface *image)
 
     invertColors(grayImage);
 
-    // applyCannyFilter(grayImage, 50, 150);
+    applyCannyFilter(grayImage, 50, 150);
     // applyDilation(grayImage, 3, 1);
     // applyErosion(grayImage, 5, 1);
 
@@ -46,6 +46,8 @@ void preprocessImage(SDL_Surface *image)
     int numLines;
     lines = HoughTransform(grayImage, &numLines);
     printf("Number of lines detected: %d\n", numLines);
+    // MergeSimilarLines(lines, &numLines, 10.0, 0.1);
+    // printf("Number of lines after merging: %d\n", numLines);
     
     for (int i = 0; i < numLines; i++)
     {
@@ -56,7 +58,6 @@ void preprocessImage(SDL_Surface *image)
 
     SDL_BlitSurface(grayImage, NULL, image, NULL);
 
-    // Free the grayscale image
     SDL_FreeSurface(grayImage);
 }
 

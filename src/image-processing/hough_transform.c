@@ -15,11 +15,11 @@ HoughLine *HoughTransform(SDL_Surface *image, int *numLines)
     int height = image->h;
 
     int diagonalLength = (int)sqrt(width * width + height * height);
-    diagonalLength+=diagonalLength;
+    diagonalLength += diagonalLength;
 
     int numThetas = 180;
-    
-    int *accumulator = (int *)calloc(diagonalLength * numThetas*2, sizeof(int));
+
+    int *accumulator = (int *)calloc(diagonalLength * numThetas * 2, sizeof(int));
 
     // Parcourir tous les pixels de l'image
     for (int x = 0; x < height; x++)
@@ -41,12 +41,12 @@ HoughLine *HoughTransform(SDL_Surface *image, int *numLines)
                     // Vérifier les limites du tableau
                     if (rhoIndex >= 0 && rhoIndex < diagonalLength)
                     {
-                        accumulator[(rhoIndex+diagonalLength) * numThetas + thetaIndex]++;
+                        accumulator[(rhoIndex + diagonalLength) * numThetas + thetaIndex]++;
                     }
-                    
+
                     if (rhoIndex < 0 && rhoIndex > -diagonalLength)
                     {
-                        accumulator[(rhoIndex+diagonalLength) * numThetas + thetaIndex]++;
+                        accumulator[(rhoIndex + diagonalLength) * numThetas + thetaIndex]++;
                     }
                 }
             }
@@ -55,7 +55,7 @@ HoughLine *HoughTransform(SDL_Surface *image, int *numLines)
 
     // Trouver les lignes avec le plus grand nombre de votes
     int maxVotes = 0;
-    for (int i = 0; i < diagonalLength * numThetas*2; i++)
+    for (int i = 0; i < diagonalLength * numThetas * 2; i++)
     {
         if (accumulator[i] > maxVotes)
         {
@@ -70,17 +70,17 @@ HoughLine *HoughTransform(SDL_Surface *image, int *numLines)
     int numLinesFound = 0;
 
     // Parcourir tous les indices de l'accumulateur
-    for (int rhoIndex = 0; rhoIndex < diagonalLength*2; rhoIndex++)
+    for (int rhoIndex = 0; rhoIndex < diagonalLength * 2; rhoIndex++)
     {
         for (int thetaIndex = 0; thetaIndex < numThetas; thetaIndex++)
         {
             int votes = accumulator[rhoIndex * numThetas + thetaIndex];
 
             // Si le nombre de votes est supérieur au treshold, ajouter la ligne à la liste
-            if (votes > threshold )
+            if (votes > threshold)
             {
                 HoughLine line;
-                line.rho = (double)(rhoIndex-diagonalLength - diagonalLength / 2);
+                line.rho = (double)(rhoIndex - diagonalLength - diagonalLength / 2);
                 line.theta = (double)thetaIndex * M_PI / numThetas;
                 lines[numLinesFound] = line;
                 numLinesFound++;
@@ -88,7 +88,6 @@ HoughLine *HoughTransform(SDL_Surface *image, int *numLines)
         }
     }
 
-    // Libérer la mémoire de l'accumulateur
     free(accumulator);
 
     // Définir le nombre de lignes détectées
@@ -97,17 +96,22 @@ HoughLine *HoughTransform(SDL_Surface *image, int *numLines)
     return lines;
 }
 
-void MergeSimilarLines(HoughLine *lines, int *numLines, double rhoTolerance, double thetaTolerance) {
+void MergeSimilarLines(HoughLine *lines, int *numLines, double rhoTolerance, double thetaTolerance)
+{
     int numMergedLines = *numLines;
-    
-    for (int i = 0; i < numMergedLines; i++) {
-        if (lines[i].rho == 0.0 && lines[i].theta == 0.0) {
+
+    for (int i = 0; i < numMergedLines; i++)
+    {
+        if (lines[i].rho == 0.0 && lines[i].theta == 0.0)
+        {
             continue; // La ligne a déjà été fusionnée
         }
-        
-        for (int j = i + 1; j < numMergedLines; j++) {
+
+        for (int j = i + 1; j < numMergedLines; j++)
+        {
             if (fabs(lines[i].rho - lines[j].rho) <= rhoTolerance &&
-                fabs(lines[i].theta - lines[j].theta) <= thetaTolerance) {
+                fabs(lines[i].theta - lines[j].theta) <= thetaTolerance)
+            {
                 // Les lignes i et j sont suffisamment proches, fusionner j dans i
                 lines[i].rho = (lines[i].rho + lines[j].rho) / 2.0;
                 lines[i].theta = (lines[i].theta + lines[j].theta) / 2.0;
@@ -117,26 +121,31 @@ void MergeSimilarLines(HoughLine *lines, int *numLines, double rhoTolerance, dou
             }
         }
     }
-    
+
     // Compter les lignes non fusionnées
     int numRemainingLines = 0;
-    for (int i = 0; i < numMergedLines; i++) {
-        if (lines[i].rho != 0.0 || lines[i].theta != 0.0) {
+    for (int i = 0; i < numMergedLines; i++)
+    {
+        if (lines[i].rho != 0.0 || lines[i].theta != 0.0)
+        {
             numRemainingLines++;
         }
     }
-    
+
     // Remettre les lignes non fusionnées au début du tableau
     int currentIndex = 0;
-    for (int i = 0; i < numMergedLines; i++) {
-        if (lines[i].rho != 0.0 || lines[i].theta != 0.0) {
-            if (currentIndex != i) {
+    for (int i = 0; i < numMergedLines; i++)
+    {
+        if (lines[i].rho != 0.0 || lines[i].theta != 0.0)
+        {
+            if (currentIndex != i)
+            {
                 lines[currentIndex] = lines[i];
             }
             currentIndex++;
         }
     }
-    
+
     // Mettre à jour le nombre de lignes restantes
     *numLines = numRemainingLines;
 }
