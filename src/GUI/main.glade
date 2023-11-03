@@ -98,7 +98,7 @@ Optical Cramptés
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">Insert a text but la flemme là</property>
+                        <property name="label" translatable="yes">Welcome to the OCR GUI</property>
                         <property name="wrap">True</property>
                         <attributes>
                           <attribute name="font-desc" value="Sans Bold 10"/>

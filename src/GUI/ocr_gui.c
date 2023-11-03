@@ -41,6 +41,29 @@ void change_image(GdkPixbuf *pixbuf, char *GtkimageID)
     GtkImage *imageWidget =
         GTK_IMAGE(gtk_builder_get_object(builder, GtkimageID)); // get image
 
+    size_t width = gdk_pixbuf_get_width(pixbuf);
+    size_t height = gdk_pixbuf_get_height(pixbuf);
+
+    // resize image
+    if (width > 800 || height > 800)
+    {
+        if (width > height)
+        {
+            double ratio = (double)width / (double)height;
+            width = 800;
+            height = (size_t)round(width / ratio);
+        }
+        else
+        {
+            double ratio = (double)height / (double)width;
+            height = 800;
+            width = (size_t)round(height / ratio);
+        }
+
+        pixbuf = gdk_pixbuf_scale_simple(pixbuf, width, height, GDK_INTERP_BILINEAR);
+    }
+
+    
     gtk_image_set_from_pixbuf(imageWidget, pixbuf); 
 }
 
@@ -59,7 +82,7 @@ SDL_Surface* resize(SDL_Surface* surface, int newWidth, int newHeight)
     SDL_Surface* resizedSurface = SDL_CreateRGBSurface(0, newWidth, newHeight, 32, 0, 0, 0, 0);
 
     // Fill the new surface with white color
-    SDL_FillRect(resizedSurface, NULL, SDL_MapRGB(resizedSurface->format, 240, 240, 240));
+    SDL_FillRect(resizedSurface, NULL, SDL_MapRGB(resizedSurface->format, 247, 247, 247));
 
     // Calculate the position to blit the original image
     int xOffset = (newWidth - surface->w) / 2;
@@ -73,14 +96,16 @@ SDL_Surface* resize(SDL_Surface* surface, int newWidth, int newHeight)
     return resizedSurface;
 }
 
+
 SDL_Surface* rotate(SDL_Surface* source, double angle) {
     SDL_Surface* rotated = SDL_CreateRGBSurface(0, source->w*1.5, source->h*1.5, 32, 0, 0, 0, 0);
 
     SDL_Renderer* renderer = SDL_CreateSoftwareRenderer(rotated);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);  // Fond blanc
+    SDL_SetRenderDrawColor(renderer, 247, 247, 247, 247);  // Fond blanc
     SDL_RenderClear(renderer);
 
-    SDL_Rect dstRect = {150, 150, source->w, source->h};
+    //TODO: Fix rotation coordinates
+    SDL_Rect dstRect = {(source->w / 2) * 0.8, (source->h / 2) * 0.8, source->w, source->h};
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, source);
     SDL_RenderCopyEx(renderer, texture, NULL, &dstRect, angle, NULL, SDL_FLIP_NONE);
     SDL_DestroyTexture(texture);  // Libérer la texture
@@ -89,7 +114,6 @@ SDL_Surface* rotate(SDL_Surface* source, double angle) {
     SDL_DestroyRenderer(renderer);
     return rotated;
 }
-
 
 
 void on_rotate(GtkWidget *widget, gpointer data)
@@ -106,11 +130,11 @@ void on_rotate(GtkWidget *widget, gpointer data)
 
             // rotate image
             SDL_Surface *image = IMG_Load(filename);
-            SDL_Surface *resized = resize(image, image->w*1.3, image->h*1.3);
+            SDL_Surface *resized = resize(image, image->w*1.5, image->h*1.5);
             global_rotated = rotate(resized, angle);
             
             pixbufImageRotated = surface_to_pixbuf(global_rotated);
-
+           
             change_image(pixbufImageRotated, "selected_image2");
 
             SDL_FreeSurface(resized);
