@@ -3,7 +3,6 @@
 
 School group project that recognize and solve sudoku grids using home made OCR and sudoku solver algorithm.
 
-
 ## How does it works ?
 
 ### Image processing
