@@ -46,9 +46,9 @@ void preprocessImage(SDL_Surface *image)
     int numLines;
     lines = HoughTransform(grayImage, &numLines);
     printf("Number of lines detected: %d\n", numLines);
-    // MergeSimilarLines(lines, &numLines, 10.0, 0.1);
-    // printf("Number of lines after merging: %d\n", numLines);
-    
+    MergeSimilarLines(lines, &numLines, 10.0, 0.1);
+    printf("Number of lines after merging: %d\n", numLines);
+
     for (int i = 0; i < numLines; i++)
     {
         drawLine(grayImage, lines[i]);
