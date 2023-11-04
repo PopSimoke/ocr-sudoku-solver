@@ -15,7 +15,6 @@ typedef struct
     double theta;
 } HoughLine;
 
-
 /**
  * @brief This function applies the Hough Transform to an image and returns all the straight lines detected
  * 
