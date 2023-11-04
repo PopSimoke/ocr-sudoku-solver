@@ -8,6 +8,14 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+/**
+ * @brief Save individual cells of a Sudoku image in a separate directory.
+ *
+ * This function divides the input Sudoku image into individual cells and saves each cell
+ * as a separate PNG file in a directory called "saved_images."
+ *
+ * @param sudokuImage The input Sudoku image.
+ */
 void saveSquares(SDL_Surface *sudokuImage);
 
 #endif

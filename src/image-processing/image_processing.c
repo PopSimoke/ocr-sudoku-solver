@@ -1,5 +1,6 @@
 #include "image_processing.h"
 
+// Convert an image to grayscale
 SDL_Surface *convertToGrayscale(SDL_Surface *image)
 {
     SDL_Surface *grayImage = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_RGBA8888, 0);
@@ -12,6 +13,7 @@ SDL_Surface *convertToGrayscale(SDL_Surface *image)
     int w = grayImage->w;
     int h = grayImage->h;
 
+    // Iterate through each pixel
     for (int y = 0; y < h; y++)
     {
         for (int x = 0; x < w; x++)
@@ -28,6 +30,7 @@ SDL_Surface *convertToGrayscale(SDL_Surface *image)
     return grayImage;
 }
 
+// Apply a median filter to the image
 void applyMedianFilter(SDL_Surface *image, int kernelSize)
 {
     if (kernelSize % 2 == 0)
@@ -39,6 +42,7 @@ void applyMedianFilter(SDL_Surface *image, int kernelSize)
     int w = image->w;
     int h = image->h;
 
+    // Iterate through each pixel
     for (int y = 0; y < h; y++)
     {
         for (int x = 0; x < w; x++)
@@ -48,6 +52,7 @@ void applyMedianFilter(SDL_Surface *image, int kernelSize)
             Uint8 bValues[kernelSize * kernelSize];
             int index = 0;
 
+            // Iterate through the kernel
             for (int ky = -kernelSize / 2; ky <= kernelSize / 2; ky++)
             {
                 for (int kx = -kernelSize / 2; kx <= kernelSize / 2; kx++)
@@ -64,7 +69,7 @@ void applyMedianFilter(SDL_Surface *image, int kernelSize)
                 }
             }
 
-            // Tri des valeurs RVB
+            // Sort the color values
             for (int i = 0; i < index - 1; i++)
             {
                 for (int j = 0; j < index - i - 1; j++)
@@ -90,7 +95,6 @@ void applyMedianFilter(SDL_Surface *image, int kernelSize)
                 }
             }
 
-            // Utilisation de la valeur médiane
             int medianIndex = index / 2;
             Uint32 medianPixel = SDL_MapRGB(image->format, rValues[medianIndex], gValues[medianIndex], bValues[medianIndex]);
             setPixel(image, x, y, medianPixel);
@@ -98,11 +102,13 @@ void applyMedianFilter(SDL_Surface *image, int kernelSize)
     }
 }
 
+// Binarize the grayscale image
 void binarizeImage(SDL_Surface *grayImage, Uint8 threshold)
 {
     int width = grayImage->w;
     int height = grayImage->h;
 
+    // Iterate through each pixel
     for (int y = 0; y < height; y++)
     {
         for (int x = 0; x < width; x++)
@@ -110,7 +116,6 @@ void binarizeImage(SDL_Surface *grayImage, Uint8 threshold)
             Uint8 grayValue;
             SDL_GetRGB(getPixel(grayImage, x, y), grayImage->format, &grayValue, &grayValue, &grayValue);
 
-            // Binarisation : si la valeur du pixel est inférieure au seuil, le pixel devient noir, sinon il devient blanc
             Uint8 binarizedValue = (grayValue < threshold) ? 0 : 255;
             Uint32 newPixel = SDL_MapRGBA(grayImage->format, binarizedValue, binarizedValue, binarizedValue, 255);
             setPixel(grayImage, x, y, newPixel);
@@ -118,12 +123,13 @@ void binarizeImage(SDL_Surface *grayImage, Uint8 threshold)
     }
 }
 
-// Fonction pour inverser les couleurs d'une image
+// Invert the colors of the image
 void invertColors(SDL_Surface *image)
 {
     int width = image->w;
     int height = image->h;
 
+    // Iterate through each pixel
     for (int y = 0; y < height; y++)
     {
         for (int x = 0; x < width; x++)
@@ -142,7 +148,7 @@ void invertColors(SDL_Surface *image)
     }
 }
 
-// le filtre flou pas fou qu'on va pas utiliser mais  au cas-où
+// Apply a simple average filter (not used)
 void applyAverageFilter(SDL_Surface *image, int kernelSize)
 {
     int width = image->w;
@@ -151,6 +157,7 @@ void applyAverageFilter(SDL_Surface *image, int kernelSize)
 
     SDL_Surface *tempImage = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
 
+    // Iterate through each pixel
     for (int y = halfKernel; y < height - halfKernel; y++)
     {
         for (int x = halfKernel; x < width - halfKernel; x++)
@@ -159,6 +166,7 @@ void applyAverageFilter(SDL_Surface *image, int kernelSize)
             int totalG = 0;
             int totalB = 0;
 
+            // Iterate through the kernel
             for (int ky = -halfKernel; ky <= halfKernel; ky++)
             {
                 for (int kx = -halfKernel; kx <= halfKernel; kx++)
@@ -186,6 +194,7 @@ void applyAverageFilter(SDL_Surface *image, int kernelSize)
     SDL_FreeSurface(tempImage);
 }
 
+// Apply the Sobel filter
 void applySobelFilter(SDL_Surface *image)
 {
     int width = image->w;
@@ -198,26 +207,25 @@ void applySobelFilter(SDL_Surface *image)
         return;
     }
 
+    // Iterate through each pixel
     for (int y = 1; y < height - 1; y++)
     {
         for (int x = 1; x < width - 1; x++)
         {
-            // Appliquer le filtre de Sobel
             int gx = 0;
             int gy = 0;
 
-            // Noyau de Sobel pour la détection des contours horizontaux
             int kernelX[3][3] = {
                 {-1, 0, 1},
                 {-2, 0, 2},
                 {-1, 0, 1}};
 
-            // Noyau de Sobel pour la détection des contours verticaux
             int kernelY[3][3] = {
                 {-1, -2, -1},
                 {0, 0, 0},
                 {1, 2, 1}};
 
+            // Convolve with Sobel kernel
             for (int ky = -1; ky <= 1; ky++)
             {
                 for (int kx = -1; kx <= 1; kx++)
@@ -231,7 +239,6 @@ void applySobelFilter(SDL_Surface *image)
 
             int gradient = (int)sqrt(gx * gx + gy * gy);
 
-            // Limiter la valeur du gradient à 255 pour éviter un débordement
             if (gradient > 255)
             {
                 gradient = 255;
@@ -249,14 +256,11 @@ void applySobelFilter(SDL_Surface *image)
 
 void applyCannyFilter(SDL_Surface *image, Uint8 lowThreshold, Uint8 highThreshold)
 {
-
-    // Appliquer le filtre de Sobel pour détecter les contours
     applySobelFilter(image);
 
     int width = image->w;
     int height = image->h;
 
-    // Création d'une image temporaire pour stocker les résultats
     SDL_Surface *tempImage = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
     if (tempImage == NULL)
     {
@@ -271,19 +275,16 @@ void applyCannyFilter(SDL_Surface *image, Uint8 lowThreshold, Uint8 highThreshol
             Uint8 intensity;
             SDL_GetRGB(getPixel(image, x, y), image->format, &intensity, &intensity, &intensity);
 
-            // Si l'intensité est inférieure au seuil bas, pixel de fond
             if (intensity < lowThreshold)
             {
                 intensity = 0;
             }
-            // Si l'intensité est supérieure au seuil haut, pixel de contour
             else if (intensity >= highThreshold)
             {
                 intensity = 255;
             }
             else
             {
-                // Vérification des pixels voisins pour la suppression des non-maximums
                 Uint8 neighbors[8];
                 neighbors[0] = getIntensity(image, x - 1, y - 1);
                 neighbors[1] = getIntensity(image, x, y - 1);
@@ -294,7 +295,6 @@ void applyCannyFilter(SDL_Surface *image, Uint8 lowThreshold, Uint8 highThreshol
                 neighbors[6] = getIntensity(image, x, y + 1);
                 neighbors[7] = getIntensity(image, x + 1, y + 1);
 
-                // comparaison de l'intensité actuelle avec les voisins
                 int isMaximum = 1;
                 for (int i = 0; i < 8; i++)
                 {
@@ -322,7 +322,6 @@ void applyCannyFilter(SDL_Surface *image, Uint8 lowThreshold, Uint8 highThreshol
 
     SDL_BlitSurface(tempImage, NULL, image, NULL);
 
-    // Suivi des contours
     for (int y = 0; y < height; y++)
     {
         for (int x = 0; x < width; x++)
@@ -332,14 +331,12 @@ void applyCannyFilter(SDL_Surface *image, Uint8 lowThreshold, Uint8 highThreshol
 
             if (intensity == 255)
             {
-                // Si un pixel est un contour potentiel, suivez-le
                 for (int ky = -1; ky <= 1; ky++)
                 {
                     for (int kx = -1; kx <= 1; kx++)
                     {
                         if (getIntensity(image, x + kx, y + ky) >= lowThreshold && intensity != 255)
                         {
-                            // Marquer le pixel comme un contour
                             intensity = 255;
                             break;
                         }
