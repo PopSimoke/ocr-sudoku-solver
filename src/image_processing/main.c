@@ -19,7 +19,9 @@ void drawLine(SDL_Surface *image, HoughLine line)
             double rho = line.rho;
             double theta = line.theta;
             double distance = x * cos(theta) + y * sin(theta);
-            if (fabs(distance - rho) < 1.0)
+            Uint8 r, g, b;
+            SDL_GetRGB(getPixel(image, x, y), image->format, &r, &g, &b);
+            if (fabs(distance - rho) < 1.0 && r == 255 && g == 255 && b == 255)
             {                                    // Tolérance pour dessiner la ligne
                 setPixel(image, x, y, redColor); // Fonction pour définir la couleur du pixel en rouge
             }
@@ -38,9 +40,9 @@ void preprocessImage(SDL_Surface *image)
 
     invertColors(grayImage);
 
-    applyCannyFilter(grayImage, 50, 150);
-    // applyDilation(grayImage, 3, 1);
-    // applyErosion(grayImage, 5, 1);
+    applyCannyFilter(grayImage, 20, 200);
+    //applyDilation(grayImage, 3, 1);
+    //applyErosion(grayImage, 3, 1);
 
     HoughLine *lines;
     int numLines;
@@ -52,6 +54,16 @@ void preprocessImage(SDL_Surface *image)
     for (int i = 0; i < numLines; i++)
     {
         drawLine(grayImage, lines[i]);
+    }
+
+    for (int i = 0; i < image->w * image->h; i++)
+    {
+        Uint8 r, g, b;
+        SDL_GetRGB(getPixel(grayImage, i % image->w, i / image->w), grayImage->format, &r, &g, &b);
+        if (r == 0 && g == 0 && b == 0)
+        {
+            setPixel(grayImage, i % image->w, i / image->w, SDL_MapRGB(grayImage->format, 255, 255, 255));
+        }
     }
 
     free(lines);
