@@ -29,8 +29,29 @@ void drawLine(SDL_Surface *image, HoughLine line)
     }
 }
 
+void drawSquare(SDL_Surface *image, Point *p, int squareSize)
+{
+    int width = image->w;
+    int height = image->h;
+    Uint32 redColor = SDL_MapRGB(image->format, 255, 255, 0);
+
+    for (int x = p->x - (int)(squareSize / 2); x < p->x + (int)(squareSize / 2); x++)
+    {
+        for (int y = p->y - (int)(squareSize / 2); y < p->y + (int)(squareSize / 2); y++)
+        {
+            if (x > 0 && y > 0 && x < width && y < height)
+            {
+                setPixel(image, x, y, redColor);
+            }
+        }
+    }
+}
+
 void preprocessImage(SDL_Surface *image)
 {    
+    int w = image->w;
+    int h = image->h;
+
     SDL_Surface *grayImage = convertToGrayscale(image);
     if (grayImage == NULL)
     {
@@ -38,39 +59,44 @@ void preprocessImage(SDL_Surface *image)
         return;
     }
 
+    contrastCorrection(grayImage, 1.5);
+    gammaCorrection(grayImage, 0.5);
+    applyMedianFilter(grayImage, 3);
     invertColors(grayImage);
+    otsuTresholding(grayImage);
 
-    applyCannyFilter(grayImage, 20, 200);
-    //applyDilation(grayImage, 3, 1);
-    //applyErosion(grayImage, 3, 1);
+    Color *colors = (Color *)malloc(w * h * sizeof(Color));
+    int *intensities = (int *)calloc(sizeof(int), w * h);
+    crampthresholding(grayImage, colors, intensities);
 
-    HoughLine *lines;
-    int numLines;
-    lines = HoughTransform(grayImage, &numLines);
-    printf("Number of lines detected: %d\n", numLines);
-    MergeSimilarLines(lines, &numLines, 10.0, 0.1);
-    printf("Number of lines after merging: %d\n", numLines);
-
-    for (int i = 0; i < numLines; i++)
+    int maxIndex = arrayMaxIndex(intensities, w * h);
+    Color mostFrequentColor = colors[maxIndex];
+    for (int x = 0; x < grayImage->w; x++)
     {
-        drawLine(grayImage, lines[i]);
-    }
-
-    for (int i = 0; i < image->w * image->h; i++)
-    {
-        Uint8 r, g, b;
-        SDL_GetRGB(getPixel(grayImage, i % image->w, i / image->w), grayImage->format, &r, &g, &b);
-        if (r == 0 && g == 0 && b == 0)
+        for (int y = 0; y < grayImage->h; y++)
         {
-            setPixel(grayImage, i % image->w, i / image->w, SDL_MapRGB(grayImage->format, 255, 255, 255));
+            if (!isSameColor(grayImage, x, y, mostFrequentColor))
+            {
+                setPixel(grayImage, x, y, SDL_MapRGB(grayImage->format, 0, 0, 0));
+            }
         }
     }
 
-    free(lines);
+    Point *corners = findCorners(grayImage, mostFrequentColor);
+
+    for (int i = 0; i < 4; i++)
+    {
+        drawSquare(grayImage, &corners[i], 20);
+        printf("Corner %d: (%d, %d)\n", i, corners[i].x, corners[i].y);
+    }
 
     SDL_BlitSurface(grayImage, NULL, image, NULL);
 
     SDL_FreeSurface(grayImage);
+
+    free(corners);
+    free(colors);
+    free(intensities);
 }
 
 int main(int argc, char *argv[])
