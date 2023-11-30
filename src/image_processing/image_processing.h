@@ -2,12 +2,33 @@
 #define IMAGE_PROCESSING_H
 
 #include "pixel_operations.h"
+#include "utils.h"
 
 #include <stdlib.h>
 #include <math.h>
 #include <stdbool.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+
+typedef struct Point
+{
+    int x;
+    int y;
+} Point;
+
+typedef struct Stack
+{
+    Point point;
+    int size;
+    struct Stack *next;
+} Stack;
+
+Stack *createStack();
+void push(Stack **stack, Point *point);
+Point *pop(Stack **stack);
+Point *peek(Stack *stack);
+bool isEmpty(Stack *stack);
+void freeStack(Stack *stack);
 
 /**
  * @brief Converts an image to grayscale.
@@ -81,5 +102,33 @@ void applyDilation(SDL_Surface *image, int kernelSize, int iterations);
  * @param iterations The number of erosion iterations.
  */
 void applyErosion(SDL_Surface *image, int kernelSize, int iterations);
+
+/**
+ * @brief Corrects the gamma of the image.
+ * 
+ * @param image The input image.
+ * @param gamma The gamma value.
+ */
+void gammaCorrection(SDL_Surface *image, double gamma);
+
+/**
+ * @brief Corrects the contrast of the image.
+ * 
+ * @param image The input image.
+ * @param contrast The contrast value.
+ */
+void contrastCorrection(SDL_Surface *image, double contrast);
+
+/**
+ * @brief Converts the image to a binary image using the Otsu method.
+ * 
+ * @param image The input image.
+ */
+void otsuTresholding(SDL_Surface *image);
+
+void floodFill(SDL_Surface *image, int x, int y, Color targetColor, Color newColor, int *intensity);
+void crampthresholding(SDL_Surface *image, Color *colors, int *intensities);
+Point *findCorners(SDL_Surface *image, Color mostFrequentColor);
+bool isSameColor(SDL_Surface *image, int x, int y, Color color);
 
 #endif

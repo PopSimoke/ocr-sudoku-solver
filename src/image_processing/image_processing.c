@@ -441,3 +441,344 @@ void applyErosion(SDL_Surface *image, int kernelSize, int iterations)
         SDL_FreeSurface(tempImage);
     }
 }
+
+void gammaCorrection(SDL_Surface *image, double gamma)
+{
+    for (int i = 0; i < image->w * image->h; i++)
+    {
+        Uint8 r, g, b;
+        SDL_GetRGB(getPixel(image, i % image->w, i / image->w), image->format, &r, &g, &b);
+        r = (int)(255 * pow((double)r / 255, gamma));
+        g = (int)(255 * pow((double)g / 255, gamma));
+        b = (int)(255 * pow((double)b / 255, gamma));
+        setPixel(image, i % image->w, i / image->w, SDL_MapRGB(image->format, r, g, b));
+    }
+}
+
+void contrastCorrection(SDL_Surface *image, double contrast)
+{
+    for (int i = 0; i < image->w * image->h; i++)
+    {
+        Uint8 r, g, b;
+        SDL_GetRGB(getPixel(image, i % image->w, i / image->w), image->format, &r, &g, &b);
+        double newR = contrast * (r - 128) + 128;
+        double newG = contrast * (g - 128) + 128;
+        double newB = contrast * (b - 128) + 128;
+        if (newR > 255)
+        {
+            newR = 255;
+        }
+        else if (newR < 0)
+        {
+            newR = 0;
+        }
+        if (newG > 255)
+        {
+            newG = 255;
+        }
+        else if (newG < 0)
+        {
+            newG = 0;
+        }
+        if (newB > 255)
+        {
+            newB = 255;
+        }
+        else if (newB < 0)
+        {
+            newB = 0;
+        }
+        setPixel(image, i % image->w, i / image->w, SDL_MapRGB(image->format, newR, newG, newB));
+    }
+}
+
+void otsuTresholding(SDL_Surface *image)
+{
+    int width = image->w;
+    int height = image->h;
+
+    int histogram[256];
+    memset(histogram, 0, 256 * sizeof(int));
+
+    // Compute the histogram
+    for (int i = 0; i < width * height; i++)
+    {
+        Uint8 intensity;
+        SDL_GetRGB(getPixel(image, i % width, i / width), image->format, &intensity, &intensity, &intensity);
+        histogram[intensity]++;
+    }
+
+    // Compute the total number of pixels
+    int total = width * height;
+
+    double sum = 0;
+    for (int i = 0; i < 256; i++)
+    {
+        sum += i * histogram[i];
+    }
+
+    double sumB = 0;
+    int wB = 0;
+    int wF = 0;
+
+    double varMax = 0;
+    int threshold = 0;
+
+    for (int i = 0; i < 256; i++)
+    {
+        wB += histogram[i];
+        if (wB == 0)
+        {
+            continue;
+        }
+
+        wF = total - wB;
+        if (wF == 0)
+        {
+            break;
+        }
+
+        sumB += (double)(i * histogram[i]);
+
+        double mB = sumB / wB;
+        double mF = (sum - sumB) / wF;
+
+        double varBetween = (double)wB * (double)wF * (mB - mF) * (mB - mF);
+
+        if (varBetween > varMax)
+        {
+            varMax = varBetween;
+            threshold = i;
+        }
+    }
+
+    binarizeImage(image, threshold);
+}
+
+Stack *createStack()
+{
+    Stack *stack = (Stack *)malloc(sizeof(Stack));
+    stack->size = 0;
+    stack->next = NULL;
+    return stack;
+}
+
+bool isEmpty(Stack *stack)
+{
+    return stack->size == 0;
+}
+
+void push(Stack **stack, Point *point)
+{
+    Stack *newStack = (Stack *)malloc(sizeof(Stack));
+    newStack->point.x = point->x;
+    newStack->point.y = point->y;
+    newStack->size = (*stack)->size + 1;
+    newStack->next = *stack;
+    *stack = newStack;
+}
+
+Point *pop(Stack **stack)
+{
+    if (isEmpty(*stack))
+    {
+        return NULL;
+    }
+
+    Point *point = (Point *)malloc(sizeof(Point));
+    point->x = (*stack)->point.x;
+    point->y = (*stack)->point.y;
+
+    Stack *newStack = (*stack)->next;
+    free(*stack);
+    *stack = newStack;
+
+    return point;
+}
+
+Point *peek(Stack *stack)
+{
+    if (isEmpty(stack))
+    {
+        return NULL;
+    }
+
+    Point *point = (Point *)malloc(sizeof(Point));
+    point->x = stack->point.x;
+    point->y = stack->point.y;
+
+    return point;
+}
+
+void freeStack(Stack *stack)
+{
+    while (!isEmpty(stack))
+    {
+        pop(&stack);
+    }
+    free(stack);
+}
+
+void floodFill(SDL_Surface *image, int x, int y, Color targetColor, Color newColor, int *intensity)
+{
+    int w = image->w;
+    int h = image->h;
+
+    Stack *stack = createStack();
+    Point *point = (Point *)malloc(sizeof(Point));
+    point->x = x;
+    point->y = y;
+    push(&stack, point);
+    free(point);
+    while (!isEmpty(stack))
+    {
+        Point *current = pop(&stack);
+        if (current->x < 0 || current->x >= w || current->y < 0 || current->y >= h)
+        {
+            free(current);
+            continue;
+        }
+        Uint8 r, g, b;
+        SDL_GetRGB(getPixel(image, current->x, current->y), image->format, &r, &g, &b);
+        if (r != targetColor.r || g != targetColor.g || b != targetColor.b)
+        {
+            free(current);
+            continue;
+        }
+        (*intensity)++;
+        setPixel(image, current->x, current->y, SDL_MapRGB(image->format, newColor.r, newColor.g, newColor.b));
+        Point *up = (Point *)malloc(sizeof(Point));
+        up->x = current->x;
+        up->y = current->y - 1;
+        push(&stack, up);
+
+        Point *down = (Point *)malloc(sizeof(Point));
+        down->x = current->x;
+        down->y = current->y + 1;
+        push(&stack, down);
+
+        Point *left = (Point *)malloc(sizeof(Point));
+        left->x = current->x - 1;
+        left->y = current->y;
+        push(&stack, left);
+
+        Point *right = (Point *)malloc(sizeof(Point));
+        right->x = current->x + 1;
+        right->y = current->y;
+        push(&stack, right);
+
+        free(current);
+        free(up);
+        free(down);
+        free(left);
+        free(right);
+    }
+    freeStack(stack);
+}
+
+void crampthresholding(SDL_Surface *image, Color *colors, int *intensities)
+{
+    int w = image->w;
+    int h = image->h;
+
+    for (int i = 0; i < w * h; i++)
+    {
+        Uint8 r, g, b;
+        SDL_GetRGB(getPixel(image, i % w, i / w), image->format, &r, &g, &b);
+        if (r == 255 && g == 255 && b == 255)
+        {
+            Color white = {255, 255, 255};
+            Color color;
+            color.r = rand() % 256;
+            color.g = rand() % 256;
+            color.b = rand() % 256;
+            colors[i] = color;
+            int intensity = 0;
+            floodFill(image, i % w, i / w, white, color, &intensity);
+            intensities[i] = intensity;
+        }
+    }
+}
+
+bool isSameColor(SDL_Surface *image, int x, int y, Color color)
+{
+    Color currentPixelColor = fromPixel(getPixel(image, x, y), image->format);
+    return currentPixelColor.r == color.r && currentPixelColor.g == color.g && currentPixelColor.b == color.b;
+}
+
+Point *findCorners(SDL_Surface *image, Color mostFrequentColor)
+{
+    int w = image->w;
+    int h = image->h;
+
+    Point *corners = (Point *)malloc(4 * sizeof(Point));
+
+    Point *topLeft = (Point *)malloc(sizeof(Point));
+    topLeft->x = w;
+    topLeft->y = h;
+
+    Point *topRight = (Point *)malloc(sizeof(Point));
+    topRight->x = 0;
+    topRight->y = h;
+
+    Point *bottomLeft = (Point *)malloc(sizeof(Point));
+    bottomLeft->x = w;
+    bottomLeft->y = 0;
+
+    Point *bottomRight = (Point *)malloc(sizeof(Point));
+    bottomRight->x = 0;
+    bottomRight->y = 0;
+
+
+
+    for (int x = 0; x < w; x++)
+    {
+        for (int y = 0; y < h; y++)
+        {
+            if (!isSameColor(image, x, y, mostFrequentColor))
+            {
+                continue;
+            }
+
+            // find the pixel with the lowest x and y
+            if (x + y < topLeft->x + topLeft->y)
+            {
+                topLeft->x = x;
+                topLeft->y = y;
+            }
+
+            // find the pixel with the highest x and lowest y
+            if (x - y > topRight->x - topRight->y)
+            {
+                topRight->x = x;
+                topRight->y = y;
+            }
+
+            // find the pixel with the lowest x and highest y
+            if (x - y < bottomLeft->x - bottomLeft->y)
+            {
+                bottomLeft->x = x;
+                bottomLeft->y = y;
+            }
+
+            // find the pixel with the highest x and y
+            if (x + y > bottomRight->x + bottomRight->y)
+            {
+                bottomRight->x = x;
+                bottomRight->y = y;
+            }
+        }
+    }
+
+    corners[0] = *topLeft;
+    corners[1] = *topRight;
+    corners[2] = *bottomLeft;
+    corners[3] = *bottomRight;
+
+    free(topLeft);
+    free(topRight);
+    free(bottomLeft);
+    free(bottomRight);
+
+    return corners;
+}

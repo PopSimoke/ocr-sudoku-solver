@@ -41,3 +41,9 @@ Uint8 getIntensity(SDL_Surface *image, int x, int y)
     }
     return intensity;
 }
+
+Color fromPixel(Uint32 pixel, SDL_PixelFormat *format) {
+    Color color;
+    SDL_GetRGB(pixel, format, &color.r, &color.g, &color.b);
+    return color;
+}

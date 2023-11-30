@@ -4,6 +4,13 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+typedef struct
+{
+    Uint8 r;
+    Uint8 g;
+    Uint8 b;
+} Color;
+
 /**
  * @brief Get the color of a pixel in an image.
  *
@@ -42,5 +49,7 @@ int compareIntensity(const void *a, const void *b);
  * @return Uint8 The intensity value at the specified point.
  */
 Uint8 getIntensity(SDL_Surface *image, int x, int y);
+
+Color fromPixel(Uint32 pixel, SDL_PixelFormat *format);
 
 #endif
