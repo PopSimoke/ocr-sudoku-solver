@@ -1,6 +1,7 @@
 #include "hough_transform.h"
 #include "image_processing.h"
 #include "pixel_operations.h"
+#include "square_detection.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -60,7 +61,7 @@ void preprocessImage(SDL_Surface *image)
     }
 
     contrastCorrection(grayImage, 1.5);
-    gammaCorrection(grayImage, 0.5);
+    gammaCorrection(grayImage, 1.8);
     applyMedianFilter(grayImage, 3);
     invertColors(grayImage);
     otsuTresholding(grayImage);
@@ -71,18 +72,24 @@ void preprocessImage(SDL_Surface *image)
 
     int maxIndex = arrayMaxIndex(intensities, w * h);
     Color mostFrequentColor = colors[maxIndex];
-
-    Point *corners = findCorners(grayImage, mostFrequentColor);
     
-    if (corners[1].x - corners[0].x < w / 3 || corners[3].x - corners[2].x < w / 3 ||
-        corners[2].y - corners[0].y < h / 3 || corners[3].y - corners[1].y < h / 3)
-    {
-        printf("Changing grid\n");
-        mostFrequentColor = colors[arrayMaxIndexAfter(intensities, w * h, maxIndex)];
-        free(corners);
-        corners = findCorners(grayImage, mostFrequentColor);
-    }
+    // découpe la grille
+    saveSquares(grayImage, mostFrequentColor);
 
+    // les 4 coins 
+    // Point *corners = findCorners(grayImage, mostFrequentColor);
+    
+    // pour trouver les bons coins
+    // if (corners[1].x - corners[0].x < w / 3 || corners[3].x - corners[2].x < w / 3 ||
+    //     corners[2].y - corners[0].y < h / 3 || corners[3].y - corners[1].y < h / 3)
+    // {
+    //     printf("Changing grid\n");
+    //     mostFrequentColor = colors[arrayMaxIndexAfter(intensities, w * h, maxIndex)];
+    //     free(corners);
+    //     corners = findCorners(grayImage, mostFrequentColor);
+    // }
+    
+    // pour mettre tout en noir sauf la grille
     // for (int x = 0; x < grayImage->w; x++)
     // {
     //     for (int y = 0; y < grayImage->h; y++)
@@ -93,18 +100,19 @@ void preprocessImage(SDL_Surface *image)
     //         }
     //     }
     // }
-
-    for (int i = 0; i < 4; i++)
-    {
-        drawSquare(grayImage, &corners[i], 20);
-        printf("Corner %d: (%d, %d)\n", i, corners[i].x, corners[i].y);
-    }
+    
+    // pour dessiner les 4 coins
+    // for (int i = 0; i < 4; i++)
+    // {
+    //     drawSquare(grayImage, &corners[i], 20);
+    //     printf("Corner %d: (%d, %d)\n", i, corners[i].x, corners[i].y);
+    // }
 
     SDL_BlitSurface(grayImage, NULL, image, NULL);
 
     SDL_FreeSurface(grayImage);
 
-    free(corners);
+    // free(corners);
     free(colors);
     free(intensities);
 }
