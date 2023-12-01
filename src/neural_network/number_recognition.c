@@ -1,7 +1,7 @@
 #include <SDL2/SDL_surface.h>
 #define INPUT_LAYER_SIZE 1024
 #define HIDDEN_LAYER_SIZE 100
-#define OUTPUT_LAYER_SIZE 10
+#define OUTPUT_LAYER_SIZE 9
 
 #include "neural_network.h"
 #include <dirent.h>
@@ -94,7 +94,7 @@ int compute_grid(Neural_Network *nn, char *input_path, char *output_path) {
         max_index = i;
 
     // Store the index (aka identified number) into the numbers list
-    numbers[case_index] = max_index + '0';
+    numbers[case_index] = max_index + '1';
   }
 
   closedir(dir);
