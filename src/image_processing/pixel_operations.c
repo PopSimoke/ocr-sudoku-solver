@@ -23,6 +23,13 @@ void setPixel(SDL_Surface *image, int x, int y, Uint32 newPixel)
     }
 }
 
+void setPixelFromColor(SDL_Surface *image, int x, int y, Color color)
+{
+    Uint32 newPixel = SDL_MapRGB(image->format, color.r, color.g, color.b);
+    setPixel(image, x, y, newPixel);
+}
+
+
 int compareIntensity(const void *a, const void *b)
 {
     return (*(Uint8 *)a - *(Uint8 *)b);

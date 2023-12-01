@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include "pixel_operations.h"
 
 /**
  * @brief Save individual cells of a Sudoku image in a separate directory.
@@ -16,6 +17,6 @@
  *
  * @param sudokuImage The input Sudoku image.
  */
-void saveSquares(SDL_Surface *sudokuImage);
+void saveSquares(SDL_Surface *sudokuImage, Color mostFrequentColor);
 
 #endif

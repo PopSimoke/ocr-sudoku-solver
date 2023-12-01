@@ -52,4 +52,6 @@ Uint8 getIntensity(SDL_Surface *image, int x, int y);
 
 Color fromPixel(Uint32 pixel, SDL_PixelFormat *format);
 
+void setPixelFromColor(SDL_Surface *image, int x, int y, Color color);
+
 #endif
