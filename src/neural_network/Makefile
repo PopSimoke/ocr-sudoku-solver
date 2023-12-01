@@ -2,9 +2,9 @@
 
 CC = gcc -fsanitize=address -g
 CPPFLAGS = -MMD
-CFLAGS = -Wall -Wextra -Werror -O3 -std=c99
+CFLAGS = -Wall -Wextra -O3 -std=c99 `pkg-config --cflags sdl2 SDL2_image`
 LDFLAGS = -lm
-LDLIBS =
+LDLIBS = `pkg-config --libs sdl2 SDL2_image`
 
 SRC = number_recognition.c xor.c neural_network.c neural_network_utils.c activations.c matrix.c
 OBJ = ${SRC:.c=.o}
