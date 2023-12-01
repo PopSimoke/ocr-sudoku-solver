@@ -71,18 +71,28 @@ void preprocessImage(SDL_Surface *image)
 
     int maxIndex = arrayMaxIndex(intensities, w * h);
     Color mostFrequentColor = colors[maxIndex];
-    for (int x = 0; x < grayImage->w; x++)
-    {
-        for (int y = 0; y < grayImage->h; y++)
-        {
-            if (!isSameColor(grayImage, x, y, mostFrequentColor))
-            {
-                setPixel(grayImage, x, y, SDL_MapRGB(grayImage->format, 0, 0, 0));
-            }
-        }
-    }
 
     Point *corners = findCorners(grayImage, mostFrequentColor);
+    
+    if (corners[1].x - corners[0].x < w / 3 || corners[3].x - corners[2].x < w / 3 ||
+        corners[2].y - corners[0].y < h / 3 || corners[3].y - corners[1].y < h / 3)
+    {
+        printf("Changing grid\n");
+        mostFrequentColor = colors[arrayMaxIndexAfter(intensities, w * h, maxIndex)];
+        free(corners);
+        corners = findCorners(grayImage, mostFrequentColor);
+    }
+
+    // for (int x = 0; x < grayImage->w; x++)
+    // {
+    //     for (int y = 0; y < grayImage->h; y++)
+    //     {
+    //         if (!isSameColor(grayImage, x, y, mostFrequentColor))
+    //         {
+    //             setPixel(grayImage, x, y, SDL_MapRGB(grayImage->format, 0, 0, 0));
+    //         }
+    //     }
+    // }
 
     for (int i = 0; i < 4; i++)
     {

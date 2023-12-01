@@ -455,6 +455,35 @@ void gammaCorrection(SDL_Surface *image, double gamma)
     }
 }
 
+void autoResize(SDL_Surface *image, Point *corners)
+{
+    int w = image->w;
+    int h = image->h;
+
+    // resize an image with the four points in corners
+    int newWidth = (int)sqrt(pow(corners[0].x - corners[1].x, 2) + pow(corners[0].y - corners[1].y, 2));
+    printf("newWidth: %d\n", newWidth);
+    int newHeight = (int)sqrt(pow(corners[0].x - corners[2].x, 2) + pow(corners[0].y - corners[2].y, 2));
+    printf("newHeight: %d\n", newHeight);
+    SDL_Surface *tempImage = SDL_CreateRGBSurface(0, newWidth, newHeight, image->format->BitsPerPixel, image->format->Rmask, image->format->Gmask, image->format->Bmask, image->format->Amask);
+
+    // Iterate through each pixel
+    for (int y = 0; y < newHeight; y++)
+    {
+        for (int x = 0; x < newWidth; x++)
+        {
+            int srcX = (int)((double)x / newWidth * w);
+            int srcY = (int)((double)y / newHeight * h);
+            Uint32 pixel = getPixel(image, srcX, srcY);
+            *((Uint32 *)tempImage->pixels + y * newWidth + x) = pixel;
+        }
+    }
+
+    SDL_BlitSurface(tempImage, NULL, image, NULL);
+
+    SDL_FreeSurface(tempImage);
+}
+
 void contrastCorrection(SDL_Surface *image, double contrast)
 {
     for (int i = 0; i < image->w * image->h; i++)
@@ -728,7 +757,6 @@ Point *findCorners(SDL_Surface *image, Color mostFrequentColor)
     Point *bottomRight = (Point *)malloc(sizeof(Point));
     bottomRight->x = 0;
     bottomRight->y = 0;
-
 
 
     for (int x = 0; x < w; x++)
