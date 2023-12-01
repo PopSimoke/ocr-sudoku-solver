@@ -1,3 +1,7 @@
+#define INPUT_LAYER_SIZE 2
+#define HIDDEN_LAYER_SIZE 10
+#define OUTPUT_LAYER_SIZE 2
+
 #include "neural_network.h"
 #include <stdio.h>
 #include <err.h>
@@ -15,10 +19,11 @@ int main(int argc, char **argv) {
         iteration_count = iteration_count * 10 + (argv[1][i] - '0');
     }
 
-//    Neural_Network *nn = create_new_neural_network(learning_rate);
+//    Neural_Network *nn = create_new_neural_network(learning_rate, 2, 2, 10);
 
-    char *path = "/home/matiix310/epita/ocr/ocr-sudoku-solver/src/neural_network/model";
-    Neural_Network *nn = load_neural_network(path, learning_rate);
+    char *path = "./model";
+    Neural_Network *nn = load_neural_network(path,learning_rate,
+                                             INPUT_LAYER_SIZE, OUTPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE);
 
     double inputs_array1[INPUT_LAYER_SIZE] = {0, 1};
     double targets_array1[OUTPUT_LAYER_SIZE] = {1, 0}; // true
