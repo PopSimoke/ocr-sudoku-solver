@@ -18,5 +18,6 @@
  * @param sudokuImage The input Sudoku image.
  */
 void saveSquares(SDL_Surface *sudokuImage, Color mostFrequentColor);
+int editSquare(SDL_Surface *square, Color mostFrequentColor);
 
 #endif

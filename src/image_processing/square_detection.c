@@ -29,8 +29,7 @@ int editSquare(SDL_Surface *square, Color mostFrequentColor)
         {
             if (isSameColor(square, x, y, mostFrequentColor))
             {
-                setPixelFromColor(square, x, y, white);
-                edited = 1;
+                setPixelFromColor(square, x, y, black);
             }
             else if (isSameColor(square, x, y, black))
             {
@@ -38,7 +37,8 @@ int editSquare(SDL_Surface *square, Color mostFrequentColor)
             }
             else
             {
-                setPixelFromColor(square, x, y, black);
+                setPixelFromColor(square, x, y, white);
+                edited = 1;
             }
         }
     }
@@ -75,6 +75,7 @@ void saveSquares(SDL_Surface *sudokuImage, Color mostFrequentColor)
 
             if (result < 0)
             {
+                cellIndex++;
                 continue;
             }
             // sve the cell in the "saved_images" directory
