@@ -9,7 +9,7 @@
 #include "pixel_operations.h"
 #define M_PI 3.14159265358979323846
 #define NOISE_TRESHOLD 0.4
-
+//Pour avoir la rotation de l'image il faut faire 360-theta
 void addThetaToList(Element **list, float theta) {
     Element *current = *list;
 
