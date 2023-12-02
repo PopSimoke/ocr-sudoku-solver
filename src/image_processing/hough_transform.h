@@ -2,6 +2,7 @@
 #define HOUGH_TRANSFORM_H
 
 #include "pixel_operations.h"
+#include "image_processing.h"
 
 #include <stdlib.h>
 #include <math.h>
@@ -15,6 +16,13 @@ typedef struct
     double theta;
 } HoughLine;
 
+
+typedef struct Element {
+    float theta;
+    int votes;
+    struct Element *next;
+} Element;
+
 /**
  * @brief This function applies the Hough Transform to an image and returns all the straight lines detected
  * 
@@ -22,7 +30,7 @@ typedef struct
  * @param numLines the number of lines detected
  * @return HoughLine* an array of HoughLine, all the straight lines detected in the image
  */
-HoughLine *HoughTransform(SDL_Surface *image, int *numLines);
+HoughLine *HoughTransform(SDL_Surface *image, int *numLines, Point *corners, Color mostFrequentColor, float *mostpresenttheta);
 
 /**
  * @brief Merges similar lines in an array of HoughLine.
@@ -33,5 +41,22 @@ HoughLine *HoughTransform(SDL_Surface *image, int *numLines);
  * @param thetaTolerance Tolerance for theta differences.
  */
 void MergeSimilarLines(HoughLine *lines, int *numLines, double rhoTolerance, double thetaTolerance);
+
+/**
+ * @brief This function returns the most present theta in the list
+ * 
+ * @param list the list of theta
+ * @return float the most present theta
+ */
+float* getMostPresentTheta(Element *list);
+
+
+/**
+ * @brief This function returns the number of votes of the most present theta in the list
+ * 
+ * @param list the list of theta
+ * @return int the number of votes of the most present theta
+ */
+int getMostPresentThetaVotes(Element *list);
 
 #endif

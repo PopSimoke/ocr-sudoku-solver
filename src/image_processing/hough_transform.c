@@ -5,14 +5,84 @@
 #include <stdbool.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-
+#include "image_processing.h"
+#include "pixel_operations.h"
 #define M_PI 3.14159265358979323846
 #define NOISE_TRESHOLD 0.4
 
-HoughLine *HoughTransform(SDL_Surface *image, int *numLines)
+void addThetaToList(Element **list, float theta) {
+    Element *current = *list;
+
+    // Iterate over the list
+    while (current != NULL) {
+        if (current->theta == theta) {
+            // If theta is found, increment the votes and return
+            current->votes++;
+            return;
+        }
+        current = current->next;
+    }
+
+    // If theta is not found, create a new element
+    Element *newElement = (Element *)malloc(sizeof(Element));
+    newElement->theta = theta;
+    newElement->votes = 1;
+    newElement->next = NULL;
+
+    if (*list == NULL) {
+        // If the list is empty, make the new element the head
+        *list = newElement;
+    } else {
+        // Otherwise, add the new element to the end of the list
+        current = *list;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newElement;
+    }
+}
+float* getMostPresentTheta(Element *list) {
+    int maxVotes = 0;
+    float* mostPresentTheta = (float*) malloc(sizeof(float));
+    *mostPresentTheta = 0.0;
+    Element *current = list;
+
+    // Iterate over the list
+    while (current != NULL) {
+        if (current->votes > maxVotes) {
+            // If current element's votes are greater than maxVotes, update maxVotes and mostPresentTheta
+            maxVotes = current->votes;
+            *mostPresentTheta = current->theta;
+        }
+        current = current->next;
+    }
+    *mostPresentTheta = fmod(*mostPresentTheta , 360);
+    // Return the pointer to the theta with the most votes
+    return mostPresentTheta;
+}
+
+HoughLine *HoughTransform(SDL_Surface *image, int *numLines, Point *corners, Color mostFrequentColor ,float* mostpresenttheta)
 {
-    int width = image->w;
-    int height = image->h;
+    int minx = 10000;
+    int miny= 10000;
+    int maxy = 0;
+    int maxx = 0;
+    
+    for (int i = 0 ; i <4 ; i++)
+    {
+        Point oui  = corners[i];
+        if ((oui.x)>maxx)
+            maxx = oui.x;
+        if ((oui.x)<minx)
+            minx = oui.x;
+        if ((oui.y)>maxy)
+            maxy = oui.y;
+        if ((oui.y)<miny)
+            miny = oui.y;
+
+    }
+    int width = maxx-minx;
+    int height = maxy-miny;
 
     int diagonalLength = (int)sqrt(width * width + height * height);
     diagonalLength += diagonalLength;
@@ -20,18 +90,19 @@ HoughLine *HoughTransform(SDL_Surface *image, int *numLines)
     int numThetas = 180;
 
     int *accumulator = (int *)calloc(diagonalLength * numThetas * 2, sizeof(int));
-
+    
     // go through all pixels
-    for (int x = 0; x < height; x++)
+    for (int x = minx; x < maxx; x++)
     {
-        for (int y = 0; y < width; y++)
+        for (int y = miny; y < maxy; y++)
         {
-            Uint8 intensity;
-            SDL_GetRGB(getPixel(image, x, y), image->format, &intensity, &intensity, &intensity);
+            // Uint8 intensity;
+            // SDL_GetRGB(getPixel(image, x, y), image->format, &intensity, &intensity, &intensity);
 
             // if pixel is white (edge)
-            if (intensity == 255)
+            if (isSameColor(image, x, y, mostFrequentColor))
             {
+                
                 for (int thetaIndex = 0; thetaIndex < numThetas; thetaIndex++)
                 {
                     double theta = (double)thetaIndex * M_PI / numThetas;
@@ -92,7 +163,18 @@ HoughLine *HoughTransform(SDL_Surface *image, int *numLines)
 
     // set the number of lines found
     *numLines = numLinesFound;
-
+    Element *list = NULL;
+    
+    
+    for (int i = 0; i < numLinesFound; i++)
+    {
+        addThetaToList(&list, lines[i].theta*180);
+    }
+    //printf("theta : %f\n",getMostPresentTheta(list));
+    float* a = getMostPresentTheta(list);
+    *mostpresenttheta = *a;
+    
+    
     return lines;
 }
 
@@ -149,3 +231,9 @@ void MergeSimilarLines(HoughLine *lines, int *numLines, double rhoTolerance, dou
     // set the number of remaining lines
     *numLines = numRemainingLines;
 }
+
+
+
+
+
+
