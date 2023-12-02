@@ -34,4 +34,30 @@ int generate_grid(Neural_Network *nn, char *input_path, char *output_path);
 int ai_wrapper_with_model(char *model_path, char *input_path,
                           char *output_path);
 
+/**
+ * A wrap of all the ai methods that generates a sudoku grid from a given
+ * directory with sudoku cases inside.
+ *
+ * @param input_path Path to the directory containing the sudoku cases.
+ * @param output_path Path to the text file of the generated sudoku grid.
+ *
+ * @return Integer indicating the success/failure of the function's execution.
+ * Typically, returns 0 upon success and non-zero values upon failure.
+ */
+int ai_wrapper(char *model_path, char *input_path, char *output_path);
+
+/**
+ * A wrap of all the ai methods that trains a neural network and store it into a
+ * model file
+ *
+ * @param model_path Path to a model file.
+ * @param iteration_count Number of iteration the train method have to perform.
+ * @param output_path Path of the datataset that trains the ai.
+ *
+ * @return Integer indicating the success/failure of the function's execution.
+ * Typically, returns 0 upon success and non-zero values upon failure.
+ */
+int ai_wrapper_train(char *model_path, size_t iteration_count,
+                     char *dataset_path);
+
 #endif

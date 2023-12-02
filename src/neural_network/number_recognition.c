@@ -145,7 +145,8 @@ int ai_wrapper(char *model_path, char *input_path, char *output_path) {
   return err;
 }
 
-int ai_wrapper_train(char *model_path, size_t iteration_count, char *dataset) {
+int ai_wrapper_train(char *model_path, size_t iteration_count,
+                     char *dataset_path) {
   // TODO
 }
 
@@ -226,33 +227,5 @@ int main(int argc, char **argv) {
     ai_wrapper_with_model(model_path, input_path, output_path);
   }
 
-  //  if (argc < 2) {
-  //    errx(1, "You have to specify the iteration count for the
-  //    training.");
-  //  }
-  //
-  //  size_t iteration_count = 0;
-  //  for (size_t i = 0; i < strlen(argv[1]); i++) {
-  //    iteration_count = iteration_count * 10 + (argv[1][i] - '0');
-  //  }
-  //
-  //  //    Neural_Network *nn =
-  //  create_new_neural_network(learning_rate);
-  //
-  //  char *model_path = "./model";
-  //  printf("Loading model from: %s\n", model_path);
-  //  Neural_Network *nn =
-  //      load_neural_network(model_path, LEARNING_RATE,
-  //      INPUT_LAYER_SIZE,
-  //                          OUTPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE);
-  //
-  //  char *input_path = "../image_processing/saved_images/";
-  //  char *output_path = "./output.txt";
-  //
-  //  save_neural_network(nn, model_path);
-  //  printf("Model saved at : %s\n", model_path);
-  //
-  //  // free the allocated resources
-  //  neural_network_destructor(nn);
   return 0;
 }
