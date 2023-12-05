@@ -7,85 +7,86 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-int editSquare(SDL_Surface *square, Color mostFrequentColor)
-{
-    // iterates over the squares pixels and :
-    // - if pixel at pos x y is same color as mostFrequentColor (use isSameColor) then put it in white
-    // - if pixel is black, continue
-    // - else put it in black
-    // to change color of a pixel, use setPixelFromColor(square, x, y, color)
+int editSquare(SDL_Surface *square, Color mostFrequentColor) {
+  // iterates over the squares pixels and :
+  // - if pixel at pos x y is same color as mostFrequentColor (use isSameColor)
+  // then put it in white
+  // - if pixel is black, continue
+  // - else put it in black
+  // to change color of a pixel, use setPixelFromColor(square, x, y, color)
 
-    int w = square->w;
-    int h = square->h;
+  int w = square->w;
+  int h = square->h;
 
-    Color white = {255, 255, 255};
-    Color black = {0, 0, 0};
+  Color white = {255, 255, 255};
+  Color black = {0, 0, 0};
 
-    int edited = -1;
+  int edited = -1;
 
-    for (int x = 0; x < w; x++)
-    {
-        for (int y = 0; y < h; y++)
-        {
-            if (isSameColor(square, x, y, mostFrequentColor))
-            {
-                setPixelFromColor(square, x, y, black);
-            }
-            else if (isSameColor(square, x, y, black))
-            {
-                continue;
-            }
-            else
-            {
-                setPixelFromColor(square, x, y, white);
-                edited = 1;
-            }
-        }
+  for (int x = 0; x < w; x++) {
+    for (int y = 0; y < h; y++) {
+      if (isSameColor(square, x, y, mostFrequentColor)) {
+        setPixelFromColor(square, x, y, black);
+      } else if (isSameColor(square, x, y, black)) {
+        continue;
+      } else {
+        setPixelFromColor(square, x, y, white);
+        edited = 1;
+      }
     }
+  }
 
-    return edited;
+  return edited;
 }
 
-void saveSquares(SDL_Surface *sudokuImage, Color mostFrequentColor)
-{
-    // If the "saved_images" directory does not exist, create it
-    const char *outputDir = "saved_images";
-    if (mkdir(outputDir, 0777) == -1)
-    {
-        printf("Error creating directory %s\n", outputDir);
-        return;
+SDL_Surface *resizeImage(SDL_Surface *source, int newWidth, int newHeight) {
+  SDL_Surface *temp =
+      SDL_CreateRGBSurface(0, newWidth, newHeight, source->format->BitsPerPixel,
+                           source->format->Rmask, source->format->Gmask,
+                           source->format->Bmask, source->format->Amask);
+  SDL_BlitScaled(source, NULL, temp, NULL);
+  return temp;
+}
+
+void saveSquares(SDL_Surface *sudokuImage, Color mostFrequentColor) {
+  // If the "saved_images" directory does not exist, create it
+  const char *outputDir = "saved_images";
+  if (mkdir(outputDir, 0777) == -1) {
+    printf("Error creating directory %s\n", outputDir);
+    return;
+  }
+
+  int cellWidth = sudokuImage->w / 9;
+  int cellHeight = sudokuImage->h / 9;
+
+  int cellIndex = 0;
+  for (int row = 0; row < 9; row++) {
+    for (int col = 0; col < 9; col++) {
+      // create a surface to store the cell
+      SDL_Surface *cell =
+          SDL_CreateRGBSurface(0, cellWidth, cellHeight, 32, 0, 0, 0, 0);
+
+      // copy the cell from the original image
+      SDL_Rect srcRect = {col * cellWidth, row * cellHeight, cellWidth,
+                          cellHeight};
+      SDL_BlitSurface(sudokuImage, &srcRect, cell, NULL);
+
+      int result = editSquare(cell, mostFrequentColor);
+
+      if (result < 0) {
+        cellIndex++;
+        continue;
+      }
+      // sve the cell in the "saved_images" directory
+      char filename[128];
+      snprintf(filename, sizeof(filename), "saved_images/case_%d.png",
+               cellIndex);
+      SDL_Surface *resized_cell = resizeImage(cell, 32, 32);
+      IMG_SavePNG(resized_cell, filename);
+      SDL_FreeSurface(cell);
+      SDL_FreeSurface(resized_cell);
+
+      cellIndex++;
     }
-
-    int cellWidth = sudokuImage->w / 9;
-    int cellHeight = sudokuImage->h / 9;
-
-    int cellIndex = 0;
-    for (int row = 0; row < 9; row++)
-    {
-        for (int col = 0; col < 9; col++)
-        {
-            // create a surface to store the cell
-            SDL_Surface *cell = SDL_CreateRGBSurface(0, cellWidth, cellHeight, 32, 0, 0, 0, 0);
-
-            // copy the cell from the original image
-            SDL_Rect srcRect = {col * cellWidth, row * cellHeight, cellWidth, cellHeight};
-            SDL_BlitSurface(sudokuImage, &srcRect, cell, NULL);
-
-            int result = editSquare(cell, mostFrequentColor);
-
-            if (result < 0)
-            {
-                cellIndex++;
-                continue;
-            }
-            // sve the cell in the "saved_images" directory
-            char filename[128];
-            snprintf(filename, sizeof(filename), "saved_images/case_%d.png", cellIndex);
-            IMG_SavePNG(cell, filename);
-
-            SDL_FreeSurface(cell);
-
-            cellIndex++;
-        }
-    }
+  }
 }
