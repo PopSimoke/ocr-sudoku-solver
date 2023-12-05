@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include "pixel_operations.h"
+#include "image_processing.h"
 
 /**
  * @brief Save individual cells of a Sudoku image in a separate directory.

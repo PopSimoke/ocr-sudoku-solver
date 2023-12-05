@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <stdbool.h>
 
 typedef struct
 {
@@ -53,5 +54,5 @@ Uint8 getIntensity(SDL_Surface *image, int x, int y);
 Color fromPixel(Uint32 pixel, SDL_PixelFormat *format);
 
 void setPixelFromColor(SDL_Surface *image, int x, int y, Color color);
-
+bool isSameColor(SDL_Surface *image, int x, int y, Color color);
 #endif

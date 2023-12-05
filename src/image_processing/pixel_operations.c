@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <stdlib.h>
 
 Uint32 getPixel(SDL_Surface *image, int x, int y)
 {
@@ -53,4 +54,10 @@ Color fromPixel(Uint32 pixel, SDL_PixelFormat *format) {
     Color color;
     SDL_GetRGB(pixel, format, &color.r, &color.g, &color.b);
     return color;
+}
+
+bool isSameColor(SDL_Surface *image, int x, int y, Color color)
+{
+    Color currentPixelColor = fromPixel(getPixel(image, x, y), image->format);
+    return currentPixelColor.r == color.r && currentPixelColor.g == color.g && currentPixelColor.b == color.b;
 }
