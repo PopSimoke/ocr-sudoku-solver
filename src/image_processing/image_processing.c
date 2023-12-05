@@ -718,9 +718,9 @@ void crampthresholding(SDL_Surface *image, Color *colors, int *intensities)
         {
             Color white = {255, 255, 255};
             Color color;
-            color.r = rand() % 256;
-            color.g = rand() % 256;
-            color.b = rand() % 256;
+            color.r = (rand() % 254) + 1;
+            color.g = (rand() % 254) + 1;
+            color.b = (rand() % 254) + 1;
             colors[i] = color;
             int intensity = 0;
             floodFill(image, i % w, i / w, white, color, &intensity);
@@ -911,4 +911,39 @@ double findRotationAngle(Point *corners)
     double angle = atan2(topRight.y - topLeft.y, topRight.x - topLeft.x) * 180.0f / M_PI;
 
     return 360.0f - angle;
+}
+
+void autoContrast(SDL_Surface* image) {
+    int histogram[256] = {0};
+    int totalPixels = image->w * image->h;
+
+    for (int y = 0; y < image->h; y++) {
+        for (int x = 0; x < image->w; x++) {
+            Uint8 pixelValue = ((Uint8*)image->pixels)[y * image->pitch + x];
+            histogram[pixelValue]++;
+        }
+    }
+
+    int cumulativeSum = 0;
+    int p5 = -1, p95 = -1;
+    for (int i = 0; i < 256; i++) {
+        cumulativeSum += histogram[i];
+        if (p5 == -1 && cumulativeSum >= totalPixels * 0.05) {
+            p5 = i;
+        }
+        if (p95 == -1 && cumulativeSum >= totalPixels * 0.95) {
+            p95 = i;
+            break;
+        }
+    }
+
+    float a = 255.0 / (p95 - p5);
+    float b = -a * p5;
+
+    for (int y = 0; y < image->h; y++) {
+        for (int x = 0; x < image->w; x++) {
+            Uint8* pixel = &((Uint8*)image->pixels)[y * image->pitch + x];
+            *pixel = (Uint8)fmin(fmax(a * (*pixel) + b, 0), 255);
+        }
+    }
 }

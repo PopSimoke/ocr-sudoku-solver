@@ -135,5 +135,6 @@ void autoResize(SDL_Surface *image, Point *corners);
 void rotate(SDL_Surface *surface, double angleDegree);
 Point findCenter(Point *corners);
 double findRotationAngle(Point *corners);
+void autoContrast(SDL_Surface* image);
 
 #endif
