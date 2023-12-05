@@ -10,6 +10,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#define M_PI 3.14159265358979323846
+
 typedef struct Point
 {
     int x;
@@ -129,7 +131,9 @@ void otsuTresholding(SDL_Surface *image);
 void floodFill(SDL_Surface *image, int x, int y, Color targetColor, Color newColor, int *intensity);
 void crampthresholding(SDL_Surface *image, Color *colors, int *intensities);
 Point *findCorners(SDL_Surface *image, Color mostFrequentColor);
-bool isSameColor(SDL_Surface *image, int x, int y, Color color);
 void autoResize(SDL_Surface *image, Point *corners);
+void rotate(SDL_Surface *surface, double angleDegree);
+Point findCenter(Point *corners);
+bool isSameColor(SDL_Surface *image, int x, int y, Color color);
 
 #endif

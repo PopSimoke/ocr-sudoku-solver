@@ -729,12 +729,6 @@ void crampthresholding(SDL_Surface *image, Color *colors, int *intensities)
     }
 }
 
-bool isSameColor(SDL_Surface *image, int x, int y, Color color)
-{
-    Color currentPixelColor = fromPixel(getPixel(image, x, y), image->format);
-    return currentPixelColor.r == color.r && currentPixelColor.g == color.g && currentPixelColor.b == color.b;
-}
-
 Point *findCorners(SDL_Surface *image, Color mostFrequentColor)
 {
     int w = image->w;
@@ -809,4 +803,100 @@ Point *findCorners(SDL_Surface *image, Color mostFrequentColor)
     free(bottomRight);
 
     return corners;
+}
+
+Point findCenter(Point *corners) {
+    Point center;
+
+    center.x = (corners[0].x + corners[1].x + corners[2].x + corners[3].x) / 4;
+    center.y = (corners[0].y + corners[1].y + corners[2].y + corners[3].y) / 4;
+
+    return center;
+}
+
+double bilinearly_interpolate(unsigned int top, unsigned int bottom,
+                              unsigned int left, unsigned int right,
+                              double horizontal_position,
+                              double vertical_position, Uint32 *pixels)
+{
+    int height = bottom - top;
+    int width = right - left;
+    // Determine the values of the corners.
+    double top_left = pixels[top * width + left];
+    double top_right = pixels[top * width + right];
+    double bottom_left = pixels[bottom * width + left];
+    double bottom_right = pixels[bottom * width + right];
+
+    // Figure out "how far" the output pixel being considered is
+    // between *_left and *_right.
+    double horizontal_progress = horizontal_position - (double)left;
+    double vertical_progress = vertical_position - (double)top;
+
+    // Combine top_left and top_right into one large, horizontal
+    // block.
+    double top_block = top_left + horizontal_progress * (top_right - top_left);
+
+    // Combine bottom_left and bottom_right into one large, horizontal
+    // block.
+    double bottom_block =
+        bottom_left + horizontal_progress * (bottom_right - bottom_left);
+
+    // Combine the top_block and bottom_block using vertical
+    // interpolation and return as the resulting pixel.
+    return top_block + vertical_progress * (bottom_block - top_block);
+}
+
+void rotate(SDL_Surface *surface, double angleDegree)
+{
+    const unsigned int width = surface->w;
+    const unsigned int height = surface->h;
+
+    const double middleX = ((double)width / 2.0);
+    const double middleY = ((double)height / 2.0);
+
+    const double angle = angleDegree * M_PI / 180.0;
+
+    SDL_Surface *rotatedSurface = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
+
+    double newX;
+    double newY;
+    unsigned int top;
+    unsigned int bottom;
+    unsigned int left;
+    unsigned int right;
+
+    for (unsigned int x = 0; x < width; x++)
+    {
+        for (unsigned int y = 0; y < height; y++)
+        {
+            newX = ((double)(cos(angle) * ((double)x - middleX)
+                             - sin(angle) * ((double)y - middleY))
+                    + middleX);
+            newY = ((double)(cos(angle) * ((double)y - middleY)
+                             + sin(angle) * ((double)x - middleX))
+                    + middleY);
+
+            top = (unsigned int)floor(newY);
+            bottom = top + 1;
+            left = (unsigned int)floor(newX);
+            right = left + 1;
+
+            if (top < height && bottom < height && left < width && right < width)
+            {
+                double xRatio = newX - left;
+                double yRatio = newY - top;
+
+                Uint32 *pixels = (Uint32 *)surface->pixels;
+                Uint8 *pixelData = (Uint8 *)&pixels[y * surface->pitch + x * sizeof(Uint32)];
+
+                bilinearly_interpolate(top, bottom, left, right, xRatio, yRatio, pixels);
+
+                *((Uint32 *)rotatedSurface->pixels + y * rotatedSurface->w + x) = *((Uint32 *)surface->pixels + y * surface->w + x);            
+            }
+        }
+    }
+
+    SDL_BlitSurface(rotatedSurface, NULL, surface, NULL);
+
+    SDL_FreeSurface(rotatedSurface);
 }
