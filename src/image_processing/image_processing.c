@@ -900,3 +900,15 @@ void rotate(SDL_Surface *surface, double angleDegree)
 
     SDL_FreeSurface(rotatedSurface);
 }
+
+double findRotationAngle(Point *corners)
+{
+    Point topLeft = corners[0];
+    Point topRight = corners[1];
+    Point bottomLeft = corners[2];
+    Point bottomRight = corners[3];
+
+    double angle = atan2(topRight.y - topLeft.y, topRight.x - topLeft.x) * 180.0f / M_PI;
+
+    return 360.0f - angle;
+}
