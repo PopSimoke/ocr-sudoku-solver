@@ -134,6 +134,5 @@ Point *findCorners(SDL_Surface *image, Color mostFrequentColor);
 void autoResize(SDL_Surface *image, Point *corners);
 void rotate(SDL_Surface *surface, double angleDegree);
 Point findCenter(Point *corners);
-bool isSameColor(SDL_Surface *image, int x, int y, Color color);
 
 #endif
