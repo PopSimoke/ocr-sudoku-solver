@@ -2,9 +2,9 @@
 #define NUMBER_RECOGNITION_H
 
 #define INPUT_LAYER_SIZE 1024
-#define HIDDEN_LAYER_SIZE 100
+#define HIDDEN_LAYER_SIZE 500
 #define OUTPUT_LAYER_SIZE 9
-#define LEARNING_RATE 0.5
+#define LEARNING_RATE 0.005
 
 #include "neural_network.h"
 
@@ -44,7 +44,7 @@ int ai_wrapper_with_model(char *model_path, char *input_path,
  * @return Integer indicating the success/failure of the function's execution.
  * Typically, returns 0 upon success and non-zero values upon failure.
  */
-int ai_wrapper(char *model_path, char *input_path, char *output_path);
+int ai_wrapper(char *input_path, char *output_path);
 
 /**
  * A wrap of all the ai methods that trains a neural network and store it into a
