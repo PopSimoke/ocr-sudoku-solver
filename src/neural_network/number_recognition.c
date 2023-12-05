@@ -1,4 +1,5 @@
 #include "number_recognition.h"
+#include "../image_processing/pixel_operations.h"
 #include "neural_network.h"
 
 #include <dirent.h>
@@ -61,18 +62,22 @@ int generate_grid(Neural_Network *nn, char *input_path, char *output_path) {
 
     for (size_t i = 0; i < INPUT_LAYER_SIZE; i++) {
 
-      Uint8 r, g, b, a;
+      Uint8 r, g, b;
 
       // Get the pixel data at the i position
       Uint32 pixel = ((Uint32 *)sudoku_case->pixels)[i];
 
       // Extract the RGBA values from the pixel
-      SDL_GetRGBA(pixel, sudoku_case->format, &r, &g, &b, &a);
+      SDL_GetRGB(pixel, sudoku_case->format, &r, &g, &b);
 
       if (r == 255 && g == 255 && b == 255) {
         inputs[i] = 1;
+        printf("1");
+      } else {
+        printf("0");
       }
     }
+    printf("\n");
     // Unlock the surface
     if (SDL_MUSTLOCK(sudoku_case)) {
       SDL_UnlockSurface(sudoku_case);
@@ -87,9 +92,12 @@ int generate_grid(Neural_Network *nn, char *input_path, char *output_path) {
     // get the max from the output
     size_t max_index = 0;
 
-    for (size_t i = 1; i < OUTPUT_LAYER_SIZE; i++)
+    for (size_t i = 1; i < OUTPUT_LAYER_SIZE; i++) {
       if (outputs[max_index] < outputs[i])
         max_index = i;
+      //      printf("%f\n", outputs[i]);
+    }
+    //    printf("\n");
 
     // Store the index (aka identified number) into the numbers list
     numbers[case_index] = max_index + '1';
@@ -145,13 +153,135 @@ int ai_wrapper(char *model_path, char *input_path, char *output_path) {
   return err;
 }
 
-int ai_wrapper_train(char *model_path, size_t iteration_count,
-                     char *dataset_path) {
-  // TODO
+void generate_target(char number, double res[OUTPUT_LAYER_SIZE]) {
+  for (char i = 0; i < OUTPUT_LAYER_SIZE; i++)
+    res[i] = 0;
+
+  res[number - 1] = 1;
 }
 
-int main(int argc, char **argv) {
+void cast_inputs(char inputs_c[INPUT_LAYER_SIZE],
+                 double inputs_d[INPUT_LAYER_SIZE]) {
+  for (size_t i = 0; i < INPUT_LAYER_SIZE; i++) {
+    //    printf("%d", inputs_c[i]);
+    inputs_d[i] = (double)inputs_c[i];
+  }
+}
 
+void print_list(char *data, size_t size) { printf("|%-40s|\n", data); }
+
+int ai_wrapper_train(char *model_path, size_t iteration_count,
+                     char *dataset_path, size_t dataset_size) {
+
+  Neural_Network *nn =
+      load_neural_network(model_path, LEARNING_RATE, INPUT_LAYER_SIZE,
+                          OUTPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE);
+
+  // open the dataset
+  FILE *fptr;
+
+  fptr = fopen(dataset_path, "rb");
+
+  if (fptr == NULL) {
+    printf("Can't read from the dataset at: %s", dataset_path);
+    return EXIT_FAILURE;
+  }
+
+  // train for each image
+  size_t old_percent = 101;
+  for (size_t i = 0; i < iteration_count; i++) {
+    size_t new_percent = (double)((double)i / (double)iteration_count) * 100;
+    if (old_percent != new_percent) {
+      old_percent = new_percent;
+      printf("%3lu%% / 100%%\n", new_percent);
+    }
+    for (size_t i = 0; i < dataset_size; i++) {
+      char inputs[1025];
+
+      fread(inputs, 1025, 1, fptr);
+      double targets[OUTPUT_LAYER_SIZE] = {0};
+      double d_inputs[INPUT_LAYER_SIZE] = {0};
+      generate_target(inputs[0], targets);
+      cast_inputs(inputs + 1, d_inputs);
+
+      train(nn, d_inputs, targets, 1);
+    }
+    rewind(fptr);
+  }
+
+  if (old_percent != 100)
+    printf("100%% / 100%%\n");
+
+  save_neural_network(nn, model_path);
+
+  neural_network_destructor(nn);
+
+  return EXIT_SUCCESS;
+}
+
+int create_dataset_from_images(char *images_dir_path, char *dataset_path) {
+
+  FILE *fptr;
+  fptr = fopen(dataset_path, "wb");
+  Color white = {255, 255, 255};
+
+  DIR *dir;
+  struct dirent *ent;
+  if ((dir = opendir(images_dir_path)) == NULL) {
+    printf("Can't get the directory at: %s\n", images_dir_path);
+    return EXIT_FAILURE;
+  }
+
+  // Get each case of the sudoku grid
+  while ((ent = readdir(dir)) != NULL) {
+    if (*ent->d_name == '.')
+      continue;
+
+    // Load the image
+    //    char *image_path = concat_str(images_dir_path, ent->d_name);
+    char *image_path = "../image_processing/saved_images/case_0.png";
+    SDL_Surface *sudoku_case = IMG_Load(image_path);
+    printf("%s\n", image_path);
+    //    free(image_path);
+    if (sudoku_case == NULL) {
+      printf("Image could not be loaded! SDL Image Error: %s\n",
+             IMG_GetError());
+      return EXIT_FAILURE;
+    }
+
+    // Lock the surface to directly access its pixel information
+    if (SDL_MUSTLOCK(sudoku_case)) {
+      SDL_LockSurface(sudoku_case);
+    }
+
+    // get the number inside the case from the file name
+    char case_index = ent->d_name[0] - '0';
+
+    char inputs[1025];
+
+    for (size_t x = 0; x < 32; x++) {
+      for (size_t y = 0; y < 32; y++) {
+        if (isSameColor(sudoku_case, x, y, white)) {
+          printf("coucou\n");
+        }
+      }
+    }
+
+    fwrite(inputs, sizeof(char), 1025, fptr);
+    // Unlock the surface
+    if (SDL_MUSTLOCK(sudoku_case)) {
+      SDL_UnlockSurface(sudoku_case);
+    }
+
+    SDL_FreeSurface(sudoku_case);
+  }
+
+  closedir(dir);
+
+  return EXIT_SUCCESS;
+}
+
+void ask_questions() {
   char *default_model_path = "./model";
   char *default_input_path = "../image_processing/saved_images/";
   char *default_output_path = "./output.txt";
@@ -204,7 +334,7 @@ int main(int argc, char **argv) {
       }
     }
 
-    ai_wrapper_train(model_path, iteration_count, dataset_path);
+    ai_wrapper_train(model_path, iteration_count, dataset_path, 30);
   } else {
     char input_path[128];
     printf("Input Path [%s]: ", default_input_path);
@@ -226,6 +356,12 @@ int main(int argc, char **argv) {
 
     ai_wrapper_with_model(model_path, input_path, output_path);
   }
+}
+
+int main(int argc, char **argv) {
+
+  create_dataset_from_images("../image_processing/trainingset/", "./dataset");
+  //  ask_questions();
 
   return 0;
 }
