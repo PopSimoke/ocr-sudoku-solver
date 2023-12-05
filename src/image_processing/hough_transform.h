@@ -59,4 +59,11 @@ float* getMostPresentTheta(Element *list);
  */
 int getMostPresentThetaVotes(Element *list);
 
+/**
+ * @brief This function returns the number of votes of the most present theta in the list
+ * 
+ * @param list the list of theta
+ * @return int the number of votes of the most present theta
+ */
+float returntheta(SDL_Surface *image, Point *corners, Color mostFrequentColor);
 #endif

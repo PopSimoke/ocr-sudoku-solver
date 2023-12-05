@@ -58,6 +58,7 @@ float* getMostPresentTheta(Element *list) {
     }
     *mostPresentTheta = fmod(*mostPresentTheta , 360);
     // Return the pointer to the theta with the most votes
+    
     return mostPresentTheta;
 }
 
@@ -81,6 +82,8 @@ HoughLine *HoughTransform(SDL_Surface *image, int *numLines, Point *corners, Col
             miny = oui.y;
 
     }
+    
+
     int width = maxx-minx;
     int height = maxy-miny;
 
@@ -100,8 +103,10 @@ HoughLine *HoughTransform(SDL_Surface *image, int *numLines, Point *corners, Col
             // SDL_GetRGB(getPixel(image, x, y), image->format, &intensity, &intensity, &intensity);
 
             // if pixel is white (edge)
+            
             if (isSameColor(image, x, y, mostFrequentColor))
             {
+                
                 
                 for (int thetaIndex = 0; thetaIndex < numThetas; thetaIndex++)
                 {
@@ -168,9 +173,10 @@ HoughLine *HoughTransform(SDL_Surface *image, int *numLines, Point *corners, Col
     
     for (int i = 0; i < numLinesFound; i++)
     {
+        
         addThetaToList(&list, lines[i].theta*180);
     }
-    //printf("theta : %f\n",getMostPresentTheta(list));
+    printf("theta : %f\n",getMostPresentTheta(list));
     float* a = getMostPresentTheta(list);
     *mostpresenttheta = *a;
     
@@ -230,6 +236,17 @@ void MergeSimilarLines(HoughLine *lines, int *numLines, double rhoTolerance, dou
 
     // set the number of remaining lines
     *numLines = numRemainingLines;
+}
+
+float returntheta(SDL_Surface *image, Point *corners, Color mostFrequentColor)
+{
+    int *numLines = 0;
+    int theta = 0;
+    float* mostpresenttheta = (float*) malloc(sizeof(float));
+    HoughLine *lines = HoughTransform(image, &numLines, corners, mostFrequentColor, &mostpresenttheta);
+    
+    printf("theta : %f\n",theta);
+    return theta;
 }
 
 
