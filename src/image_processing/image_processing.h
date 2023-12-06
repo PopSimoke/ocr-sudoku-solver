@@ -2,7 +2,6 @@
 #define IMAGE_PROCESSING_H
 
 #include "pixel_operations.h"
-#include "utils.h"
 
 #include <stdlib.h>
 #include <math.h>

@@ -846,61 +846,6 @@ double bilinearly_interpolate(unsigned int top, unsigned int bottom,
     return top_block + vertical_progress * (bottom_block - top_block);
 }
 
-void rotate(SDL_Surface *surface, double angleDegree)
-{
-    const unsigned int width = surface->w;
-    const unsigned int height = surface->h;
-
-    const double middleX = ((double)width / 2.0);
-    const double middleY = ((double)height / 2.0);
-
-    const double angle = angleDegree * M_PI / 180.0;
-
-    SDL_Surface *rotatedSurface = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
-
-    double newX;
-    double newY;
-    unsigned int top;
-    unsigned int bottom;
-    unsigned int left;
-    unsigned int right;
-
-    for (unsigned int x = 0; x < width; x++)
-    {
-        for (unsigned int y = 0; y < height; y++)
-        {
-            newX = ((double)(cos(angle) * ((double)x - middleX)
-                             - sin(angle) * ((double)y - middleY))
-                    + middleX);
-            newY = ((double)(cos(angle) * ((double)y - middleY)
-                             + sin(angle) * ((double)x - middleX))
-                    + middleY);
-
-            top = (unsigned int)floor(newY);
-            bottom = top + 1;
-            left = (unsigned int)floor(newX);
-            right = left + 1;
-
-            if (top < height && bottom < height && left < width && right < width)
-            {
-                double xRatio = newX - left;
-                double yRatio = newY - top;
-
-                Uint32 *pixels = (Uint32 *)surface->pixels;
-                Uint8 *pixelData = (Uint8 *)&pixels[y * surface->pitch + x * sizeof(Uint32)];
-
-                bilinearly_interpolate(top, bottom, left, right, xRatio, yRatio, pixels);
-
-                *((Uint32 *)rotatedSurface->pixels + y * rotatedSurface->w + x) = *((Uint32 *)surface->pixels + y * surface->w + x);            
-            }
-        }
-    }
-
-    SDL_BlitSurface(rotatedSurface, NULL, surface, NULL);
-
-    SDL_FreeSurface(rotatedSurface);
-}
-
 double findRotationAngle(Point *corners)
 {
     Point topLeft = corners[0];
@@ -908,7 +853,15 @@ double findRotationAngle(Point *corners)
     Point bottomLeft = corners[2];
     Point bottomRight = corners[3];
 
-    double angle = atan2(topRight.y - topLeft.y, topRight.x - topLeft.x) * 180.0f / M_PI;
+    double angleTop = atan2(topRight.y - topLeft.y, topRight.x - topLeft.x) * 180.0f / M_PI;
+    double angleBottom = atan2(bottomRight.y - bottomLeft.y, bottomRight.x - bottomLeft.x) * 180.0f / M_PI;
+    
+    double angle = (angleTop + angleBottom) / 2.0f;
+    
+    if (360.0f - angle > 360.0f)
+    {
+        return 360.0f - angle - 360.0f;
+    }
 
     return 360.0f - angle;
 }
