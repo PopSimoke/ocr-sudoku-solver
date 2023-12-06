@@ -26,7 +26,7 @@ int arrayMaxIndexAfter(int *array, int size, int currentMaxIndex) {
 
     return max;
 }
-#define max(a,b) \
+#define max(a,b) \ // https://stackoverflow.com/questions/3437404/min-and-max-in-c pas de chance c'est pas copiloté
    ({ __typeof__ (a) _a = (a); \
        __typeof__ (b) _b = (b); \
      _a > _b ? _a : _b; })
