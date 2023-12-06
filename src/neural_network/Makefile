@@ -1,7 +1,7 @@
 # Makefile
 
 CC = gcc -fsanitize=address -g
-CPPFLAGS = -MMD
+CPPFLAGS = -MMD -D__NO_INLINE__
 CFLAGS = -Wall -Wextra -O3 -std=c99 `pkg-config --cflags sdl2 SDL2_image`
 LDFLAGS = -lm
 LDLIBS = `pkg-config --libs sdl2 SDL2_image`
