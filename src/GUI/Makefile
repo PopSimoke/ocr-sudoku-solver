@@ -1,12 +1,10 @@
 # Makefile
 
-CC = gcc -fsanitize=address -g
+CC = gcc -g
 
 CPPFLAGS = `pkg-config --cflags gtk+-3.0` -MMD -D__NO_INLINE__
 CFLAGS = -Wall -Wextra -std=c99 -O1 -g `pkg-config --cflags gtk+-3.0` `pkg-config --cflags sdl2 SDL2_image` 
-LDFLAGS = -lm
-LDLFLAGS = -lm -lpthread 
-LDLIBS = `pkg-config --libs gtk+-3.0` -rdynamic `pkg-config --libs sdl2 SDL2_image`
+LDLIBS = `pkg-config --libs gtk+-3.0` -rdynamic `pkg-config --libs sdl2 SDL2_image` -lm
 
 SRC = ocr_gui.c
 OBJ = ${SRC:.c=.o}

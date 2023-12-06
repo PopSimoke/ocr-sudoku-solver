@@ -16,7 +16,7 @@
             <property name="can-focus">False</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkLabel" id="labelStart">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">center</property>
@@ -28,17 +28,20 @@ Optical Cramptés
      Recognition</property>
                 <attributes>
                   <attribute name="font-desc" value="Sans Bold 10"/>
-                  <attribute name="scale" value="5"/>
+                  <attribute name="scale" value="10"/>
                 </attributes>
+                <style>
+                  <class name="loading_label"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">0</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="buttonStart">
                 <property name="label" translatable="yes">Start</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -47,13 +50,19 @@ Optical Cramptés
                 <property name="valign">start</property>
                 <property name="vexpand">True</property>
                 <signal name="clicked" handler="show_page" object="main_page" swapped="no"/>
+                <style>
+                  <class name="startButton"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">1</property>
               </packing>
             </child>
+            <style>
+              <class name="loading_box"/>
+            </style>
           </object>
           <packing>
             <property name="name">page1</property>
@@ -85,7 +94,7 @@ Optical Cramptés
                         <property name="justify">center</property>
                         <attributes>
                           <attribute name="font-desc" value="Sans Bold 10"/>
-                          <attribute name="scale" value="3"/>
+                          <attribute name="scale" value="6"/>
                         </attributes>
                       </object>
                       <packing>
@@ -98,10 +107,18 @@ Optical Cramptés
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">Welcome to the OCR GUI</property>
+                        <property name="label" translatable="yes">Welcome to our OCR Application, get started with text recognition with theses simple steps:
+
+
+	1. Upload your image: Select an image containing the sudoku with the file chooser.
+
+	2. Hit the "Start the process" button to resolve the sudoku.</property>
+                        <property name="justify">center</property>
                         <property name="wrap">True</property>
+                        <property name="yalign">0</property>
                         <attributes>
-                          <attribute name="font-desc" value="Sans Bold 10"/>
+                          <attribute name="font-desc" value="Sans Italic 10"/>
+                          <attribute name="scale" value="2"/>
                         </attributes>
                       </object>
                       <packing>
@@ -275,7 +292,7 @@ Optical Cramptés
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="result">
+                  <object class="GtkBox" id="resultPage">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="orientation">vertical</property>
@@ -284,7 +301,7 @@ Optical Cramptés
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <child>
-                          <object class="GtkLabel">
+                          <object class="GtkLabel" id="reslutPageLabel">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="halign">start</property>
@@ -379,6 +396,7 @@ Optical Cramptés
                             <property name="label" translatable="yes">Load Your Image</property>
                             <attributes>
                               <attribute name="font-desc" value="Sans Bold 10"/>
+                              <attribute name="scale" value="1.3"/>
                             </attributes>
                           </object>
                           <packing>
@@ -395,6 +413,9 @@ Optical Cramptés
                             <property name="margin-bottom">1</property>
                             <property name="title" translatable="yes"/>
                             <signal name="file-set" handler="on_file_set" swapped="no"/>
+                            <style>
+                              <class name="file"/>
+                            </style>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -402,6 +423,9 @@ Optical Cramptés
                             <property name="position">1</property>
                           </packing>
                         </child>
+                        <style>
+                          <class name="load_box"/>
+                        </style>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -415,33 +439,61 @@ Optical Cramptés
                         <property name="can-focus">False</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkLabel">
+                          <object class="GtkBox">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="halign">center</property>
-                            <property name="label" translatable="yes">Manual editing</property>
-                            <attributes>
-                              <attribute name="font-desc" value="Sans Bold 10"/>
-                            </attributes>
+                            <property name="homogeneous">True</property>
+                            <child>
+                              <object class="GtkButton" id="rotate">
+                                <property name="label" translatable="yes">Start the process</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="halign">end</property>
+                                <signal name="clicked" handler="rotate_screen" object="rotationPage" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="continue">
+                                <property name="label" translatable="yes">Continue Processing</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="halign">center</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="result">
+                                <property name="label" translatable="yes">Skip to the result</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="halign">start</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
+                            <style>
+                              <class name="process_box"/>
+                            </style>
                           </object>
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
                             <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkButton" id="rotate">
-                            <property name="label" translatable="yes">Rotation page</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <signal name="clicked" handler="rotate_screen" object="rotationPage" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
                           </packing>
                         </child>
                       </object>
@@ -457,43 +509,26 @@ Optical Cramptés
                         <property name="can-focus">False</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkFixed">
+                          <object class="GtkButton">
+                            <property name="label" translatable="yes">Quit</property>
+                            <property name="width-request">100</property>
+                            <property name="height-request">60</property>
                             <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <child>
-                              <object class="GtkButton">
-                                <property name="label" translatable="yes">Quit</property>
-                                <property name="width-request">100</property>
-                                <property name="height-request">80</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">True</property>
-                                <signal name="clicked" handler="quit" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="x">930</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="soutenance1">
-                                <property name="label" translatable="yes">Soutenance 1</property>
-                                <property name="width-request">100</property>
-                                <property name="height-request">80</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">True</property>
-                              </object>
-                              <packing>
-                                <property name="x">800</property>
-                              </packing>
-                            </child>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                            <property name="halign">center</property>
+                            <property name="hexpand">False</property>
+                            <signal name="clicked" handler="quit" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">2</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
                           </packing>
                         </child>
+                        <style>
+                          <class name="quit_box"/>
+                        </style>
                       </object>
                       <packing>
                         <property name="expand">False</property>

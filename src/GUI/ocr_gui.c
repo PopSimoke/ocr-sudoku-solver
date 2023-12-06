@@ -6,8 +6,12 @@
 GdkPixbuf *pixbufImage;
 GdkPixbuf *pixbufImageRotated;
 int loaded_image = 0;
+int clicked = 0;
 
 GtkBuilder *builder;
+
+GdkDisplay *display;
+GdkScreen *screen;
 gchar *filename;
 gchar *filenameRotated;
 GtkWidget *window = NULL;
@@ -55,18 +59,18 @@ void change_image(GdkPixbuf *pixbuf, char *GtkimageID)
     size_t height = gdk_pixbuf_get_height(pixbuf); // get height
 
     // resize image
-    if (width > 800 || height > 800)
+    if (width > 650 || height > 650)
     {
         if (width > height)
         {
             double ratio = (double)width / (double)height; // get ratio
-            width = 800;
+            width = 650;
             height = (size_t)round(width / ratio); // calculate new height
         }
         else
         {
             double ratio = (double)height / (double)width; // get ratio
-            height = 800;
+            height = 650;
             width = (size_t)round(height / ratio); // calculate new width
         }
 
@@ -190,12 +194,15 @@ void on_rotate(GtkWidget *widget, gpointer data)
  */
 void rotate_screen()
 {
-    if (pixbufImageRotated)
-        change_image(pixbufImageRotated, "selected_image2");
-    else if (pixbufImage)
-        change_image(pixbufImage, "selected_image2");
+    if (clicked == 0)
+    {
+        if (pixbufImageRotated)
+            change_image(pixbufImageRotated, "selected_image2");
+        else if (pixbufImage)
+            change_image(pixbufImage, "selected_image2");
 
-    gtk_stack_set_visible_child_name(stack_2, "rotationPage");
+        gtk_stack_set_visible_child_name(stack_2, "rotationPage");
+    }
 }
 
 /**
@@ -294,7 +301,8 @@ void on_save_rotate(GtkWidget *widget, gpointer data)
 
         // save image
         char *ext = get_filename_ext(filename);
-        filenameRotated = g_strdup_printf("%s_rotated.%s", filename, ext);
+        char *name = strtok(filename, ".");
+        filenameRotated = g_strdup_printf("%s_rotated.%s", name, ext);
 
         GError *error = NULL;
         gdk_pixbuf_save(pixbufImageRotated, filenameRotated, ext, &error, NULL);
@@ -352,7 +360,7 @@ void change_panel(GtkWidget *widget, gpointer data)
 }
 
 /**
- * @brief Quit the program
+ * @brief Quit the program and free memory
  */
 void quit()
 {
@@ -374,7 +382,7 @@ void quit()
 }
 
 /**
- * @brief Scale a GtkImage
+ * @brief Scale a GtkImage to the given width and height
  *
  * @param image: the GtkImage to scale
  * @param new_width: the new width
@@ -446,6 +454,11 @@ int main(int argc, char *argv[])
         return 1;
     }
     g_free(filename); // free filename
+
+    GtkCssProvider *provider = gtk_css_provider_new();
+    gtk_css_provider_load_from_path(provider, "styledefou.css", NULL);
+    screen = gdk_screen_get_default();
+    gtk_style_context_add_provider_for_screen(screen, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
 
     window = GTK_WIDGET(gtk_builder_get_object(builder, "window")); // get window
     if (!window)

@@ -1,0 +1,104 @@
+window {
+    background-image: radial-gradient(circle,
+            #FFFFFF,
+            #F2F2F2,
+            #E5E5E5,
+            #CCCCCC,
+            #B2B2B2,
+            #999999,
+            #666666,
+            #333333,
+            #666666,
+            #999999,
+            #CCCCCC);
+    color: #ecf0f1;
+    font-family: 'Lato', sans-serif;
+}
+
+/* Styling pour les boutons */
+button {
+    background-color: #3498db;
+    color: #fff;
+    border-radius: 3px;
+    padding: 8px 16px;
+}
+
+label {
+    color: black;
+}
+
+.loading_box button {
+    background-image: url("sudoku.png");
+    margin-top: 200px;
+    background-size: 100% 100%;
+    padding: 32px 64px;
+    border-radius: 40px;
+}
+
+.loading_box button:hover {
+    background-image: linear-gradient(to right, #fff, #fff);
+    border-color: black;
+    border-width: 3px;
+    color: white;
+
+}
+
+.startButton label {
+    color: black;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.process_box button {
+    padding: 16px 32px;
+    border-radius: 40px;
+}
+
+.process_box button:hover {
+    background-image: linear-gradient(to right, #fff, #fff);
+    border-color: black;
+    border-width: 3px;
+    color: white;
+}
+
+.process_box label {
+    color: black;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+
+
+
+.file {
+    padding: 20px 40px;
+    border-radius: 40px;
+}
+
+.file:hover {
+    background-image: linear-gradient(to right, #fff, #fff);
+    border-color: black;
+    border-width: 3px;
+    color: white;
+}
+
+
+.quit_box button {
+    padding: 20px 64px;
+    border-radius: 23px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.quit_box button:hover {
+    background-image: linear-gradient(to right, #fff, #fff);
+    border-color: black;
+    border-width: 3px;
+    color: white;
+}
+
+.quit_box label {
+    color: black;
+    font-size: 32px;
+    font-weight: bold;
+}
