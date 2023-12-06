@@ -1,7 +1,9 @@
 #include "utils.h"
+#include "pixel_operations.h"
+#include "image_processing.h"
+
 #include <math.h>
 #include <SDL2/SDL.h>
-#include "pixel_operations.h"
 #include <SDL2/SDL_image.h>
 #include <stdlib.h>
 #define M_PI 3.14159265358979323846
@@ -14,6 +16,33 @@ int arrayMaxIndex(int *array, int size) {
     }
 
     return max;
+}
+
+SDL_Surface *copySurface(SDL_Surface *surface, Point *corners, Color mostFrequentColor)
+{
+    int w = corners[1].x - corners[0].x;
+    int h = corners[2].y - corners[0].y;
+
+    SDL_Surface *copy = SDL_CreateRGBSurface(0, w, h, 32, 0, 0, 0, 0);
+
+    /// iterate over all the pixels in the surface and copy them to the new surface if they are in the rectangle
+    for (int x = 0; x < surface->w; x++)
+    {
+        for (int y = 0; y < surface->h; y++)
+        {
+            if (x >= corners[0].x && x <= corners[1].x && y >= corners[0].y && y <= corners[2].y)
+            {
+                Color currentPixelColor = fromPixel(getPixel(surface, x, y), surface->format);
+                setPixelFromColor(copy, x - corners[0].x, y - corners[0].y, currentPixelColor);
+            }
+            else
+            {
+                Color black = {0, 0, 0};
+                setPixelFromColor(copy, x - corners[0].x, y - corners[0].y, black);
+            }
+        }
+    }
+    
 }
 
 int arrayMaxIndexAfter(int *array, int size, int currentMaxIndex) {
