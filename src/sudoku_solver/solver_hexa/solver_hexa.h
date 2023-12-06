@@ -1,6 +1,6 @@
-#ifndef TEST_H
-#define TEST_H
-#define N 9
+#ifndef SOLVER_HEXA_H
+#define SOLVER_HEXA_H
+#define N 16
 /**
  * @brief check if the grid doesn't contain any errors
  *

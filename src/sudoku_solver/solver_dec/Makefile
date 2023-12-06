@@ -6,7 +6,7 @@ CFLAGS = -Wall -Wextra -Werror -O1
 LDFLAGS =
 LDLIBS =
 
-SRC = solver.c
+SRC = solver_dec.c
 OBJ = ${SRC:.c=.o}
 EXE = ${SRC:.c=}
 
