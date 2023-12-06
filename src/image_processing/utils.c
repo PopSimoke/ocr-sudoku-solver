@@ -42,7 +42,8 @@ SDL_Surface *copySurface(SDL_Surface *surface, Point *corners, Color mostFrequen
             }
         }
     }
-    
+
+    return copy;
 }
 
 int arrayMaxIndexAfter(int *array, int size, int currentMaxIndex) {

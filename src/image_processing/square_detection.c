@@ -117,11 +117,23 @@ SDL_Surface *resizeImage(SDL_Surface *source, int newWidth, int newHeight)
 void saveSquares(SDL_Surface *sudokuImage, Color mostFrequentColor)
 {
     // If the "saved_images" directory does not exist, create it
+    // And if it already exists, prompt "Would you like to delete squares and create a new set ? [Y/n]"
+    struct stat st = {0};
     const char *outputDir = "saved_images";
-    if (mkdir(outputDir, 0777) == -1)
+    if (stat(outputDir, &st) == -1)
     {
-        printf("Error creating directory %s\n", outputDir);
-        return;
+        mkdir(outputDir, 0700);
+    }
+    else
+    {
+        printf("Would you like to delete squares and create a new set ? [Y/n] ");
+        char answer;
+        scanf("%c", &answer);
+        if (answer == 'Y' || answer == 'y')
+        {
+            system("rm -rf saved_images");
+            mkdir(outputDir, 0700);
+        }
     }
 
     int cellWidth = sudokuImage->w / 9;
