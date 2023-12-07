@@ -6,6 +6,7 @@
 #include "pixel_operations.h"
 #include "square_detection.h"
 #include "utils.h"
+#include "image_transformations.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>

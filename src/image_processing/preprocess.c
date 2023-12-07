@@ -100,33 +100,38 @@ SDL_Surface *preprocessImage(SDL_Surface *image, Color *mostFrequentColor)
 
     // Automatic rotation
 
-    double angle = findRotationAngle(corners);
+//    double angle = findRotationAngle(corners);
     // printf("Angle: %f\n", angle);
 
-    SDL_Surface *rotatedImage = rotateImage(angle, grayImage);
-    if (rotatedImage == NULL)
-    {
-        fprintf(stderr, "SDL_ConvertSurfaceFormat Error: %s\n", SDL_GetError());
-        return;
-    }
-    resizeImage(rotatedImage, w, h);
+//    SDL_Surface *rotatedImage = rotateImage(angle, grayImage);
+//    if (rotatedImage == NULL)
+//    {
+//        fprintf(stderr, "SDL_ConvertSurfaceFormat Error: %s\n", SDL_GetError());
+//        return;
+//    }
+//    resizeImage(rotatedImage, w, h);
 
-    Point *cornersPostRotate = findCorners(rotatedImage, currentMostFrequentColor);
+    // remove the perspective
+    SDL_Surface *no_perspective = remove_perspective(grayImage, (SDL_Point *) (corners));
+
+// JE SUIS OBLIGÉ DE LAISSER CETTE MERDE, SINON Y'A TOUT QUI PLANTE
+    Point *cornersPostRotate = findCorners(grayImage, currentMostFrequentColor);
     // for (int i = 0; i < 4; i++)
     // {
     //     drawSquare(rotatedImage, &cornersPostRotate[i], 20);
     //     printf("Corner %d: (%d, %d)\n", i, cornersPostRotate[i].x, cornersPostRotate[i].y);
     // }
 
-    SDL_Surface *newImage = copySurface(rotatedImage, cornersPostRotate, currentMostFrequentColor);
+// JE SUIS OBLIGÉ DE LAISSER CETTE MERDE, SINON Y'A TOUT QUI PLANTE
+    SDL_Surface *newImage = copySurface(no_perspective, cornersPostRotate, currentMostFrequentColor);
 
     mostFrequentColor->r = currentMostFrequentColor.r;
     mostFrequentColor->g = currentMostFrequentColor.g;
     mostFrequentColor->b = currentMostFrequentColor.b;
 
-    SDL_BlitSurface(newImage, NULL, image, NULL);
+    SDL_BlitSurface(no_perspective, NULL, image, NULL);
 
-    SDL_FreeSurface(rotatedImage);
+    SDL_FreeSurface(no_perspective);
 
     free(corners);
     free(colors);
