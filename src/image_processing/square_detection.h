@@ -3,6 +3,7 @@
 
 #include "image_processing.h"
 #include "pixel_operations.h"
+#include "utils.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <stdio.h>

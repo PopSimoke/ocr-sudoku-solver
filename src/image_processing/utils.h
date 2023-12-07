@@ -3,6 +3,7 @@
 
 #include "pixel_operations.h"
 #include "image_processing.h"
+
 #include <SDL2/SDL.h>
 
 int arrayMaxIndex(int *array, int size);
