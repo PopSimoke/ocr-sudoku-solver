@@ -141,6 +141,7 @@ void matrix_copy(Matrix *m1, Matrix *m2) {
     *(m2->data + i) = *(m1->data + i);
 }
 
+// Set the identity matrix
 void set_identity_matrix(Matrix *m) {
   if (m->line_count != m->column_count)
     errx(1, "Can't set the identity matrix to an non squared matrix.");
@@ -150,6 +151,18 @@ void set_identity_matrix(Matrix *m) {
 
   for (size_t i = 0; i < m->line_count; i++)
     set_matrix_element(m, i, i, 1);
+}
+
+// Swap the rows
+void matrix_swap_row(Matrix *m, size_t r1, size_t r2) {
+  if (r1 >= m->line_count || r2 >= m->line_count)
+    errx(1, "The swapped row are greater that the line_count of the matrix.");
+
+  for (size_t col = 0; col < m->column_count; col++) {
+    double temp = *get_matrix_element(m, r2, col);
+    set_matrix_element(m, r2, col, *get_matrix_element(m, r1, col));
+    set_matrix_element(m, r1, col, temp);
+  }
 }
 
 void matrix_destructor(Matrix *matrix) {

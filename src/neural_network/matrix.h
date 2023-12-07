@@ -142,6 +142,15 @@ void matrix_copy(Matrix *m1, Matrix *m2);
 void set_identity_matrix(Matrix *m);
 
 /**
+ * @brief Swap two row of a matrix.
+ *
+ * @param m The source matrix.
+ * @param r1 the first row index.
+ * @param r2 the second row index.
+ */
+void matrix_swap_row(Matrix *m, size_t r1, size_t r2);
+
+/**
  * @brief Releases the memory allocated for a matrix.
  *
  * @param matrix The matrix to destroy.
