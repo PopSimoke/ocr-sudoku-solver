@@ -1,16 +1,16 @@
 # Makefile
 
-CC = gcc -fsanitize=address
+CC = gcc -fsanitize=address -g
 CPPFLAGS =
-CFLAGS = -Wall -Wextra -Werror -O1
+CFLAGS = -O1 `pkg-config --cflags sdl2 SDL2_image`
 LDFLAGS =
-LDLIBS =
+LDLIBS = `pkg-config --libs sdl2 SDL2_image` -lm
 
 SRC = solver_dec.c
 OBJ = ${SRC:.c=.o}
 EXE = ${SRC:.c=}
 
-solver: ${SRC}
+solver_dec: ${SRC}
 
 .PHONY: clean
 
