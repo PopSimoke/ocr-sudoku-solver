@@ -4,47 +4,6 @@
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
 
-void drawLine(SDL_Surface *image, HoughLine line)
-{
-    int width = image->w;
-    int height = image->h;
-    Uint32 redColor = SDL_MapRGB(image->format, 255, 0, 0);
-
-    for (int x = 0; x < width; x++)
-    {
-        for (int y = 0; y < height; y++)
-        {
-            double rho = line.rho;
-            double theta = line.theta;
-            double distance = x * cos(theta) + y * sin(theta);
-            Uint8 r, g, b;
-            SDL_GetRGB(getPixel(image, x, y), image->format, &r, &g, &b);
-            if (fabs(distance - rho) < 1.0 && r == 255 && g == 255 && b == 255)
-            {                                    // Tolérance pour dessiner la ligne
-                setPixel(image, x, y, redColor); // Fonction pour définir la couleur du pixel en rouge
-            }
-        }
-    }
-}
-
-void drawSquare(SDL_Surface *image, Point *p, int squareSize)
-{
-    int width = image->w;
-    int height = image->h;
-    Uint32 redColor = SDL_MapRGB(image->format, 255, 255, 0);
-
-    for (int x = p->x - (int)(squareSize / 2); x < p->x + (int)(squareSize / 2); x++)
-    {
-        for (int y = p->y - (int)(squareSize / 2); y < p->y + (int)(squareSize / 2); y++)
-        {
-            if (x > 0 && y > 0 && x < width && y < height)
-            {
-                setPixel(image, x, y, redColor);
-            }
-        }
-    }
-}
-
 int main(int argc, char *argv[])
 {
     if (argc != 2)
@@ -86,13 +45,17 @@ int main(int argc, char *argv[])
     }
     else
     {
+        Color *mostFrequentColor = malloc(sizeof(Color));
+        SDL_Surface *postTreatmentImage = preprocessImage(imageSurface, mostFrequentColor);
 
-        preprocessImage(imageSurface);
+        saveSquares(postTreatmentImage, *mostFrequentColor);
+
+        free(mostFrequentColor);
 
         // Convertir l'image prétraitée à afficher en texture
         imageTexture = SDL_CreateTextureFromSurface(renderer, imageSurface);
         SDL_FreeSurface(imageSurface); // Libérer la mémoire de l'image prétraitée
-
+        SDL_FreeSurface(postTreatmentImage);
         if (imageTexture == NULL)
         {
             fprintf(stderr, "SDL_CreateTextureFromSurface Error: %s\n", SDL_GetError());

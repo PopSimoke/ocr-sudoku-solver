@@ -11,6 +11,6 @@
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
 
-void preprocessImage(SDL_Surface *image);
+SDL_Surface *preprocessImage(SDL_Surface *image, Color *mostFrequentColor);
 
 #endif

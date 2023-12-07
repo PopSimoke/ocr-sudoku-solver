@@ -3,7 +3,8 @@
 // Convert an image to grayscale
 SDL_Surface *convertToGrayscale(SDL_Surface *image)
 {
-    SDL_Surface *grayImage = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_RGBA8888, 0);
+    SDL_Surface *grayImage = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_RGB888, 0);
+    // SDL_Surface *grayImage = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_RGBA8888, 0);
     if (grayImage == NULL)
     {
         fprintf(stderr, "SDL_ConvertSurfaceFormat Error: %s\n", SDL_GetError());
@@ -22,7 +23,9 @@ SDL_Surface *convertToGrayscale(SDL_Surface *image)
             Uint8 r, g, b;
             SDL_GetRGB(pixel, grayImage->format, &r, &g, &b);
             Uint8 grayValue = (Uint8)(0.299 * r + 0.587 * g + 0.114 * b);
-            Uint32 newPixel = SDL_MapRGBA(grayImage->format, grayValue, grayValue, grayValue, 255);
+
+            Uint32 newPixel = SDL_MapRGB(grayImage->format, grayValue, grayValue, grayValue);
+            // Uint32 newPixel = SDL_MapRGBA(grayImage->format, grayValue, grayValue, grayValue, 255);
             *((Uint32 *)grayImage->pixels + y * grayImage->w + x) = newPixel;
         }
     }
@@ -117,7 +120,8 @@ void binarizeImage(SDL_Surface *grayImage, Uint8 threshold)
             SDL_GetRGB(getPixel(grayImage, x, y), grayImage->format, &grayValue, &grayValue, &grayValue);
 
             Uint8 binarizedValue = (grayValue < threshold) ? 0 : 255;
-            Uint32 newPixel = SDL_MapRGBA(grayImage->format, binarizedValue, binarizedValue, binarizedValue, 255);
+            Uint32 newPixel = SDL_MapRGB(grayImage->format, binarizedValue, binarizedValue, binarizedValue);
+            // Uint32 newPixel = SDL_MapRGBA(grayImage->format, binarizedValue, binarizedValue, binarizedValue, 255);
             setPixel(grayImage, x, y, newPixel);
         }
     }
@@ -244,7 +248,8 @@ void applySobelFilter(SDL_Surface *image)
                 gradient = 255;
             }
 
-            Uint32 newPixel = SDL_MapRGBA(tempImage->format, gradient, gradient, gradient, 255);
+            Uint32 newPixel = SDL_MapRGB(tempImage->format, gradient, gradient, gradient);
+            // Uint32 newPixel = SDL_MapRGBA(tempImage->format, gradient, gradient, gradient, 255);
             *((Uint32 *)tempImage->pixels + y * width + x) = newPixel;
         }
     }
@@ -315,7 +320,8 @@ void applyCannyFilter(SDL_Surface *image, Uint8 lowThreshold, Uint8 highThreshol
                 }
             }
 
-            Uint32 newPixel = SDL_MapRGBA(tempImage->format, intensity, intensity, intensity, 255);
+            Uint32 newPixel = SDL_MapRGB(tempImage->format, intensity, intensity, intensity);
+            // Uint32 newPixel = SDL_MapRGBA(tempImage->format, intensity, intensity, intensity, 255);
             *((Uint32 *)tempImage->pixels + y * width + x) = newPixel;
         }
     }
@@ -343,7 +349,8 @@ void applyCannyFilter(SDL_Surface *image, Uint8 lowThreshold, Uint8 highThreshol
                     }
                 }
 
-                Uint32 newPixel = SDL_MapRGBA(tempImage->format, intensity, intensity, intensity, 255);
+                Uint32 newPixel = SDL_MapRGB(tempImage->format, intensity, intensity, intensity);
+                // Uint32 newPixel = SDL_MapRGBA(tempImage->format, intensity, intensity, intensity, 255);
                 *((Uint32 *)tempImage->pixels + y * width + x) = newPixel;
             }
         }
@@ -387,7 +394,8 @@ void applyDilation(SDL_Surface *image, int kernelSize, int iterations)
                     }
                 }
 
-                Uint32 newPixel = SDL_MapRGBA(image->format, maxIntensity, maxIntensity, maxIntensity, 255);
+                Uint32 newPixel = SDL_MapRGB(image->format, maxIntensity, maxIntensity, maxIntensity);
+                // Uint32 newPixel = SDL_MapRGBA(image->format, maxIntensity, maxIntensity, maxIntensity, 255);
                 *((Uint32 *)tempImage->pixels + y * width + x) = newPixel;
             }
         }
@@ -431,7 +439,8 @@ void applyErosion(SDL_Surface *image, int kernelSize, int iterations)
                     }
                 }
 
-                Uint32 newPixel = SDL_MapRGBA(image->format, minIntensity, minIntensity, minIntensity, 255);
+                Uint32 newPixel = SDL_MapRGB(image->format, minIntensity, minIntensity, minIntensity);
+                // Uint32 newPixel = SDL_MapRGBA(image->format, minIntensity, minIntensity, minIntensity, 255);
                 *((Uint32 *)tempImage->pixels + y * width + x) = newPixel;
             }
         }
