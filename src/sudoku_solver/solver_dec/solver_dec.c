@@ -4,7 +4,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-
 #define N 9
 
 int Sudoku_Erreur(int grid[N][N], int row,
@@ -17,8 +16,10 @@ int Sudoku_Erreur(int grid[N][N], int row,
 
     // Checking in column
     for (int x = 0; x <= 8; x++)
+    {
         if (grid[x][col] == num)
             return 0;
+    }
 
     // Checking subgrid
     int startRow = row - row % 3,
@@ -44,7 +45,7 @@ int solver(int grid[N][N], int row, int col)
         col = 0;
     }
 
-    if (grid[row][col] > 0)
+    if (grid[row][col] > 0 && grid[row][col] <= 9)
         return solver(grid, row, col + 1);
 
     for (int num = 1; num <= N; num++)
@@ -64,68 +65,101 @@ int solver(int grid[N][N], int row, int col)
     return 0;
 }
 
-
-SDL_Surface* createSudokuImage(int grid[N][N],int solvedGrid[N][N],unsigned int dimension)
+SDL_Surface *createSudokuImage(int grid[N][N], int solvedGrid[N][N], unsigned int dimension, char *path)
 {
-    SDL_Surface *image = SDL_CreateRGBSurface(0,dimension,dimension,32,0,0,0,0);
+    SDL_Surface *image = SDL_CreateRGBSurface(0, dimension, dimension, 32, 0, 0, 0, 0);
     SDL_Surface *cell_image = NULL;
     SDL_Rect dest;
 
     char filename[128];
 
-    for(int i = 0; i < N; i++) {
-        for(int j = 0; j < N; j++) {
-            if (solvedGrid[i][j]==1)
-                
-                sprintf(filename, "../assets/digit-%d.bmp", grid[i][j]);
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            if (solvedGrid[i][j] == grid[i][j])
+                sprintf(filename, "%sdigit-%d.bmp", path, solvedGrid[i][j]);
             else
-                sprintf(filename, "../assets/digit-%d-f.bmp", grid[i][j]);
+                sprintf(filename, "%sdigit-%d-f.bmp", path, solvedGrid[i][j]);
             cell_image = SDL_LoadBMP(filename);
-            if(cell_image == NULL) {
+            if (cell_image == NULL)
+            {
                 printf("Unable to load image %s! SDL Error: %s\n", filename, SDL_GetError());
                 return NULL;
             }
-            if (i==1)
-                {dest.x = 94;}
-            if (i==2)
-                {dest.x = 94*2;}
-            if (i==3)
-                {dest.x = 94*3+5;}
-            if (i==4)
-                {dest.x = 94*4 + 5;}
-            if (i==5)
-                {dest.x = 94*5 +5;}
-            if (i==6)
-                {dest.x = 94*6 +10;}
-            if (i==7)
-                {dest.x = 94*7+10;}
-            if (i==8)
-                {dest.x = 94*8+10;}
-            if (i==0)
-                {dest.x = 0;}
-            
-            if (j==1)
-                {dest.y = 94;}
-            if (j==2)
-                {dest.y = 94*2;}
-            if (j==3)
-                {dest.y = 94*3+5;}
-            if (j==4)
-                {dest.y = 94*4 + 5;}
-            if (j==5)
-                {dest.y = 94*5 +5;}
-            if (j==6)
-                {dest.y = 94*6 +10;}
-            if (j==7)
-                {dest.y = 94*7+10;}
-            if (j==8)
-                {dest.y = 94*8+10;}
-            if (j==0)
-                {dest.y = 0;}
-            
-            
+            if (i == 1)
+            {
+                dest.x = 94;
+            }
+            if (i == 2)
+            {
+                dest.x = 94 * 2;
+            }
+            if (i == 3)
+            {
+                dest.x = 94 * 3 + 5;
+            }
+            if (i == 4)
+            {
+                dest.x = 94 * 4 + 5;
+            }
+            if (i == 5)
+            {
+                dest.x = 94 * 5 + 5;
+            }
+            if (i == 6)
+            {
+                dest.x = 94 * 6 + 10;
+            }
+            if (i == 7)
+            {
+                dest.x = 94 * 7 + 10;
+            }
+            if (i == 8)
+            {
+                dest.x = 94 * 8 + 10;
+            }
+            if (i == 0)
+            {
+                dest.x = 0;
+            }
 
-
+            if (j == 1)
+            {
+                dest.y = 94;
+            }
+            if (j == 2)
+            {
+                dest.y = 94 * 2;
+            }
+            if (j == 3)
+            {
+                dest.y = 94 * 3 + 5;
+            }
+            if (j == 4)
+            {
+                dest.y = 94 * 4 + 5;
+            }
+            if (j == 5)
+            {
+                dest.y = 94 * 5 + 5;
+            }
+            if (j == 6)
+            {
+                dest.y = 94 * 6 + 10;
+            }
+            if (j == 7)
+            {
+                dest.y = 94 * 7 + 10;
+            }
+            if (j == 8)
+            {
+                dest.y = 94 * 8 + 10;
+            }
+            if (j == 0)
+            {
+                dest.y = 0;
+            }
 
             SDL_BlitSurface(cell_image, NULL, image, &dest);
             SDL_FreeSurface(cell_image);
@@ -135,7 +169,8 @@ SDL_Surface* createSudokuImage(int grid[N][N],int solvedGrid[N][N],unsigned int 
     return image;
 }
 
-int** readGridFromFile(char* filename) {
+int **readGridFromFile(char *filename)
+{
     FILE *inputFile = fopen(filename, "r");
     if (inputFile == NULL)
     {
@@ -143,8 +178,9 @@ int** readGridFromFile(char* filename) {
         return NULL;
     }
 
-    int** grid = malloc(N * sizeof(int*));
-    for (int i = 0; i < N; i++) {
+    int **grid = malloc(N * sizeof(int *));
+    for (int i = 0; i < N; i++)
+    {
         grid[i] = malloc(N * sizeof(int));
     }
 
@@ -153,7 +189,8 @@ int** readGridFromFile(char* filename) {
     char tempvalue;
     while (!feof(inputFile)) // while not end of file keep reading the file and store the values in the 2D array if . then store 0
     {
-        if (row==N){
+        if (row == N)
+        {
             break;
         }
         fscanf(inputFile, "%c", &tempvalue);
@@ -183,12 +220,6 @@ int** readGridFromFile(char* filename) {
     fclose(inputFile);
     return grid;
 }
-
-
-
-
-
-
 
 // Main function
 // int main(int argc, char *argv[])
@@ -340,14 +371,9 @@ int** readGridFromFile(char* filename) {
 //         if (tempvalue == ' ')
 //             continue;
 //     }
-    
 
 //     fclose(inputFile);
-    
-    
 
-                
-    
 //     if (solver(grid, 0, 0) == 1) // if the sudoku is solved, write the solution in a file
 //     {
 //         char outputFileName[strlen(argv[1]) + 8];
@@ -373,7 +399,6 @@ int** readGridFromFile(char* filename) {
 //         printf("No solution exists");
 //     // Après avoir créé l'image du sudoku
 
-
 // SDL_Surface* sudokuImage = createSudokuImage(grid,solvedGrid, 96*9);
 
 // // Sauvegarder l'image dans le même répertoire que le fichier d'entrée
@@ -388,7 +413,5 @@ int** readGridFromFile(char* filename) {
 // // Libérer la surface de l'image
 // SDL_FreeSurface(sudokuImage);
 //     return 0;
-   
 
 // }
-
