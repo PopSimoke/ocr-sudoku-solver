@@ -263,6 +263,11 @@ int editSquare(SDL_Surface *square, Color mostFrequentColor)
 
     int edited = 0;
 
+    int x_min = w / 4;
+    int x_max = (w*3) / 4;
+    int y_min = h / 4;
+    int y_max = (h*3) / 4;
+
     for (int x = 0; x < w; x++)
     {
         for (int y = 0; y < h; y++)
@@ -275,12 +280,14 @@ int editSquare(SDL_Surface *square, Color mostFrequentColor)
             {
                 continue;
             }
-            else
+            else if (x >= x_min && x <= x_max && y >= y_min && y <= y_max)
             {
                 // Color c = fromPixel(getPixel(square, x, y), square->format);
                 // printf("color : (%d, %d, %d)\n", c.r, c.g, c.b);
                 setPixelFromColor(square, x, y, white);
                 edited += 1;
+            } else {
+              setPixelFromColor(square, x, y, white);
             }
         }
     }
