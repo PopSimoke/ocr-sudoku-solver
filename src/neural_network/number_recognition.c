@@ -119,8 +119,6 @@ int generate_grid(Neural_Network *nn, char *input_path, char *output_path) {
 
   fclose(fptr);
 
-  printf("Grid path: %s\n", output_path);
-
   return EXIT_SUCCESS;
 }
 
@@ -200,10 +198,6 @@ int ai_wrapper_train(char *model_path, size_t iteration_count,
       train(nn, d_inputs, targets, 1);
       double outputs[OUTPUT_LAYER_SIZE] = {0};
       predict(nn, d_inputs, outputs);
-      //      printf("%d -> %f %f %f %f %f %f %f %f %f\n", inputs[0],
-      //      outputs[0],
-      //             outputs[1], outputs[2], outputs[3], outputs[4], outputs[5],
-      //             outputs[6], outputs[7], outputs[8]);
     }
     rewind(fptr);
 
@@ -235,17 +229,13 @@ int ai_wrapper_train(char *model_path, size_t iteration_count,
         success_counter[max_index] += 100;
         success_counter_tot += 100;
       }
-
-      //      printf("%d\n", inputs[0]);
     }
 
-    printf("Accuracy: %lu%% [ %lu%%, %lu%%, %lu%%, %lu%%, %lu%%, %lu%%, %lu%%, "
-           "%lu%%, %lu%% ]\n",
-           success_counter_tot / dataset_size, success_counter[0] / 3,
-           success_counter[1] / 2, success_counter[2] / 3,
-           success_counter[3] / 2, success_counter[4] / 3,
-           success_counter[5] / 5, success_counter[6] / 3,
-           success_counter[7] / 5, success_counter[8] / 4);
+    size_t accuracy_percentage = success_counter_tot / dataset_size;
+    printf("Accuracy: %lu%%\n", accuracy_percentage);
+
+    if (accuracy_percentage == 100)
+      break;
 
     rewind(fptr);
   }
@@ -260,7 +250,8 @@ int ai_wrapper_train(char *model_path, size_t iteration_count,
   return EXIT_SUCCESS;
 }
 
-int create_dataset_from_images(char *images_dir_path, char *dataset_path) {
+int create_dataset_from_images(char *images_dir_path, char *dataset_path,
+                               int *dataset_size) {
 
   FILE *fptr;
   fptr = fopen(dataset_path, "wb");
@@ -272,14 +263,14 @@ int create_dataset_from_images(char *images_dir_path, char *dataset_path) {
     return EXIT_FAILURE;
   }
 
-  size_t dataset_size = 0;
+  *dataset_size = 0;
 
   // Get each case of the sudoku grid
   while ((ent = readdir(dir)) != NULL) {
     if (*ent->d_name == '.')
       continue;
 
-    dataset_size += 1;
+    *dataset_size += 1;
 
     // Load the image
     char *image_path = concat_str(images_dir_path, ent->d_name);
@@ -331,8 +322,6 @@ int create_dataset_from_images(char *images_dir_path, char *dataset_path) {
   closedir(dir);
   fclose(fptr);
 
-  printf("Length: %lu\nPath:   %s\n", dataset_size, dataset_path);
-
   return EXIT_SUCCESS;
 }
 
@@ -342,6 +331,7 @@ int ask_questions() {
   char *default_input_path = "../image_processing/saved_images/";
   char *default_output_path = "./output.txt";
   char *default_dataset_path = "./dataset";
+  char *default_training_folder_path = "../image_processing/trainingset/";
   size_t default_iteration_count = 100;
 
   printf("\n   ╔══════════════════════════╗\n   ║      Neural Network      "
@@ -359,13 +349,36 @@ int ask_questions() {
     mode = mode_str[0] - '0';
 
   if (mode == 3) {
-    int err = create_dataset_from_images("../image_processing/trainingset/",
-                                         "./dataset");
+    // Dataset creation
+
+    char training_folder_path[128];
+    printf("Training folder path [%s]: ", default_training_folder_path);
+    fgets(training_folder_path, 127, stdin);
+
+    if (training_folder_path[0] == '\n') {
+      memmove(training_folder_path, default_training_folder_path,
+              strlen(default_training_folder_path));
+    } else
+      training_folder_path[strlen(training_folder_path) - 1] = 0;
+
+    char dataset_path[128];
+    printf("Dataset path [%s]: ", default_dataset_path);
+    fgets(dataset_path, 127, stdin);
+
+    if (dataset_path[0] == '\n') {
+      memmove(dataset_path, default_dataset_path, strlen(default_dataset_path));
+    } else
+      dataset_path[strlen(dataset_path) - 1] = 0;
+
+    int dataset_size = 0;
+    int err = create_dataset_from_images(training_folder_path, dataset_path,
+                                         &dataset_size);
+    printf("Dataset size: %d\n", dataset_size);
     return err;
   }
 
   char model_path[128];
-  printf("Model Path [%s]: ", default_model_path);
+  printf("Model path [%s]: ", default_model_path);
   fgets(model_path, 127, stdin);
 
   if (model_path[0] == '\n') {
@@ -375,7 +388,7 @@ int ask_questions() {
 
   if (mode == 2) {
     char dataset_path[128];
-    printf("Dataset Path [%s]: ", default_dataset_path);
+    printf("Dataset path [%s]: ", default_dataset_path);
     fgets(dataset_path, 127, stdin);
 
     if (dataset_path[0] == '\n') {
@@ -384,7 +397,7 @@ int ask_questions() {
       dataset_path[strlen(dataset_path) - 1] = 0;
 
     char iteration_count_str[128];
-    printf("Iteration Count [%lu]: ", default_iteration_count);
+    printf("Iteration count [%lu]: ", default_iteration_count);
     fgets(iteration_count_str, 127, stdin);
 
     size_t iteration_count = 0;
@@ -398,10 +411,10 @@ int ask_questions() {
       }
     }
 
-    ai_wrapper_train(model_path, iteration_count, dataset_path, 30);
+    ai_wrapper_train(model_path, iteration_count, dataset_path, 64);
   } else {
     char input_path[128];
-    printf("Input Path [%s]: ", default_input_path);
+    printf("Input path [%s]: ", default_input_path);
     fgets(input_path, 127, stdin);
 
     if (input_path[0] == '\n') {
@@ -410,7 +423,7 @@ int ask_questions() {
       input_path[strlen(input_path) - 1] = 0;
 
     char output_path[128];
-    printf("Output Path [%s]: ", default_output_path);
+    printf("Output path [%s]: ", default_output_path);
     fgets(output_path, 127, stdin);
 
     if (output_path[0] == '\n') {
