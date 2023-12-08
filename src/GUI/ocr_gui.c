@@ -2,6 +2,7 @@
 #include "../image_processing/utils.h"
 #include "../sudoku_solver/solver_dec/solver_dec.h"
 #include "../image_processing/preprocess.h"
+#include "../neural_network/number_recognition.h"
 
 #include <gtk/gtk.h>
 #include <SDL2/SDL.h>
@@ -565,8 +566,6 @@ void on_file_set(GtkFileChooserButton *file_chooser, gpointer data)
             return;
         }
 
-        printf("    🎨 Loaded %s\n", filename);
-
         // update label
         GtkLabel *label =
             GTK_LABEL(gtk_builder_get_object(builder, "image_path"));
@@ -815,6 +814,40 @@ void on_step_by_step(GtkWidget *widget, gpointer data)
         gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Perspective transform");
         gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
     }
+    else if (state == 11)
+    {
+        saveSquares(global_preprocess, realMostFrequentColor);
+        state++;
+        GdkPixbuf *pixbuf = surface_to_pixbuf(global_preprocess);
+        change_image(pixbuf, "result_image");
+        gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Cut the grid");
+        gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
+    }
+    else if (state == 12)
+    {
+        ai_wrapper_with_model("../neural_network/model", "saved_images/", "sudoku.txt");
+        int **tempgrid = readGridFromFile("sudoku.txt");
+
+        int oldgrid[N][N];
+        int newgrid[N][N];
+        for (int i = 0; i < N; i++)
+        {
+            for (int j = 0; j < N; j++)
+            {
+                oldgrid[i][j] = tempgrid[i][j];
+                newgrid[i][j] = tempgrid[i][j];
+            }
+        }
+
+        solver(newgrid, 0, 0);
+        transposeMatrix(oldgrid);
+        transposeMatrix(newgrid);
+        SDL_Surface *resolve_grid = createSudokuImage(oldgrid, newgrid, 96 * 9, "../sudoku_solver/assets/");
+        change_image(surface_to_pixbuf(resolve_grid), "result_image");
+        state++;
+        gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Reslut grid");
+        gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
+    }
 }
 
 void skip_to_the_result(GtkWidget *widget, gpointer data)
@@ -827,6 +860,88 @@ void skip_to_the_result(GtkWidget *widget, gpointer data)
         gtk_dialog_run(GTK_DIALOG(dialog)); // run dialog
         gtk_widget_destroy(dialog);         // destroy dialog
         return;
+    }
+
+    if (state == 0)
+        global_preprocess = convertToGrayscale(global_preprocess);
+    if (state <= 1)
+        autoContrast(global_preprocess);
+    if (state <= 2)
+        gammaCorrection(global_preprocess, 0.2);
+    if (state <= 3)
+        applyMedianFilter(global_preprocess, 3);
+    if (state <= 4)
+        invertColors(global_preprocess);
+    if (state <= 5)
+        otsuTresholding(global_preprocess);
+    if (state <= 6)
+    {
+        colors = (Color *)malloc(global_preprocess->w * global_preprocess->h * sizeof(Color));
+        intensities = (int *)calloc(sizeof(int), global_preprocess->w * global_preprocess->h);
+        crampthresholding(global_preprocess, colors, intensities);
+        maxIndex = arrayMaxIndex(intensities, global_preprocess->w * global_preprocess->h);
+        mostFrequentColor = colors[maxIndex];
+        corners = findCorners(global_preprocess, mostFrequentColor);
+        while (corners[1].x - corners[0].x < global_preprocess->w / 3 || corners[3].x - corners[2].x < global_preprocess->w / 3 ||
+               corners[2].y - corners[0].y < global_preprocess->h / 3 || corners[3].y - corners[1].y < global_preprocess->h / 3)
+        {
+            mostFrequentColor = colors[arrayMaxIndexAfter(intensities, global_preprocess->w * global_preprocess->h, maxIndex)];
+            free(corners);
+            corners = findCorners(global_preprocess, mostFrequentColor);
+        }
+    }
+    if (state <= 9)
+    {
+        angle = findRotationAngle(corners);
+        global_preprocess = rotateImage(angle, global_preprocess);
+        resizeImage(global_preprocess, global_preprocess->w, global_preprocess->h);
+    }
+    if (state <= 10)
+    {
+        SDL_Surface *no_perspective;
+        if ((angle != 360.0 && angle > 345.0))
+        {
+            no_perspective = remove_perspective(global_preprocess, (SDL_Point *)corners);
+        }
+        else
+        {
+            no_perspective = global_preprocess;
+        }
+
+        Point *cornersPostRotate = findCorners(no_perspective, mostFrequentColor);
+
+        realMostFrequentColor.r = mostFrequentColor.r;
+        realMostFrequentColor.g = mostFrequentColor.g;
+        realMostFrequentColor.b = mostFrequentColor.b;
+
+        global_preprocess = copySurface(no_perspective, cornersPostRotate, mostFrequentColor);
+    }
+    if (state <= 11)
+        saveSquares(global_preprocess, realMostFrequentColor);
+
+    if (state <= 12)
+    {
+        ai_wrapper_with_model("../neural_network/model", "saved_images/", "sudoku.txt");
+        int **tempgrid = readGridFromFile("sudoku.txt");
+
+        int oldgrid[N][N];
+        int newgrid[N][N];
+        for (int i = 0; i < N; i++)
+        {
+            for (int j = 0; j < N; j++)
+            {
+                oldgrid[i][j] = tempgrid[i][j];
+                newgrid[i][j] = tempgrid[i][j];
+            }
+        }
+
+        solver(newgrid, 0, 0);
+        transposeMatrix(oldgrid);
+        transposeMatrix(newgrid);
+        SDL_Surface *resolve_grid = createSudokuImage(oldgrid, newgrid, 96 * 9, "../sudoku_solver/assets/");
+        change_image(surface_to_pixbuf(resolve_grid), "result_image");
+        gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Reslut grid");
+        gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
     }
 }
 
