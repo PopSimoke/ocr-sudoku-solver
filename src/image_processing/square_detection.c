@@ -305,7 +305,12 @@ void saveSquares(SDL_Surface *sudokuImage, Color mostFrequentColor)
     if (mkdir(outputDir, 0777) == -1)
     {
         // if directory already exists, delete it and create a new one
-        system("rm -rf saved_images");
+        int s = system("rm -rf saved_images");
+        if (s != 0)
+        {
+            fprintf(stderr, "Error while deleting the directory\n");
+            exit(1);
+        }
         mkdir(outputDir, 0777);
     }
 

@@ -140,7 +140,7 @@ SDL_Surface *preprocessImage(SDL_Surface *image, Color *mostFrequentColor)
     resizeImage(rotatedImage, w, h);
 
     SDL_Surface *no_perspective;
-    if (angle != 360.0 && angle > 345.0)
+    if ((angle != 360.0 && angle > 345.0))
     {
         no_perspective = remove_perspective(rotatedImage, (SDL_Point *)corners);
     }
