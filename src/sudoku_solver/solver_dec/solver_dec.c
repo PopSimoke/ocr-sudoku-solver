@@ -77,7 +77,7 @@ SDL_Surface *createSudokuImage(int grid[N][N], int solvedGrid[N][N], unsigned in
     {
         for (int j = 0; j < N; j++)
         {
-            if (solvedGrid[i][j] == grid[i][j])
+            if (solvedGrid[i][j] != grid[i][j])
 
                 sprintf(filename, "%sdigit-%d.bmp", path, solvedGrid[i][j]);
             else
