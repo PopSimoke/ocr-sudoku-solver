@@ -10,12 +10,6 @@
 #include <math.h>
 #include <err.h>
 
-typedef struct
-{
-    Color *colors;
-    int *intensities;
-} CallbackData;
-
 void on_confirm_values(GtkWidget *widget, gpointer data);
 void on_click_values(GtkWidget *widget, gpointer data);
 
@@ -36,6 +30,13 @@ GtkStack *stack_2;
 GtkStack *stack_3;
 SDL_Surface *global_preprocess = NULL;
 SDL_Surface *global_rotated = NULL;
+Color *colors;
+int *intensities;
+Color mostFrequentColor;
+Color realMostFrequentColor;
+Point *corners;
+int maxIndex;
+double angle;
 
 // Fonction pour copier une surface SDL
 SDL_Surface *copyImage(SDL_Surface *source)
@@ -181,6 +182,9 @@ void on_confirm_values(GtkWidget *widget, gpointer data)
 
         i++;
     }
+    // free the memory
+    g_list_free(children);
+    g_list_free(iter);
 
     FILE *file = fopen("sudoku.txt", "w");
     if (file == NULL)
@@ -223,6 +227,11 @@ void on_confirm_values(GtkWidget *widget, gpointer data)
     SDL_Surface *resolve_grid = createSudokuImage(oldgrid, newgrid, 96 * 9, "../sudoku_solver/assets/");
     change_image(surface_to_pixbuf(resolve_grid), "result_image");
     gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
+
+    // free all the memory
+    free(values);
+    free(tempgrid);
+    SDL_FreeSurface(resolve_grid);
 }
 
 void set_logo_image(GdkPixbuf *pixbuf, char *GtkimageID)
@@ -310,7 +319,6 @@ SDL_Surface *rotate_Surface(SDL_Surface *source, double angle)
     SDL_SetRenderDrawColor(renderer, 247, 247, 247, 247); // white background
     SDL_RenderClear(renderer);
 
-    // TODO: Fix rotation coordinates
     SDL_Rect dstRect = {(source->w / 2) * 0.8, (source->h / 2) * 0.8, source->w, source->h}; // center of the image
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, source);                   // Create texture from surface
     SDL_RenderCopyEx(renderer, texture, NULL, &dstRect, angle, NULL, SDL_FLIP_NONE);         // Render texture to screen
@@ -482,7 +490,6 @@ void on_rotate(GtkWidget *widget, gpointer data)
 
         // get the degree
         double angle = gtk_range_get_value(GTK_RANGE(scale)); // get value of the scale
-        printf("    🔄 Rotating image by %f degrees\n", angle);
 
         // rotate image
         SDL_Surface *image = IMG_Load(filename);                              // load image
@@ -642,14 +649,6 @@ void on_auto_rotate(GtkWidget *widget, gpointer data)
 {
     // TODO: AUTOROTATE
 }
-
-Color *colors;
-int *intensities;
-Color mostFrequentColor;
-Color realMostFrequentColor;
-Point *corners;
-int maxIndex;
-double angle;
 
 void on_step_by_step(GtkWidget *widget, gpointer data)
 {
