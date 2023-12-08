@@ -243,7 +243,7 @@ float returntheta(SDL_Surface *image, Point *corners, Color mostFrequentColor)
     int *numLines = 0;
     int theta = 0;
     float* mostpresenttheta = (float*) malloc(sizeof(float));
-    HoughLine *lines = HoughTransform(image, &numLines, corners, mostFrequentColor, &mostpresenttheta);
+    HoughLine *lines = HoughTransform(image, numLines, corners, mostFrequentColor, mostpresenttheta);
     
     printf("theta : %f\n",theta);
     return theta;

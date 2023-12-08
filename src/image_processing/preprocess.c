@@ -101,7 +101,7 @@ SDL_Surface *preprocessImage(SDL_Surface *image, Color *mostFrequentColor)
     // Automatic rotation
 
     double angle = findRotationAngle(corners);
-    printf("Angle: %f\n", angle);
+    // printf("Angle: %f\n", angle);
 
     SDL_Surface *rotatedImage = rotateImage(angle, grayImage);
     if (rotatedImage == NULL)
