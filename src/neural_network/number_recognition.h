@@ -60,6 +60,16 @@ int ai_wrapper(char *input_path, char *output_path);
 int ai_wrapper_train(char *model_path, size_t iteration_count,
                      char *dataset_path, size_t dataset_size);
 
+/**
+ * Creates a dataset from a folder of annoted images
+ *
+ * @param images_dir_path Path to the training folder containing the images.
+ * @param dataset_path Path to the output dataset.
+ * @param dataset_size The size of the dataset (The number of images inside it).
+ *
+ * @return Integer indicating the success/failure of the function's execution.
+ * Typically, returns 0 upon success and non-zero values upon failure.
+ */
 int create_dataset_from_images(char *images_dir_path, char *dataset_path,
                                int *dataset_size);
 
