@@ -134,6 +134,8 @@ SDL_Surface* createSudokuImage(int grid[N][N],int solvedGrid[N][N],unsigned int 
 
     return image;
 }
+
+
 // Main function
 int main(int argc, char *argv[])
 {
@@ -280,7 +282,11 @@ int main(int argc, char *argv[])
     
 
     fclose(inputFile);
-    solver(grid, 0, 0);
+    
+    
+
+                
+    
     if (solver(grid, 0, 0) == 1) // if the sudoku is solved, write the solution in a file
     {
         char outputFileName[strlen(argv[1]) + 8];

@@ -1,6 +1,7 @@
 #ifndef SOLVER_DEC_H
 #define SOLVER_DEC_H
 #define N 9
+#include <SDL2/SDL.h>
 /**
  * @brief check if the grid doesn't contain any errors
  *
@@ -21,5 +22,8 @@ int Sudoku_Erreur(int grid[N][N], int row, int col, int num);
  * @return int
  */
 int solver(int grid[N][N], int row, int col);
+
+SDL_Surface* createSudokuImage(int grid[N][N],int solvedGrid[N][N],unsigned int dimension);
+
 
 #endif
