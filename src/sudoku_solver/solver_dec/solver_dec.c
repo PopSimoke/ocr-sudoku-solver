@@ -188,198 +188,207 @@ int** readGridFromFile(char* filename) {
 
 
 
+
+
 // Main function
-int main(int argc, char *argv[])
-{
+// int main(int argc, char *argv[])
+// {
 
-    // Check if the input file is valid, if it's valid, read the file and store the values in a 2D array
-    FILE *inputFile = fopen(argv[1], "r");
-    if (inputFile == NULL)
-    {
-        perror("Error opening input file");
-        return 1;
-    }
-    if (argc != 2)
-    {
-        printf("Usage: %s <input file>\n", argv[0]);
-        return 1;
-    }
+//     int** zizigrid= readGridFromFile("test.txt");
+//     for (int i = 0 ; i<N;i++){
+//         for (int j = 0 ; j<N;j++){
+//             printf("%d",zizigrid[i][j]);
+//         }
+//         printf("\n");
+//     }
+//     // Check if the input file is valid, if it's valid, read the file and store the values in a 2D array
+//     FILE *inputFile = fopen(argv[1], "r");
+//     if (inputFile == NULL)
+//     {
+//         perror("Error opening input file");
+//         return 1;
+//     }
+//     if (argc != 2)
+//     {
+//         printf("Usage: %s <input file>\n", argv[0]);
+//         return 1;
+//     }
 
-    int grid[N][N];
-    int solvedGrid[N][N];
-    int col = 0;
-    int row = 0;
-    char tempvalue;
-    while (!feof(inputFile)) // while not end of file keep reading the file and store the values in the 2D array if . then store 0
-    {
-        if (row==9){
-            break;
-        }
-        char oui = fscanf(inputFile, "%c", &tempvalue);
-        oui += 1;
+//     int grid[N][N];
+//     int solvedGrid[N][N];
+//     int col = 0;
+//     int row = 0;
+//     char tempvalue;
+//     while (!feof(inputFile)) // while not end of file keep reading the file and store the values in the 2D array if . then store 0
+//     {
+//         if (row==9){
+//             break;
+//         }
+//         char oui = fscanf(inputFile, "%c", &tempvalue);
+//         oui += 1;
 
-        if (tempvalue == '1')
-        {
-            grid[row][col] = 1;
-            solvedGrid[row][col] = 1;
-            col += 1;
-            if (col == 9)
-            {
-                col = 0;
-                row += 1;
-            }
-        }
-        if (tempvalue == '2')
-        {
-            grid[row][col] = 2;
-            solvedGrid[row][col] = 1;
-            col += 1;
-            if (col == 9)
-            {
-                col = 0;
-                row += 1;
-            }
-        }
-        if (tempvalue == '3')
-        {
-            grid[row][col] = 3;
-            solvedGrid[row][col] = 1;
-            col += 1;
-            if (col == 9)
-            {
-                col = 0;
-                row += 1;
-            }
-        }
-        if (tempvalue == '4')
-        {
-            grid[row][col] = 4;
-            solvedGrid[row][col] = 1;
-            col += 1;
-            if (col == 9)
-            {
-                col = 0;
-                row += 1;
-            }
-        }
-        if (tempvalue == '5')
-        {
-            grid[row][col] = 5;
-            solvedGrid[row][col] = 1;
-            col += 1;
-            if (col == 9)
-            {
-                col = 0;
-                row += 1;
-            }
-        }
-        if (tempvalue == '6')
-        {
-            grid[row][col] = 6;
-            solvedGrid[row][col] = 1;
-            col += 1;
-            if (col == 9)
-            {
-                col = 0;
-                row += 1;
-            }
-        }
-        if (tempvalue == '7')
-        {
-            grid[row][col] = 7;
-            solvedGrid[row][col] = 1;
-            col += 1;
-            if (col == 9)
-            {
-                col = 0;
-                row += 1;
-            }
-        }
-        if (tempvalue == '8')
-        {
-            grid[row][col] = 8;
-            solvedGrid[row][col] = 1;
-            col += 1;
-            if (col == 9)
-            {
-                col = 0;
-                row += 1;
-            }
-        }
-        if (tempvalue == '9')
-        {
-            grid[row][col] = 9;
-            solvedGrid[row][col] = 1;
-            col += 1;
-            if (col == 9)
-            {
-                col = 0;
-                row += 1;
-            }
-        }
-        if (tempvalue == '.')
-        {
-            grid[row][col] = 0;
-            solvedGrid[row][col] = 0;
-            col += 1;
-            if (col == 9)
-            {
-                col = 0;
-                row += 1;
-            }
-        }
-        if (tempvalue == ' ')
-            continue;
-    }
+//         if (tempvalue == '1')
+//         {
+//             grid[row][col] = 1;
+//             solvedGrid[row][col] = 1;
+//             col += 1;
+//             if (col == 9)
+//             {
+//                 col = 0;
+//                 row += 1;
+//             }
+//         }
+//         if (tempvalue == '2')
+//         {
+//             grid[row][col] = 2;
+//             solvedGrid[row][col] = 1;
+//             col += 1;
+//             if (col == 9)
+//             {
+//                 col = 0;
+//                 row += 1;
+//             }
+//         }
+//         if (tempvalue == '3')
+//         {
+//             grid[row][col] = 3;
+//             solvedGrid[row][col] = 1;
+//             col += 1;
+//             if (col == 9)
+//             {
+//                 col = 0;
+//                 row += 1;
+//             }
+//         }
+//         if (tempvalue == '4')
+//         {
+//             grid[row][col] = 4;
+//             solvedGrid[row][col] = 1;
+//             col += 1;
+//             if (col == 9)
+//             {
+//                 col = 0;
+//                 row += 1;
+//             }
+//         }
+//         if (tempvalue == '5')
+//         {
+//             grid[row][col] = 5;
+//             solvedGrid[row][col] = 1;
+//             col += 1;
+//             if (col == 9)
+//             {
+//                 col = 0;
+//                 row += 1;
+//             }
+//         }
+//         if (tempvalue == '6')
+//         {
+//             grid[row][col] = 6;
+//             solvedGrid[row][col] = 1;
+//             col += 1;
+//             if (col == 9)
+//             {
+//                 col = 0;
+//                 row += 1;
+//             }
+//         }
+//         if (tempvalue == '7')
+//         {
+//             grid[row][col] = 7;
+//             solvedGrid[row][col] = 1;
+//             col += 1;
+//             if (col == 9)
+//             {
+//                 col = 0;
+//                 row += 1;
+//             }
+//         }
+//         if (tempvalue == '8')
+//         {
+//             grid[row][col] = 8;
+//             solvedGrid[row][col] = 1;
+//             col += 1;
+//             if (col == 9)
+//             {
+//                 col = 0;
+//                 row += 1;
+//             }
+//         }
+//         if (tempvalue == '9')
+//         {
+//             grid[row][col] = 9;
+//             solvedGrid[row][col] = 1;
+//             col += 1;
+//             if (col == 9)
+//             {
+//                 col = 0;
+//                 row += 1;
+//             }
+//         }
+//         if (tempvalue == '.')
+//         {
+//             grid[row][col] = 0;
+//             solvedGrid[row][col] = 0;
+//             col += 1;
+//             if (col == 9)
+//             {
+//                 col = 0;
+//                 row += 1;
+//             }
+//         }
+//         if (tempvalue == ' ')
+//             continue;
+//     }
     
 
-    fclose(inputFile);
+//     fclose(inputFile);
     
     
 
                 
     
-    if (solver(grid, 0, 0) == 1) // if the sudoku is solved, write the solution in a file
-    {
-        char outputFileName[strlen(argv[1]) + 8];
-        strcpy(outputFileName, argv[1]);
-        strcat(outputFileName, "_result");
-        FILE *output;
-        output = fopen(outputFileName, "w");
-        for (int i = 0; i < N; i++) // write the solution in the file
-        {
-            for (int j = 0; j < N; j++)
-            {
-                fprintf(output, "%d", grid[i][j]);
-                if (j == 2 || j == 5 || j == 8)
-                    fprintf(output, " ");
-            }
-            if (i == 2 || i == 5 || i == 8)
-                fprintf(output, "\n");
-            fprintf(output, "\n");
-        }
-        fclose(output);
-    }
-    else
-        printf("No solution exists");
-    // Après avoir créé l'image du sudoku
+//     if (solver(grid, 0, 0) == 1) // if the sudoku is solved, write the solution in a file
+//     {
+//         char outputFileName[strlen(argv[1]) + 8];
+//         strcpy(outputFileName, argv[1]);
+//         strcat(outputFileName, "_result");
+//         FILE *output;
+//         output = fopen(outputFileName, "w");
+//         for (int i = 0; i < N; i++) // write the solution in the file
+//         {
+//             for (int j = 0; j < N; j++)
+//             {
+//                 fprintf(output, "%d", grid[i][j]);
+//                 if (j == 2 || j == 5 || j == 8)
+//                     fprintf(output, " ");
+//             }
+//             if (i == 2 || i == 5 || i == 8)
+//                 fprintf(output, "\n");
+//             fprintf(output, "\n");
+//         }
+//         fclose(output);
+//     }
+//     else
+//         printf("No solution exists");
+//     // Après avoir créé l'image du sudoku
 
 
-SDL_Surface* sudokuImage = createSudokuImage(grid,solvedGrid, 96*9);
+// SDL_Surface* sudokuImage = createSudokuImage(grid,solvedGrid, 96*9);
 
-// Sauvegarder l'image dans le même répertoire que le fichier d'entrée
-char save_path[256];
-sprintf(save_path, "%s_sudoku.bmp", argv[1]);
-if(SDL_SaveBMP(sudokuImage, save_path) != 0) {
-    printf("Unable to save image! SDL Error: %s\n", SDL_GetError());
-} else {
-    printf("Image saved to %s\n", save_path);
-}
+// // Sauvegarder l'image dans le même répertoire que le fichier d'entrée
+// char save_path[256];
+// sprintf(save_path, "%s_sudoku.bmp", argv[1]);
+// if(SDL_SaveBMP(sudokuImage, save_path) != 0) {
+//     printf("Unable to save image! SDL Error: %s\n", SDL_GetError());
+// } else {
+//     printf("Image saved to %s\n", save_path);
+// }
 
-// Libérer la surface de l'image
-SDL_FreeSurface(sudokuImage);
-    return 0;
+// // Libérer la surface de l'image
+// SDL_FreeSurface(sudokuImage);
+//     return 0;
    
 
-}
+// }
 
