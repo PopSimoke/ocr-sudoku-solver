@@ -67,7 +67,7 @@ int solver(int grid[N][N], int row, int col)
 
 SDL_Surface *createSudokuImage(int grid[N][N], int solvedGrid[N][N], unsigned int dimension, char *path)
 {
-    SDL_Surface *image = SDL_CreateRGBSurface(0, dimension, dimension, 32, 0, 0, 0, 0);
+    SDL_Surface *image = SDL_CreateRGBSurface(0, dimension + 20, dimension + 20, 32, 0, 0, 0, 0);
     SDL_Surface *cell_image = NULL;
     SDL_Rect dest;
 
@@ -78,6 +78,7 @@ SDL_Surface *createSudokuImage(int grid[N][N], int solvedGrid[N][N], unsigned in
         for (int j = 0; j < N; j++)
         {
             if (solvedGrid[i][j] == grid[i][j])
+
                 sprintf(filename, "%sdigit-%d.bmp", path, solvedGrid[i][j]);
             else
                 sprintf(filename, "%sdigit-%d-f.bmp", path, solvedGrid[i][j]);
@@ -89,76 +90,76 @@ SDL_Surface *createSudokuImage(int grid[N][N], int solvedGrid[N][N], unsigned in
             }
             if (i == 1)
             {
-                dest.x = 94;
+                dest.x = 94 + 15;
             }
             if (i == 2)
             {
-                dest.x = 94 * 2;
+                dest.x = 94 * 2 + 15;
             }
             if (i == 3)
             {
-                dest.x = 94 * 3 + 5;
+                dest.x = 94 * 3 + 5 + 15;
             }
             if (i == 4)
             {
-                dest.x = 94 * 4 + 5;
+                dest.x = 94 * 4 + 5 + 15;
             }
             if (i == 5)
             {
-                dest.x = 94 * 5 + 5;
+                dest.x = 94 * 5 + 5 + 15;
             }
             if (i == 6)
             {
-                dest.x = 94 * 6 + 10;
+                dest.x = 94 * 6 + 10 + 15;
             }
             if (i == 7)
             {
-                dest.x = 94 * 7 + 10;
+                dest.x = 94 * 7 + 10 + 15;
             }
             if (i == 8)
             {
-                dest.x = 94 * 8 + 10;
+                dest.x = 94 * 8 + 10 + 15;
             }
             if (i == 0)
             {
-                dest.x = 0;
+                dest.x = 0 + 15;
             }
 
             if (j == 1)
             {
-                dest.y = 94;
+                dest.y = 94 + 15;
             }
             if (j == 2)
             {
-                dest.y = 94 * 2;
+                dest.y = 94 * 2 + 15;
             }
             if (j == 3)
             {
-                dest.y = 94 * 3 + 5;
+                dest.y = 94 * 3 + 5 + 15;
             }
             if (j == 4)
             {
-                dest.y = 94 * 4 + 5;
+                dest.y = 94 * 4 + 5 + 15;
             }
             if (j == 5)
             {
-                dest.y = 94 * 5 + 5;
+                dest.y = 94 * 5 + 5 + 15;
             }
             if (j == 6)
             {
-                dest.y = 94 * 6 + 10;
+                dest.y = 94 * 6 + 10 + 15;
             }
             if (j == 7)
             {
-                dest.y = 94 * 7 + 10;
+                dest.y = 94 * 7 + 10 + 15;
             }
             if (j == 8)
             {
-                dest.y = 94 * 8 + 10;
+                dest.y = 94 * 8 + 10 + 15;
             }
             if (j == 0)
             {
-                dest.y = 0;
+                dest.y = 0 + 15;
             }
 
             SDL_BlitSurface(cell_image, NULL, image, &dest);

@@ -15,4 +15,6 @@
 
 SDL_Surface *preprocessImage(SDL_Surface *image, Color *mostFrequentColor);
 
+void drawSquare(SDL_Surface *image, Point *p, int squareSize);
+
 #endif

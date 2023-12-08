@@ -1,12 +1,22 @@
 #include "../image_processing/image_processing.h"
 #include "../image_processing/utils.h"
 #include "../sudoku_solver/solver_dec/solver_dec.h"
+#include "../image_processing/preprocess.h"
 
 #include <gtk/gtk.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <math.h>
 #include <err.h>
+
+typedef struct
+{
+    Color *colors;
+    int *intensities;
+} CallbackData;
+
+void on_confirm_values(GtkWidget *widget, gpointer data);
+void on_click_values(GtkWidget *widget, gpointer data);
 
 GdkPixbuf *pixbufImage;
 GdkPixbuf *pixbufImageRotated;
@@ -25,6 +35,52 @@ GtkStack *stack_2;
 GtkStack *stack_3;
 SDL_Surface *global_preprocess = NULL;
 SDL_Surface *global_rotated = NULL;
+
+// Fonction pour copier une surface SDL
+SDL_Surface *copyImage(SDL_Surface *source)
+{
+    if (source == NULL)
+    {
+        fprintf(stderr, "Erreur : la surface source est NULL.\n");
+        return NULL;
+    }
+
+    // Créer une nouvelle surface avec les mêmes spécifications que la source
+    SDL_Surface *copiedSurface = SDL_CreateRGBSurface(0, source->w, source->h, source->format->BitsPerPixel,
+                                                      source->format->Rmask, source->format->Gmask,
+                                                      source->format->Bmask, source->format->Amask);
+
+    if (copiedSurface == NULL)
+    {
+        fprintf(stderr, "Erreur lors de la création de la surface copiée : %s\n", SDL_GetError());
+        return NULL;
+    }
+
+    // Copier les pixels de la surface source à la surface copiée
+    if (SDL_BlitSurface(source, NULL, copiedSurface, NULL) != 0)
+    {
+        fprintf(stderr, "Erreur lors de la copie de la surface : %s\n", SDL_GetError());
+        SDL_FreeSurface(copiedSurface); // Libérer la mémoire en cas d'erreur
+        return NULL;
+    }
+
+    return copiedSurface;
+}
+
+void transposeMatrix(int mat[9][9])
+{
+    int temp;
+    for (int i = 0; i < 9; i++)
+    {
+        for (int j = i + 1; j < 9; j++)
+        {
+            // Échanger les éléments mat[i][j] et mat[j][i]
+            temp = mat[i][j];
+            mat[i][j] = mat[j][i];
+            mat[j][i] = temp;
+        }
+    }
+}
 
 /**
  * @brief Convert a SDL_Surface to a GdkPixbuf
@@ -101,6 +157,71 @@ void change_image(GdkPixbuf *pixbuf, char *GtkimageID)
     }
 
     gtk_image_set_from_pixbuf(imageWidget, pixbuf); // set image
+}
+
+void on_confirm_values(GtkWidget *widget, gpointer data)
+{
+    (void)widget;
+    (void)data;
+    GtkWidget *grid = GTK_WIDGET(gtk_builder_get_object(builder, "9x9Grid"));
+    // Get all the entries by list of the child of the grid
+    GList *children, *iter;
+    children = gtk_container_get_children(GTK_CONTAINER(grid));
+    int *values = malloc(sizeof(int) * 81);
+    int i = 0;
+    for (iter = children; iter != NULL; iter = g_list_next(iter))
+    {
+        GtkWidget *entry = GTK_WIDGET(iter->data);
+        const char *text = gtk_entry_get_text(GTK_ENTRY(entry));
+        if (strlen(text) == 0)
+            values[i] = 0;
+        else
+            values[i] = atoi(text);
+
+        i++;
+    }
+
+    FILE *file = fopen("sudoku.txt", "w");
+    if (file == NULL)
+        errx(1, "Error opening file");
+    for (int i = 8; i >= 0; i--)
+    {
+        for (int j = 8; j >= 0; j--)
+        {
+            int index = i * 9 + j;
+            if (values[index] == 0)
+                fprintf(file, ".");
+            else
+                fprintf(file, "%d", values[index]);
+            if (j % 3 == 0 && j != 0)
+                fprintf(file, " ");
+        }
+        fprintf(file, "\n");
+        if (i % 3 == 0 && i != 0)
+            fprintf(file, "\n");
+    }
+
+    fclose(file);
+    int **tempgrid = readGridFromFile("sudoku.txt");
+
+    int oldgrid[N][N];
+    int newgrid[N][N];
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            oldgrid[i][j] = tempgrid[i][j];
+            newgrid[i][j] = tempgrid[i][j];
+        }
+    }
+
+    solver(newgrid, 0, 0);
+
+    transposeMatrix(oldgrid);
+    transposeMatrix(newgrid);
+    SDL_Surface *resolve_grid = createSudokuImage(oldgrid, newgrid, 96 * 9, "../sudoku_solver/assets/");
+    change_image(surface_to_pixbuf(resolve_grid), "result_image");
+    gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
 }
 
 void set_logo_image(GdkPixbuf *pixbuf, char *GtkimageID)
@@ -367,8 +488,8 @@ void on_rotate(GtkWidget *widget, gpointer data)
         SDL_Surface *resized = resize(image, image->w * 1.5, image->h * 1.5); // resize image
         global_rotated = rotate_Surface(resized, angle);                      // rotate image
         global_rotated = cropImage(global_rotated);                           // crop image
-
-        pixbufImageRotated = surface_to_pixbuf(global_rotated); // convert to pixbuf
+        global_preprocess = global_rotated;                                   // save image
+        pixbufImageRotated = surface_to_pixbuf(global_rotated);               // convert to pixbuf
 
         change_image(pixbufImageRotated, "selected_image2"); // change image
 
@@ -410,6 +531,9 @@ void rotate_screen()
     state = 0;
     gtk_stack_set_visible_child_name(stack_2, "rotationPage");
     gtk_stack_set_visible_child_name(stack_3, "lower_panel3");
+    g_signal_handlers_disconnect_by_func(G_OBJECT(gtk_builder_get_object(builder, "valueButton")), G_CALLBACK(on_confirm_values), NULL);
+    g_signal_connect(G_OBJECT(gtk_builder_get_object(builder, "valueButton")), "clicked", G_CALLBACK(on_click_values), NULL);
+    gtk_button_set_label(GTK_BUTTON(gtk_builder_get_object(builder, "valueButton")), "Enter your own values");
 }
 
 /**
@@ -477,84 +601,6 @@ void on_file_set(GtkFileChooserButton *file_chooser, gpointer data)
     }
 }
 
-void on_confirm_values(GtkWidget *widget, gpointer data)
-{
-    (void)widget;
-    (void)data;
-    GtkWidget *grid = GTK_WIDGET(gtk_builder_get_object(builder, "9x9Grid"));
-    // Get all the entries by list of the child of the grid
-    GList *children, *iter;
-    children = gtk_container_get_children(GTK_CONTAINER(grid));
-    int *values = malloc(sizeof(int) * 81);
-    int i = 0;
-    for (iter = children; iter != NULL; iter = g_list_next(iter))
-    {
-        GtkWidget *entry = GTK_WIDGET(iter->data);
-        const char *text = gtk_entry_get_text(GTK_ENTRY(entry));
-        if (strlen(text) == 0)
-            values[i] = 0;
-        else
-            values[i] = atoi(text);
-
-        i++;
-    }
-
-    FILE *file = fopen("sudoku.txt", "w");
-    if (file == NULL)
-        errx(1, "Error opening file");
-    for (int i = 8; i >= 0; i--)
-    {
-        for (int j = 8; j >= 0; j--)
-        {
-            int index = i * 9 + j;
-            if (values[index] == 0)
-                fprintf(file, ".");
-            else
-                fprintf(file, "%d", values[index]);
-            if (j % 3 == 0 && j != 0)
-                fprintf(file, " ");
-        }
-        fprintf(file, "\n");
-        if (i % 3 == 0 && i != 0)
-            fprintf(file, "\n");
-    }
-
-    fclose(file);
-    int **tempgrid = readGridFromFile("sudoku.txt");
-    int oldgrid[N][N];
-    int newgrid[N][N];
-    for (int i = 0; i < N; i++)
-    {
-        for (int j = 0; j < N; j++)
-        {
-            oldgrid[i][j] = tempgrid[i][j];
-            newgrid[i][j] = tempgrid[i][j];
-        }
-    }
-
-    solver(newgrid, 0, 0);
-
-    for (int i = 0; i < N; i++)
-    {
-        for (int j = 0; j < N; j++)
-        {
-            printf("%d", oldgrid[i][j]);
-        }
-        printf("\n");
-    }
-    for (int i = 0; i < N; i++)
-    {
-        for (int j = 0; j < N; j++)
-        {
-            printf("%d", newgrid[i][j]);
-        }
-        printf("\n");
-    }
-    SDL_Surface *resolve_grid = createSudokuImage(oldgrid, newgrid, 96 * 9, "../sudoku_solver/assets/");
-    change_image(surface_to_pixbuf(resolve_grid), "result_image");
-    gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
-}
-
 /**
  * @brief Go back to the main page
  *
@@ -598,8 +644,17 @@ void on_auto_rotate(GtkWidget *widget, gpointer data)
     // TODO: AUTOROTATE
 }
 
+Color *colors;
+int *intensities;
+Color mostFrequentColor;
+Color realMostFrequentColor;
+Point *corners;
+int maxIndex;
+double angle;
+
 void on_step_by_step(GtkWidget *widget, gpointer data)
 {
+
     if (!filename)
     {
         GtkWidget *dialog = gtk_message_dialog_new( // create error dialog
@@ -611,10 +666,153 @@ void on_step_by_step(GtkWidget *widget, gpointer data)
     }
     if (state == 0)
     {
-        SDL_Surface *surface = convertToGrayscale(global_preprocess);
+        global_preprocess = convertToGrayscale(global_preprocess);
         state++;
-        GdkPixbuf *pixbuf = surface_to_pixbuf(surface);
+        GdkPixbuf *pixbuf = surface_to_pixbuf(global_preprocess);
         change_image(pixbuf, "result_image");
+        gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Grayscale");
+        gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
+    }
+    else if (state == 1)
+    {
+        autoContrast(global_preprocess);
+        state++;
+        GdkPixbuf *pixbuf = surface_to_pixbuf(global_preprocess);
+        change_image(pixbuf, "result_image");
+        gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Auto contrast");
+        gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
+    }
+    else if (state == 2)
+    {
+        gammaCorrection(global_preprocess, 0.2);
+        state++;
+        GdkPixbuf *pixbuf = surface_to_pixbuf(global_preprocess);
+        change_image(pixbuf, "result_image");
+        gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Gamma correction");
+        gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
+    }
+    else if (state == 3)
+    {
+        applyMedianFilter(global_preprocess, 3);
+        state++;
+        GdkPixbuf *pixbuf = surface_to_pixbuf(global_preprocess);
+        change_image(pixbuf, "result_image");
+        gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Median filter");
+        gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
+    }
+    else if (state == 4)
+    {
+        invertColors(global_preprocess);
+        state++;
+        GdkPixbuf *pixbuf = surface_to_pixbuf(global_preprocess);
+        change_image(pixbuf, "result_image");
+        gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Invert colors");
+        gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
+    }
+    else if (state == 5)
+    {
+        otsuTresholding(global_preprocess);
+        state++;
+        GdkPixbuf *pixbuf = surface_to_pixbuf(global_preprocess);
+        change_image(pixbuf, "result_image");
+        gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Otsu tresholding");
+        gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
+    }
+    else if (state == 6)
+    {
+        colors = (Color *)malloc(global_preprocess->w * global_preprocess->h * sizeof(Color));
+        intensities = (int *)calloc(sizeof(int), global_preprocess->w * global_preprocess->h);
+        crampthresholding(global_preprocess, colors, intensities);
+        maxIndex = arrayMaxIndex(intensities, global_preprocess->w * global_preprocess->h);
+        mostFrequentColor = colors[maxIndex];
+        corners = findCorners(global_preprocess, mostFrequentColor);
+        while (corners[1].x - corners[0].x < global_preprocess->w / 3 || corners[3].x - corners[2].x < global_preprocess->w / 3 ||
+               corners[2].y - corners[0].y < global_preprocess->h / 3 || corners[3].y - corners[1].y < global_preprocess->h / 3)
+        {
+            mostFrequentColor = colors[arrayMaxIndexAfter(intensities, global_preprocess->w * global_preprocess->h, maxIndex)];
+            free(corners);
+            corners = findCorners(global_preprocess, mostFrequentColor);
+        }
+        state++;
+        GdkPixbuf *pixbuf = surface_to_pixbuf(global_preprocess);
+        change_image(pixbuf, "result_image");
+        gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Cramptrésholding");
+        gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
+    }
+    else if (state == 7)
+    {
+        SDL_Surface *copy = copyImage(global_preprocess);
+
+        for (int i = 0; i < 4; i++)
+        {
+            drawSquare(copy, &corners[i], 20);
+        }
+        state++;
+        GdkPixbuf *pixbuf = surface_to_pixbuf(copy);
+        change_image(pixbuf, "result_image");
+        gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Corner detection");
+        gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
+
+        SDL_FreeSurface(copy);
+    }
+    else if (state == 8)
+    {
+        SDL_Surface *copy = copyImage(global_preprocess);
+
+        for (int x = 0; x < copy->w; x++)
+        {
+            for (int y = 0; y < copy->h; y++)
+            {
+                if (!isSameColor(copy, x, y, mostFrequentColor))
+                {
+                    setPixel(copy, x, y, SDL_MapRGB(copy->format, 0, 0, 0));
+                }
+            }
+        }
+        state++;
+        GdkPixbuf *pixbuf = surface_to_pixbuf(copy);
+        change_image(pixbuf, "result_image");
+        gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Grid detection");
+        gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
+
+        SDL_FreeSurface(copy);
+    }
+    else if (state == 9)
+    {
+        angle = findRotationAngle(corners);
+        global_preprocess = rotateImage(angle, global_preprocess);
+        resizeImage(global_preprocess, global_preprocess->w, global_preprocess->h);
+
+        state++;
+        GdkPixbuf *pixbuf = surface_to_pixbuf(global_preprocess);
+        change_image(pixbuf, "result_image");
+        gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Auto rotation");
+        gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
+    }
+    else if (state == 10)
+    {
+        SDL_Surface *no_perspective;
+        if ((angle != 360.0 && angle > 345.0))
+        {
+            no_perspective = remove_perspective(global_preprocess, (SDL_Point *)corners);
+        }
+        else
+        {
+            no_perspective = global_preprocess;
+        }
+
+        Point *cornersPostRotate = findCorners(no_perspective, mostFrequentColor);
+
+        realMostFrequentColor.r = mostFrequentColor.r;
+        realMostFrequentColor.g = mostFrequentColor.g;
+        realMostFrequentColor.b = mostFrequentColor.b;
+
+        global_preprocess = copySurface(no_perspective, cornersPostRotate, mostFrequentColor);
+
+        state++;
+        GdkPixbuf *pixbuf = surface_to_pixbuf(global_preprocess);
+        change_image(pixbuf, "result_image");
+        gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Perspective transform");
         gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
     }
 }
@@ -680,6 +878,14 @@ void quit()
         g_object_unref(pixbufImageRotated);
     if (global_rotated)
         SDL_FreeSurface(global_rotated);
+    if (global_preprocess)
+        SDL_FreeSurface(global_preprocess);
+    if (corners)
+        free(corners);
+    if (colors)
+        free(colors);
+    if (intensities)
+        free(intensities);
 
     // quit the program
     gtk_main_quit();
