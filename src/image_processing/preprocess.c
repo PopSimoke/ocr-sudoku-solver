@@ -53,35 +53,7 @@ SDL_Surface *preprocessImage(SDL_Surface *image, Color *mostFrequentColor)
         errx(1, "SDL_ConvertSurfaceFormat Error: %s\n", SDL_GetError());
     }
 
-    double bestContrastValue = 1.8;
-
-    int maxGrayValue = 0;
-    int minGrayValue = 255;
-
-    for (int x = 0; x < grayImage->w; x++)
-    {
-        for (int y = 0; y < grayImage->h; y++)
-        {
-            Uint8 r, g, b;
-            SDL_GetRGB(getPixel(grayImage, x, y), grayImage->format, &r, &g, &b);
-            int grayValue = (r + g + b) / 3;
-            if (grayValue > maxGrayValue)
-            {
-                maxGrayValue = grayValue;
-            }
-            if (grayValue < minGrayValue)
-            {
-                minGrayValue = grayValue;
-            }
-        }
-    }
-
-    printf("Max gray value: %d\n", maxGrayValue);
-    printf("Min gray value: %d\n", minGrayValue);
-    bestContrastValue = ((double)maxGrayValue + (double)minGrayValue) / 2.0 / 128.0;
-    printf("Contrast value: %f\n", bestContrastValue);
-
-    contrastCorrection(grayImage, bestContrastValue);
+    autoContrast(grayImage);
     gammaCorrection(grayImage, 0.2);
     applyMedianFilter(grayImage, 3);
     invertColors(grayImage);

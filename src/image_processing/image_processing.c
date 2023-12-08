@@ -761,7 +761,6 @@ Point *findCorners(SDL_Surface *image, Color mostFrequentColor)
     bottomRight->x = 0;
     bottomRight->y = 0;
 
-
     for (int x = 0; x < w; x++)
     {
         for (int y = 0; y < h; y++)
@@ -814,7 +813,8 @@ Point *findCorners(SDL_Surface *image, Color mostFrequentColor)
     return corners;
 }
 
-Point findCenter(Point *corners) {
+Point findCenter(Point *corners)
+{
     Point center;
 
     center.x = (corners[0].x + corners[1].x + corners[2].x + corners[3].x) / 4;
@@ -864,13 +864,43 @@ double findRotationAngle(Point *corners)
 
     double angleTop = atan2(topRight.y - topLeft.y, topRight.x - topLeft.x) * 180.0f / M_PI;
     double angleBottom = atan2(bottomRight.y - bottomLeft.y, bottomRight.x - bottomLeft.x) * 180.0f / M_PI;
-    
+
     double angle = (angleTop + angleBottom) / 2.0f;
-    
+
     if (360.0f - angle > 360.0f)
     {
         return 360.0f - angle - 360.0f;
     }
 
     return 360.0f - angle;
+}
+
+void autoContrast(SDL_Surface *image)
+{
+    double bestContrastValue = 1.8;
+
+    int maxGrayValue = 0;
+    int minGrayValue = 255;
+
+    for (int x = 0; x < image->w; x++)
+    {
+        for (int y = 0; y < image->h; y++)
+        {
+            Uint8 r, g, b;
+            SDL_GetRGB(getPixel(image, x, y), image->format, &r, &g, &b);
+            int grayValue = (r + g + b) / 3;
+            if (grayValue > maxGrayValue)
+            {
+                maxGrayValue = grayValue;
+            }
+            if (grayValue < minGrayValue)
+            {
+                minGrayValue = grayValue;
+            }
+        }
+    }
+
+    bestContrastValue = ((double)maxGrayValue + (double)minGrayValue) / 2.0 / 128.0;
+
+    contrastCorrection(image, bestContrastValue);
 }
