@@ -9,7 +9,7 @@
 #include <math.h>
 #include <stdio.h>
 
-#define EPSILON 0.000001
+#define EPSILON 0.00001
 
 int min_int(int a, int b) {
   return a < b ? a : b;

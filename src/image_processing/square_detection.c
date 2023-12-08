@@ -250,6 +250,8 @@ void centerImage(SDL_Surface *image)
     SDL_FreeSurface(centeredImage);
 }
 
+
+
 int editSquare(SDL_Surface *square, Color mostFrequentColor)
 {
 
@@ -336,7 +338,7 @@ void saveSquares(SDL_Surface *sudokuImage, Color mostFrequentColor)
             snprintf(filename, sizeof(filename), "saved_images/case_%d.png",
                      cellIndex);
 
-            centerImage(cell);
+            // centerImage(cell);
             SDL_Surface *resized_cell = resizeImage(cell, 32, 32);
             IMG_SavePNG(resized_cell, filename);
             SDL_FreeSurface(cell);

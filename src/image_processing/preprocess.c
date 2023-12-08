@@ -53,8 +53,36 @@ SDL_Surface *preprocessImage(SDL_Surface *image, Color *mostFrequentColor)
         return;
     }
 
-    contrastCorrection(grayImage, 1.8);
-    gammaCorrection(grayImage, 0.5);
+    double bestContrastValue = 1.8;
+
+    int maxGrayValue = 0;
+    int minGrayValue = 255;
+
+    for (int x = 0; x < grayImage->w; x++)
+    {
+        for (int y = 0; y < grayImage->h; y++)
+        {
+            Uint8 r, g, b;
+            SDL_GetRGB(getPixel(grayImage, x, y), grayImage->format, &r, &g, &b);
+            int grayValue = (r + g + b) / 3;
+            if (grayValue > maxGrayValue)
+            {
+                maxGrayValue = grayValue;
+            }
+            if (grayValue < minGrayValue)
+            {
+                minGrayValue = grayValue;
+            }
+        }
+    }
+
+    printf("Max gray value: %d\n", maxGrayValue);
+    printf("Min gray value: %d\n", minGrayValue);
+    bestContrastValue = ((double)maxGrayValue + (double)minGrayValue) / 2.0 / 128.0;
+    printf("Contrast value: %f\n", bestContrastValue);
+
+    contrastCorrection(grayImage, bestContrastValue);
+    gammaCorrection(grayImage, 0.2);
     applyMedianFilter(grayImage, 3);
     invertColors(grayImage);
     otsuTresholding(grayImage);
@@ -71,7 +99,7 @@ SDL_Surface *preprocessImage(SDL_Surface *image, Color *mostFrequentColor)
     Point *corners = findCorners(grayImage, currentMostFrequentColor);
 
     while (corners[1].x - corners[0].x < w / 3 || corners[3].x - corners[2].x < w / 3 ||
-        corners[2].y - corners[0].y < h / 3 || corners[3].y - corners[1].y < h / 3)
+           corners[2].y - corners[0].y < h / 3 || corners[3].y - corners[1].y < h / 3)
     {
         printf("Changing grid\n");
         currentMostFrequentColor = colors[arrayMaxIndexAfter(intensities, w * h, maxIndex)];
@@ -100,30 +128,20 @@ SDL_Surface *preprocessImage(SDL_Surface *image, Color *mostFrequentColor)
 
     // Automatic rotation
 
-//    double angle = findRotationAngle(corners);
-    // printf("Angle: %f\n", angle);
+    double angle = findRotationAngle(corners);
+    printf("Angle: %f\n", angle);
 
-//    SDL_Surface *rotatedImage = rotateImage(angle, grayImage);
-//    if (rotatedImage == NULL)
-//    {
-//        fprintf(stderr, "SDL_ConvertSurfaceFormat Error: %s\n", SDL_GetError());
-//        return;
-//    }
-//    resizeImage(rotatedImage, w, h);
+    SDL_Surface *rotatedImage = rotateImage(angle, grayImage);
+    if (rotatedImage == NULL)
+    {
+        fprintf(stderr, "SDL_ConvertSurfaceFormat Error: %s\n", SDL_GetError());
+        return;
+    }
+    resizeImage(rotatedImage, w, h);
 
-    // remove the perspective
-    SDL_Surface *no_perspective = remove_perspective(grayImage, (SDL_Point *) (corners));
+    SDL_Surface *no_perspective;
 
-// JE SUIS OBLIGÉ DE LAISSER CETTE MERDE, SINON Y'A TOUT QUI PLANTE
-    Point *cornersPostRotate = findCorners(grayImage, currentMostFrequentColor);
-    // for (int i = 0; i < 4; i++)
-    // {
-    //     drawSquare(rotatedImage, &cornersPostRotate[i], 20);
-    //     printf("Corner %d: (%d, %d)\n", i, cornersPostRotate[i].x, cornersPostRotate[i].y);
-    // }
-
-// JE SUIS OBLIGÉ DE LAISSER CETTE MERDE, SINON Y'A TOUT QUI PLANTE
-    SDL_Surface *newImage = copySurface(no_perspective, cornersPostRotate, currentMostFrequentColor);
+    Point *cornersPostRotate = findCorners(no_perspective, currentMostFrequentColor);
 
     mostFrequentColor->r = currentMostFrequentColor.r;
     mostFrequentColor->g = currentMostFrequentColor.g;
@@ -131,11 +149,12 @@ SDL_Surface *preprocessImage(SDL_Surface *image, Color *mostFrequentColor)
 
     SDL_BlitSurface(no_perspective, NULL, image, NULL);
 
-    SDL_FreeSurface(no_perspective);
+    // SDL_FreeSurface(newImage);
+    SDL_FreeSurface(grayImage);
 
     free(corners);
     free(colors);
     free(intensities);
 
-    return newImage;
+    return no_perspective;
 }
