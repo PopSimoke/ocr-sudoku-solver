@@ -60,4 +60,7 @@ int ai_wrapper(char *input_path, char *output_path);
 int ai_wrapper_train(char *model_path, size_t iteration_count,
                      char *dataset_path, size_t dataset_size);
 
+int create_dataset_from_images(char *images_dir_path, char *dataset_path,
+                               int *dataset_size);
+
 #endif
