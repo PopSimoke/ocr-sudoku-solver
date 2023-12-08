@@ -30,6 +30,7 @@ GtkStack *stack_2;
 GtkStack *stack_3;
 SDL_Surface *global_preprocess = NULL;
 SDL_Surface *global_rotated = NULL;
+SDL_Surface *resolve_grid = NULL;
 Color *colors;
 int *intensities;
 Color mostFrequentColor;
@@ -833,7 +834,7 @@ void on_step_by_step(GtkWidget *widget, gpointer data)
         solver(newgrid, 0, 0);
         transposeMatrix(oldgrid);
         transposeMatrix(newgrid);
-        SDL_Surface *resolve_grid = createSudokuImage(oldgrid, newgrid, 96 * 9, "../sudoku_solver/assets/");
+        resolve_grid = createSudokuImage(oldgrid, newgrid, 96 * 9, "../sudoku_solver/assets/");
         change_image(surface_to_pixbuf(resolve_grid), "result_image");
         state++;
         gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Result grid");
@@ -929,11 +930,31 @@ void skip_to_the_result(GtkWidget *widget, gpointer data)
         solver(newgrid, 0, 0);
         transposeMatrix(oldgrid);
         transposeMatrix(newgrid);
-        SDL_Surface *resolve_grid = createSudokuImage(oldgrid, newgrid, 96 * 9, "../sudoku_solver/assets/");
+        resolve_grid = createSudokuImage(oldgrid, newgrid, 96 * 9, "../sudoku_solver/assets/");
         change_image(surface_to_pixbuf(resolve_grid), "result_image");
         gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Result grid");
         gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
     }
+}
+
+void save_result(GtkWidget *widget, gpointer data)
+{
+    if (!filename)
+    {
+        GtkWidget *dialog = gtk_message_dialog_new( // create error dialog
+            GTK_WINDOW(window), GTK_DIALOG_DESTROY_WITH_PARENT,
+            GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "No image loaded");
+        gtk_dialog_run(GTK_DIALOG(dialog)); // run dialog
+        gtk_widget_destroy(dialog);         // destroy dialog
+        return;
+    }
+
+    // save the image in the current folder
+    char *ext = get_filename_ext(filename); // get extension
+    char *new_filename = g_strconcat("result.", ext, NULL);
+    SDL_SaveBMP(resolve_grid, new_filename);
+
+    free(new_filename);
 }
 
 /**
@@ -992,6 +1013,8 @@ void quit()
         free(colors);
     if (intensities)
         free(intensities);
+    if (resolve_grid)
+        SDL_FreeSurface(resolve_grid);
 
     // quit the program
     gtk_main_quit();
