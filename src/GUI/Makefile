@@ -1,6 +1,6 @@
 # Makefile
 
-CC = gcc  
+CC = gcc
 
 CPPFLAGS = `pkg-config --cflags gtk+-3.0` -MMD -D__NO_INLINE__
 CFLAGS = -std=c99 -O1  `pkg-config --cflags gtk+-3.0` `pkg-config --cflags sdl2 SDL2_image` 

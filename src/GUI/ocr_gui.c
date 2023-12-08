@@ -140,18 +140,18 @@ void change_image(GdkPixbuf *pixbuf, char *GtkimageID)
     size_t height = gdk_pixbuf_get_height(pixbuf); // get height
 
     // resize image
-    if (width > 650 || height > 650)
+    if (width > 600 || height > 600)
     {
         if (width > height)
         {
             double ratio = (double)width / (double)height; // get ratio
-            width = 650;
+            width = 600;
             height = (size_t)round(width / ratio); // calculate new height
         }
         else
         {
             double ratio = (double)height / (double)width; // get ratio
-            height = 650;
+            height = 600;
             width = (size_t)round(height / ratio); // calculate new width
         }
 
@@ -639,17 +639,6 @@ void on_click_values(GtkWidget *widget, gpointer data)
     gtk_stack_set_visible_child_name(stack_2, "page_confirm");
 }
 
-/**
- * @brief Save the rotated image and go back to the main page
- *
- * @param widget: the widget
- * @param data: the data
- */
-void on_auto_rotate(GtkWidget *widget, gpointer data)
-{
-    // TODO: AUTOROTATE
-}
-
 void on_step_by_step(GtkWidget *widget, gpointer data)
 {
 
@@ -812,6 +801,9 @@ void on_step_by_step(GtkWidget *widget, gpointer data)
         change_image(pixbuf, "result_image");
         gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Perspective transform");
         gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
+
+        SDL_FreeSurface(no_perspective);
+        free(cornersPostRotate);
     }
     else if (state == 11)
     {
@@ -844,7 +836,7 @@ void on_step_by_step(GtkWidget *widget, gpointer data)
         SDL_Surface *resolve_grid = createSudokuImage(oldgrid, newgrid, 96 * 9, "../sudoku_solver/assets/");
         change_image(surface_to_pixbuf(resolve_grid), "result_image");
         state++;
-        gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Reslut grid");
+        gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Result grid");
         gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
     }
 }
@@ -939,7 +931,7 @@ void skip_to_the_result(GtkWidget *widget, gpointer data)
         transposeMatrix(newgrid);
         SDL_Surface *resolve_grid = createSudokuImage(oldgrid, newgrid, 96 * 9, "../sudoku_solver/assets/");
         change_image(surface_to_pixbuf(resolve_grid), "result_image");
-        gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Reslut grid");
+        gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Result grid");
         gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
     }
 }
