@@ -26,4 +26,6 @@ int solver(int grid[N][N], int row, int col);
 SDL_Surface* createSudokuImage(int grid[N][N],int solvedGrid[N][N],unsigned int dimension);
 
 
+int** readGridFromFile(char* filename);
+
 #endif

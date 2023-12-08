@@ -135,6 +135,58 @@ SDL_Surface* createSudokuImage(int grid[N][N],int solvedGrid[N][N],unsigned int 
     return image;
 }
 
+int** readGridFromFile(char* filename) {
+    FILE *inputFile = fopen(filename, "r");
+    if (inputFile == NULL)
+    {
+        perror("Error opening input file");
+        return NULL;
+    }
+
+    int** grid = malloc(N * sizeof(int*));
+    for (int i = 0; i < N; i++) {
+        grid[i] = malloc(N * sizeof(int));
+    }
+
+    int col = 0;
+    int row = 0;
+    char tempvalue;
+    while (!feof(inputFile)) // while not end of file keep reading the file and store the values in the 2D array if . then store 0
+    {
+        if (row==N){
+            break;
+        }
+        fscanf(inputFile, "%c", &tempvalue);
+
+        if (tempvalue >= '1' && tempvalue <= '9')
+        {
+            grid[row][col] = tempvalue - '0';
+            col += 1;
+            if (col == N)
+            {
+                col = 0;
+                row += 1;
+            }
+        }
+        else if (tempvalue == '.')
+        {
+            grid[row][col] = 0;
+            col += 1;
+            if (col == N)
+            {
+                col = 0;
+                row += 1;
+            }
+        }
+    }
+
+    fclose(inputFile);
+    return grid;
+}
+
+
+
+
 
 // Main function
 int main(int argc, char *argv[])
