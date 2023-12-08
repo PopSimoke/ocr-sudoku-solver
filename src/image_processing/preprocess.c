@@ -50,7 +50,7 @@ SDL_Surface *preprocessImage(SDL_Surface *image, Color *mostFrequentColor)
     if (grayImage == NULL)
     {
         fprintf(stderr, "SDL_ConvertSurfaceFormat Error: %s\n", SDL_GetError());
-        return;
+        errx(1, "SDL_ConvertSurfaceFormat Error: %s\n", SDL_GetError());
     }
 
     double bestContrastValue = 1.8;
@@ -101,7 +101,7 @@ SDL_Surface *preprocessImage(SDL_Surface *image, Color *mostFrequentColor)
     while (corners[1].x - corners[0].x < w / 3 || corners[3].x - corners[2].x < w / 3 ||
            corners[2].y - corners[0].y < h / 3 || corners[3].y - corners[1].y < h / 3)
     {
-        printf("Changing grid\n");
+        // printf("Changing grid\n");
         currentMostFrequentColor = colors[arrayMaxIndexAfter(intensities, w * h, maxIndex)];
         free(corners);
         corners = findCorners(grayImage, currentMostFrequentColor);
@@ -135,19 +135,29 @@ SDL_Surface *preprocessImage(SDL_Surface *image, Color *mostFrequentColor)
     if (rotatedImage == NULL)
     {
         fprintf(stderr, "SDL_ConvertSurfaceFormat Error: %s\n", SDL_GetError());
-        return;
+        errx(1, "SDL_ConvertSurfaceFormat Error: %s\n", SDL_GetError());
     }
     resizeImage(rotatedImage, w, h);
 
     SDL_Surface *no_perspective;
+    if (angle != 360.0 && angle > 345.0)
+    {
+        no_perspective = remove_perspective(rotatedImage, (SDL_Point *)corners);
+    }
+    else
+    {
+        no_perspective = rotatedImage;
+    }
 
     Point *cornersPostRotate = findCorners(no_perspective, currentMostFrequentColor);
-
+    
     mostFrequentColor->r = currentMostFrequentColor.r;
     mostFrequentColor->g = currentMostFrequentColor.g;
     mostFrequentColor->b = currentMostFrequentColor.b;
 
-    SDL_BlitSurface(no_perspective, NULL, image, NULL);
+    SDL_Surface *newImage = copySurface(no_perspective, cornersPostRotate, currentMostFrequentColor);
+
+    SDL_BlitSurface(newImage, NULL, image, NULL);
 
     // SDL_FreeSurface(newImage);
     SDL_FreeSurface(grayImage);
@@ -156,5 +166,5 @@ SDL_Surface *preprocessImage(SDL_Surface *image, Color *mostFrequentColor)
     free(colors);
     free(intensities);
 
-    return no_perspective;
+    return newImage;
 }
