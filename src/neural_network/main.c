@@ -88,7 +88,7 @@ int ask_questions() {
       }
     }
 
-    ai_wrapper_train(model_path, iteration_count, dataset_path, 64);
+    ai_wrapper_train(model_path, iteration_count, dataset_path);
   } else {
     char input_path[128];
     printf("Input path [%s]: ", default_input_path);

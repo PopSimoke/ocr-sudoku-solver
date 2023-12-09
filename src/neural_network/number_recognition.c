@@ -162,8 +162,17 @@ void cast_inputs(char inputs_c[INPUT_LAYER_SIZE],
   }
 }
 
+size_t get_dataset_size(FILE *fptr) {
+  fseek(fptr, 0L, SEEK_END);
+  size_t dataset_size = ftell(fptr) / 1025;
+
+  rewind(fptr);
+
+  return dataset_size;
+}
+
 int ai_wrapper_train(char *model_path, size_t iteration_count,
-                     char *dataset_path, size_t dataset_size) {
+                     char *dataset_path) {
 
   Neural_Network *nn =
       load_neural_network(model_path, LEARNING_RATE, INPUT_LAYER_SIZE,
@@ -178,6 +187,10 @@ int ai_wrapper_train(char *model_path, size_t iteration_count,
     printf("Can't read from the dataset at: %s", dataset_path);
     return EXIT_FAILURE;
   }
+
+  size_t dataset_size = get_dataset_size(fptr);
+
+  printf("dataset_size: %lu\n", dataset_size);
 
   // train for each image
   size_t old_percent = 101;

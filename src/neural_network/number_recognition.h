@@ -58,7 +58,7 @@ int ai_wrapper(char *input_path, char *output_path);
  * Typically, returns 0 upon success and non-zero values upon failure.
  */
 int ai_wrapper_train(char *model_path, size_t iteration_count,
-                     char *dataset_path, size_t dataset_size);
+                     char *dataset_path);
 
 /**
  * Creates a dataset from a folder of annoted images
