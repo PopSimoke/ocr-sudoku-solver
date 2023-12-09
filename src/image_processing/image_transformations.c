@@ -19,16 +19,19 @@ int max_int(int a, int b) {
   return a > b ? a : b;
 }
 
-Matrix *powerMatrixMethod(Matrix *A) {
+int powerMatrixMethod(Matrix *A, Matrix *X) {
 
   // Create the 1 column matrix
-  double x_array[SIZE] = {1};
-  Matrix *X = create_new_matrix_from_array(x_array, SIZE);
   Matrix *Y = create_new_matrix(SIZE, 1);
 
   double lambda = 0;
+  size_t iteration = 0;
 
   while (true) {
+
+    if (iteration > 1000)
+      return 1;
+
     matrix_dot_multiply(A, X, Y);
 
     // Find the max value
@@ -50,10 +53,11 @@ Matrix *powerMatrixMethod(Matrix *A) {
 
     // Assign the old lambda to the new one
     lambda = lambda1;
+    iteration++;
   }
 
   matrix_destructor(Y);
-  return X;
+  return 0;
 }
 
 void invertMatrix(double C[SIZE][SIZE], double A[SIZE][SIZE]) {
@@ -196,7 +200,19 @@ SDL_Surface *remove_perspective(SDL_Surface *src_image, SDL_Point corners[4]) {
 
   // Compute the eigenvector of the smallest eigenvalue with the inverse power
   // algorithm
-  Matrix *H = powerMatrixMethod(M);
+  double x_array[SIZE] = {1};
+  Matrix *H = create_new_matrix_from_array(x_array, SIZE);
+  int err_matrix_power = powerMatrixMethod(M, H);
+
+  if (err_matrix_power) {
+    matrix_destructor(M);
+    matrix_destructor(H);
+    matrix_destructor(A_t);
+    matrix_destructor(A_txA);
+    matrix_destructor(A);
+
+    return NULL;
+  }
 
   SDL_Surface *dst_image =
       SDL_CreateRGBSurface(0, sudoku_width, sudoku_width, 32, 0, 0, 0, 0);

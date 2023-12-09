@@ -779,32 +779,43 @@ void on_step_by_step(GtkWidget *widget, gpointer data)
     }
     else if (state == 10)
     {
-        SDL_Surface *no_perspective;
-        if ((angle != 360.0 && angle > 345.0))
-        {
-            no_perspective = remove_perspective(global_preprocess, (SDL_Point *)corners);
+        free(corners);
+        corners = findCorners(global_preprocess, mostFrequentColor);
+        SDL_Surface *no_perspective = remove_perspective(global_preprocess, (SDL_Point *)corners);
+
+        if (no_perspective != NULL) {
+            realMostFrequentColor.r = mostFrequentColor.r;
+            realMostFrequentColor.g = mostFrequentColor.g;
+            realMostFrequentColor.b = mostFrequentColor.b;
+
+            corners[0].x = 0;
+            corners[0].y = 0;
+            corners[1].x = no_perspective->w;
+            corners[1].y = 0;
+            corners[2].x = 0;
+            corners[2].y = no_perspective->h;
+            corners[3].x = no_perspective->w;
+            corners[3].y = no_perspective->h;
+
+            global_preprocess = copySurface(no_perspective, corners, mostFrequentColor);
+            GdkPixbuf *pixbuf = surface_to_pixbuf(no_perspective);
+            change_image(pixbuf, "result_image");
+            free(corners);
+            SDL_FreeSurface(no_perspective);
+        } else {
+            realMostFrequentColor.r = mostFrequentColor.r;
+            realMostFrequentColor.g = mostFrequentColor.g;
+            realMostFrequentColor.b = mostFrequentColor.b;
+
+            global_preprocess = copySurface(global_preprocess, corners, mostFrequentColor);
+            GdkPixbuf *pixbuf = surface_to_pixbuf(global_preprocess);
+            change_image(pixbuf, "result_image");
+            free(corners);
         }
-        else
-        {
-            no_perspective = global_preprocess;
-        }
-
-        Point *cornersPostRotate = findCorners(no_perspective, mostFrequentColor);
-
-        realMostFrequentColor.r = mostFrequentColor.r;
-        realMostFrequentColor.g = mostFrequentColor.g;
-        realMostFrequentColor.b = mostFrequentColor.b;
-
-        global_preprocess = copySurface(no_perspective, cornersPostRotate, mostFrequentColor);
 
         state++;
-        GdkPixbuf *pixbuf = surface_to_pixbuf(global_preprocess);
-        change_image(pixbuf, "result_image");
         gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Perspective transform");
         gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
-
-        SDL_FreeSurface(no_perspective);
-        free(cornersPostRotate);
     }
     else if (state == 11)
     {
@@ -890,23 +901,43 @@ void skip_to_the_result(GtkWidget *widget, gpointer data)
     }
     if (state <= 10)
     {
-        SDL_Surface *no_perspective;
-        if ((angle != 360.0 && angle > 345.0))
-        {
-            no_perspective = remove_perspective(global_preprocess, (SDL_Point *)corners);
+      free(corners);
+        corners = findCorners(global_preprocess, mostFrequentColor);
+        SDL_Surface *no_perspective = remove_perspective(global_preprocess, (SDL_Point *)corners);
+
+        if (no_perspective != NULL) {
+            realMostFrequentColor.r = mostFrequentColor.r;
+            realMostFrequentColor.g = mostFrequentColor.g;
+            realMostFrequentColor.b = mostFrequentColor.b;
+
+            corners[0].x = 0;
+            corners[0].y = 0;
+            corners[1].x = no_perspective->w;
+            corners[1].y = 0;
+            corners[2].x = 0;
+            corners[2].y = no_perspective->h;
+            corners[3].x = no_perspective->w;
+            corners[3].y = no_perspective->h;
+
+            global_preprocess = copySurface(no_perspective, corners, mostFrequentColor);
+            GdkPixbuf *pixbuf = surface_to_pixbuf(no_perspective);
+            change_image(pixbuf, "result_image");
+            free(corners);
+            SDL_FreeSurface(no_perspective);
+        } else {
+            realMostFrequentColor.r = mostFrequentColor.r;
+            realMostFrequentColor.g = mostFrequentColor.g;
+            realMostFrequentColor.b = mostFrequentColor.b;
+
+            global_preprocess = copySurface(global_preprocess, corners, mostFrequentColor);
+            GdkPixbuf *pixbuf = surface_to_pixbuf(global_preprocess);
+            change_image(pixbuf, "result_image");
+            free(corners);
         }
-        else
-        {
-            no_perspective = global_preprocess;
-        }
 
-        Point *cornersPostRotate = findCorners(no_perspective, mostFrequentColor);
-
-        realMostFrequentColor.r = mostFrequentColor.r;
-        realMostFrequentColor.g = mostFrequentColor.g;
-        realMostFrequentColor.b = mostFrequentColor.b;
-
-        global_preprocess = copySurface(no_perspective, cornersPostRotate, mostFrequentColor);
+        state++;
+        gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(builder, "reslutPageLabel")), "Perspective transform");
+        gtk_stack_set_visible_child_name(stack_2, "page_result"); // show the result page
     }
     if (state <= 11)
         saveSquares(global_preprocess, realMostFrequentColor);
