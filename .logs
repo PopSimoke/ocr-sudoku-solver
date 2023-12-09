@@ -1,0 +1,829 @@
+commit 358684ae1e1ae30cc51489d24211932cc859210f
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Sat Dec 9 23:31:32 2023 +0100
+
+    add: trainingset 1 to 6
+
+commit 6038d9927ca414cabe3f369867d3f14da5b20e2f
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Sat Dec 9 23:30:45 2023 +0100
+
+    add: trainingset
+
+commit 1883837bf0f6e937d90e6f92089ad13192ffdeeb
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Sat Dec 9 23:29:01 2023 +0100
+
+    website
+
+commit 2659c06bb6783ff757bdda0e774a3f801516618d
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Sat Dec 9 22:36:53 2023 +0100
+
+    flexible main4
+
+commit 74979d8fd413fef818c5a198102446f94305e3a4
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Sat Dec 9 19:42:59 2023 +0100
+
+    flexible main3
+
+commit c4958535aeb85447f04f0f7e2fd989ae87bc7840
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Sat Dec 9 17:57:39 2023 +0100
+
+    add: Welcome message
+
+commit 0d05bc3082f54c1008389ed8e512503782324961
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Sat Dec 9 17:47:23 2023 +0100
+
+    fix + tests added
+
+commit bec1d4c79fd0618d8ad91f7e79d972ec31622b46
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Sat Dec 9 17:31:04 2023 +0100
+
+    fix: warning
+
+commit 8a6ab1e537c84a500de55af0d3861a5f0e6b9b8f
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Sat Dec 9 17:17:10 2023 +0100
+
+    fix: Makefile for 2nd presentation
+
+commit 92d8e2eae7f600f7fa0e24d1646000ba0519318a
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Sat Dec 9 16:50:16 2023 +0100
+
+    flexible main2
+
+commit e7cdde990aae4ebe790efcdf9f5dd76144e38b34
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Sat Dec 9 16:28:28 2023 +0100
+
+    flexible main
+
+commit 24e9dc576d7f2f61e84f3630c960a2c5bf102dcb
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Sat Dec 9 16:20:57 2023 +0100
+
+    add: dataset + model for all the images
+
+commit e0f51920b2fc416130d16a74aaad63c92a4af2e4
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Sat Dec 9 16:11:38 2023 +0100
+
+    remvove debug print
+
+commit 8c4a0a29f2d77a2cabebf8bb5fab621a07b3f341
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Sat Dec 9 15:21:38 2023 +0100
+
+    fix: number filter threshold calculation
+
+commit bc5b08cc05761ccfb6844236ae7f0d7aa79d9055
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Sat Dec 9 14:48:14 2023 +0100
+
+    feat: auto compute of the dataset size
+
+commit 804608e3e3ff19aa517de210e53c38c934d37551
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Sat Dec 9 14:31:50 2023 +0100
+
+    fix crash solver
+
+commit 44b9466c8d22a699f29f74e73835f76fe38d72d4
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Sat Dec 9 13:33:24 2023 +0100
+
+    fix: decrease threshold for number filter
+
+commit 3c6d3eb617eee1acf7f23dce93e06af861df9d46
+Author: Nicolas Naegelen <nicolas.naegelen@epita.fr>
+Date:   Sat Dec 9 12:22:20 2023 +0100
+
+    error management
+
+commit 7f7de27a71d7b7fe99871fd638a644a245824e18
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Sat Dec 9 12:43:09 2023 +0100
+
+    add: model for image_06_bis.png
+
+commit f5eb5eff25f96d3cdf58e89ad8fbc7ad5f887c32
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Sat Dec 9 12:10:20 2023 +0100
+
+    add: 2 new images to test on
+
+commit 46e316e209b750b352f5d7f69fff08640e5dc88e
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Sat Dec 9 02:05:07 2023 +0100
+
+    changing error management in remove_perspective + increase no number threshold
+
+commit 0b758fc4ff89f9c652fef40dc0dc161fbdf7fff7
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Sat Dec 9 00:51:01 2023 +0100
+
+    flexible
+
+commit 2f2e115af7e7d23029eb70ab6781168708b19eac
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Fri Dec 8 23:56:36 2023 +0100
+
+    fix images
+
+commit 9887561be93551d37963a85c67fead6686f519b9
+Author: Nicolas Naegelen <nicolas.naegelen@epita.fr>
+Date:   Fri Dec 8 21:36:32 2023 +0100
+
+    add save button
+
+commit 624cd3869fd4d009739edc3539f181db05809a34
+Author: Nicolas Naegelen <nicolas.naegelen@epita.fr>
+Date:   Fri Dec 8 21:24:02 2023 +0100
+
+    fix mem leaks
+
+commit 16bddbcb84d38a7a0f55fb12d12f0ab24f16d89c
+Author: Nicolas Naegelen <nicolas.naegelen@epita.fr>
+Date:   Fri Dec 8 20:59:57 2023 +0100
+
+    fix assets and mem leaks
+
+commit f9fbc22b40550b5256eb9288c61e6854c373581d
+Author: Nicolas Naegelen <nicolas.naegelen@epita.fr>
+Date:   Fri Dec 8 20:39:50 2023 +0100
+
+    add AI to the GUI
+
+commit 573453f3e047f37818816b9c6d19771258f85b51
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Fri Dec 8 20:45:46 2023 +0100
+
+    add: dataset_02
+
+commit 1a38cdefc56b83ea48d6c52022c65dd748cd6b6e
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Fri Dec 8 20:44:41 2023 +0100
+
+    add: model_02
+
+commit c6acd56b2c9b4aed5dfbad02adb536f9abf6973e
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Fri Dec 8 20:31:12 2023 +0100
+
+    add: doc for the create_dataset_from_images function
+
+commit 98ddfdd6c743895f1bde2fa6a3bbecbf38e0064d
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Fri Dec 8 20:30:45 2023 +0100
+
+    main entry of the neural_network
+
+commit 3a805c22a3fb901c63841fe395ccf36a1fe34a3e
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Fri Dec 8 20:23:32 2023 +0100
+
+    move: main function to main.c
+
+commit e8427b6f9a21c4f18ef91092a100d2ad74aceb11
+Author: Nicolas Naegelen <nicolas.naegelen@epita.fr>
+Date:   Fri Dec 8 19:33:30 2023 +0100
+
+    fix recreate grid
+
+commit b8cdf74982091c527717dcad49d40b5be75b95a2
+Author: Nicolas Naegelen <nicolas.naegelen@epita.fr>
+Date:   Fri Dec 8 19:31:41 2023 +0100
+
+    push assets
+
+commit cf69d8c0b8a2c7f30df906b31c4113a30a1efcde
+Author: Nicolas Naegelen <nicolas.naegelen@epita.fr>
+Date:   Fri Dec 8 19:26:10 2023 +0100
+
+    improve GUI + fix preprocess etc
+
+commit 1dbdf74eede79b0e52bdaff780b3c133156f5a45
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Fri Dec 8 17:27:04 2023 +0100
+
+    fix: typo + format + dataset creation
+
+commit e87f1cee32db4fc8d773fa00fe4291f4d4fc4bac
+Author: Nicolas Naegelen <nicolas.naegelen@epita.fr>
+Date:   Fri Dec 8 16:54:12 2023 +0100
+
+    improve GUI + fix image and solver
+
+commit 8f33a8b44c2d4d5f830c2cb1a6dbda517e330488
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Fri Dec 8 15:28:19 2023 +0100
+
+    j'ai enlevé main
+
+commit b2132737dc96e9a952d5cae04bd8c537eb0f9f6f
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Fri Dec 8 15:04:49 2023 +0100
+
+    ajout transfro to grid a partir d'un file
+
+commit c3cce3febcbfe744c81a40541cddef6810ae2573
+Merge: da39439 29a9665
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Fri Dec 8 14:52:48 2023 +0100
+
+    Merge branch 'master' of github.com:yqnk/ocr-sudoku-solver
+
+commit da394393b7129d03fe42599ca06f5b2da02c464b
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Fri Dec 8 14:52:24 2023 +0100
+
+    modif .h et .c
+
+commit 29a966501334565ef546f2135c842243c96c274c
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Fri Dec 8 14:51:20 2023 +0100
+
+    fix: false number recognition
+
+commit 839b1c42c49173cb04ff2882c96771ae3eb19256
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Fri Dec 8 13:26:53 2023 +0100
+
+    oui
+
+commit a9faddca09db206abcf6888bcf354201534da36d
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Fri Dec 8 13:08:07 2023 +0100
+
+    yes2
+
+commit 894f78ae51addc975311ab8cf9b4968c106825cc
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Fri Dec 8 13:06:48 2023 +0100
+
+    yes
+
+commit dc400c181fe811a58bbc84ac956e7b39cc205f43
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Fri Dec 8 12:45:48 2023 +0100
+
+    update images
+
+commit da3bad02f374e6222e69a70c31693db2aeab92d7
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Fri Dec 8 12:10:57 2023 +0100
+
+    preprocess
+
+commit 5b6ca6cdf7b22a069845571950021f6d0abc22fb
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Thu Dec 7 23:02:41 2023 +0100
+
+    refonte de tout le solver + hexa + test a la mano + ca marche le retour
+
+commit c254cd65177109c5131a0fb5e41155bffc695d75
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Thu Dec 7 22:37:01 2023 +0100
+
+    add: use of remove_perspective in preprocess
+
+commit 16c379b7813cc4e17bab3e75d6e9b5a09c183a6e
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Thu Dec 7 22:30:57 2023 +0100
+
+    add: matrix swap line
+
+commit d5ffa0d505bfc8705b660e9f0af3b51ba971e913
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Thu Dec 7 22:19:03 2023 +0100
+
+    add: homography tranform
+
+commit 3086a7c7bbe6452ed587302234d0b4bdcc4bf5d2
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Thu Dec 7 20:25:42 2023 +0100
+
+    RGB sans le A
+
+commit 32ad0cc3234544f12a2ee1e8e8438e7fd9cf4be7
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Thu Dec 7 15:12:27 2023 +0100
+
+    ok
+
+commit 1b12819481084bcc2f215340b116488f3cb9c370
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Thu Dec 7 14:28:57 2023 +0100
+
+    ok
+
+commit e2c3afc5e485441429018688e3cadc170131ee74
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Thu Dec 7 14:15:18 2023 +0100
+
+    wait
+
+commit 516ab3b168181acd53bc99ea481e2853e36fd9ec
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Thu Dec 7 10:51:12 2023 +0100
+
+    add identity matrix generator
+
+commit b5af87ad4418cf089ffca49b3af0fa9618310cf2
+Author: Nicolas Naegelen <nicolas.naegelen@epita.fr>
+Date:   Thu Dec 7 00:10:07 2023 +0100
+
+    better GUI + CSS style
+
+commit 5feb0c36250888cd18b8f15208652467c08bb096
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Wed Dec 6 23:02:57 2023 +0100
+
+    add sudoku_hexa
+
+commit f9fca494f78b6abd17ecf7e1a5a0c5b2e793ce52
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Wed Dec 6 13:05:18 2023 +0100
+
+    idk
+
+commit 47f838a0fa261f929156709c5a9353ea070c6c57
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Wed Dec 6 13:05:02 2023 +0100
+
+    idk
+
+commit bfe24ce4c9e1c81cba6dd3718fa50d37d8b1c3cf
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Wed Dec 6 12:37:35 2023 +0100
+
+    idk
+
+commit 70d83419d196aab160e4623cdadc8f9113f1b1e3
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Wed Dec 6 12:35:08 2023 +0100
+
+    center images
+
+commit dd427091c8ffd6bbb632603807fba04dc9499e99
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Wed Dec 6 10:54:34 2023 +0100
+
+    neural network no inline warning
+
+commit 9821d323251509dc9ad0dfbce5f3f10199f04411
+Merge: d667fbe 9ce92a1
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Wed Dec 6 09:53:46 2023 +0100
+
+    Merge branch 'master' of github.com:yqnk/ocr-sudoku-solver
+
+commit d667fbed85125da0150cf3abbaae0c0a84b44bb7
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Wed Dec 6 09:53:23 2023 +0100
+
+    modif max et min
+
+commit 9ce92a144380c48f3e006238b883f64948c50691
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Wed Dec 6 09:51:55 2023 +0100
+
+    ai dataset
+
+commit 59d38b755f3764b57efda043226df015ccba5b54
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Wed Dec 6 09:16:38 2023 +0100
+
+    fix max
+
+commit 4c8e01fddd6bcb574d9ecb161d6f454bc3ea91ce
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Tue Dec 5 23:57:43 2023 +0100
+
+    la rota v1
+
+commit 9e9e0e6dab11c44e8d823fc08003656b320b0c6f
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Tue Dec 5 23:53:06 2023 +0100
+
+    fix cramptreshold
+
+commit 3d28002ced4f69777f3ddfa758fa987b2408d686
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Tue Dec 5 23:02:30 2023 +0100
+
+    training and cli commands for the neural network
+
+commit 0eaaffcc6fff60210e3ba47d7e3e214734856697
+Author: Yan Bertile <yan.bertile@epita.fr>
+Date:   Tue Dec 5 18:06:04 2023 +0100
+
+    find rotation angle
+
+commit 6a6f947aed739572e67de0e2e280fb61ab8396c7
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Tue Dec 5 18:02:38 2023 +0100
+
+    resize cases before saving them
+
+commit 4a8fe36b20a0cfd63f2a7719ed14d8d193c95a27
+Author: Yan Bertile <yan.bertile@epita.fr>
+Date:   Tue Dec 5 17:37:52 2023 +0100
+
+    update isSameColor
+
+commit ef8d0d2a9b6362d2057e304e565b135bb9aad72c
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Tue Dec 5 17:25:18 2023 +0100
+
+    fix le la
+
+commit 89e636469a8a2329eb7ca57037a33db1d119a5fd
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Tue Dec 5 16:44:06 2023 +0100
+
+    test commit for SDL in the neural network
+
+commit 6f95921e83f8049d37b40a696c87c92a869122e9
+Author: Yan Bertile <yan.bertile@epita.fr>
+Date:   Tue Dec 5 16:32:13 2023 +0100
+
+    update isSameColor
+
+commit 5a4eac875d09424026424bf578fb900b19b197b2
+Author: Yan Bertile <yan.bertile@epita.fr>
+Date:   Tue Dec 5 16:31:25 2023 +0100
+
+    update isSameColor
+
+commit 2ce92f3e807e219e8e2b121b2869bf57110fb559
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Sat Dec 2 21:05:15 2023 +0100
+
+    delete main
+
+commit 3d160fe1eca5106477341d237450a098e075bf1b
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Sat Dec 2 20:12:43 2023 +0100
+
+    add docstring
+
+commit cf0f68914a8ce3fc507462899b492773628c36f6
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Sat Dec 2 20:01:59 2023 +0100
+
+    add nice wrapper to launch the ai
+
+commit 53217a33dbc2b3a62df69cfceebb642067baf8ae
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Sat Dec 2 19:43:13 2023 +0100
+
+    add coms
+
+commit d1ea2d89afabb3d2ed1333d42f3ad1b6f92fdb06
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Sat Dec 2 19:38:40 2023 +0100
+
+    modif hough rotate
+
+commit c667315592d6ac05931f2f9525df1a672dd66c98
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Fri Dec 1 23:07:57 2023 +0100
+
+    fix: sudoku only have 9 digits... not 10
+
+commit c43867afd924fffe69ed2f148c3e9439e920dd5d
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Fri Dec 1 22:58:27 2023 +0100
+
+    add: ai read case from directory and save exploitable sudoku grid as txt
+
+commit 17c54f25ee3d973b99b5100dfb7d4b687220ff1b
+Author: Yan Bertile <yan.bertile@epita.fr>
+Date:   Fri Dec 1 18:04:36 2023 +0100
+
+    main update
+
+commit bf4a0bace785f837c1905b045585ad023291cb6a
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Fri Dec 1 15:46:12 2023 +0100
+
+    fix neural_network
+
+commit 48e7ee40dca0a7dfaf1005f7f5afbea714b027e0
+Author: Yan Bertile <yan.bertile@epita.fr>
+Date:   Fri Dec 1 12:09:53 2023 +0100
+
+    pixel updates
+
+commit 574d242d5e58a99c8267e779876deae77abfa2f7
+Author: Yan Bertile <yan.bertile@epita.fr>
+Date:   Fri Dec 1 12:01:23 2023 +0100
+
+    pixel updates
+
+commit 703feecdb3da58ba22a551e1a0dab46ab696813a
+Author: Yan Bertile <yan.bertile@epita.fr>
+Date:   Fri Dec 1 09:42:31 2023 +0100
+
+    detect grid regarding of its size
+
+commit ca4c0f31cb314a4d4e2fb7f87f0eeede48e5765c
+Author: Yan Bertile <yan.bertile@epita.fr>
+Date:   Thu Nov 30 09:29:42 2023 +0100
+
+    utils
+
+commit ecce9a671b0a05b93a94fc5be9c0dffc7afeee0b
+Author: Yan Bertile <yan.bertile@epita.fr>
+Date:   Thu Nov 30 09:29:13 2023 +0100
+
+    test images
+
+commit 2f970cdfe83d7413a9f983461e356b3b77eca8d2
+Author: Yan Bertile <yan.bertile@epita.fr>
+Date:   Thu Nov 30 09:28:55 2023 +0100
+
+    corner detections and preprocessing operations
+
+commit cbbd2c0e7723c53644fee4756768ad715a7dd1b8
+Author: Yan Bertile <yan.bertile@epita.fr>
+Date:   Thu Nov 30 09:28:29 2023 +0100
+
+    remove Werror for tests
+
+commit 921d5ca2a266226f96f441e9e6cf5c1904228547
+Author: Yan Bertile <yan.bertile@epita.fr>
+Date:   Tue Nov 28 12:19:11 2023 +0100
+
+    better
+
+commit cc4a1b60e48857d8e843f71c79e278a04ffce485
+Author: Yan Bertile <yan.bertile@epita.fr>
+Date:   Sat Nov 4 19:05:34 2023 +0100
+
+    rename image_processing
+
+commit 0f14819b99317342c721790cc3fd728420e99f91
+Author: Yan Bertile <yan.bertile@epita.fr>
+Date:   Sat Nov 4 19:05:23 2023 +0100
+
+    makefile for all
+
+commit b12b15e1feeda1832299ec2bc236ef26e7429a39
+Author: Yan Bertile <yan.bertile@epita.fr>
+Date:   Sat Nov 4 18:57:44 2023 +0100
+
+    fix
+
+commit 51508b37a4928d8e6aa75de40d7614cdd9106143
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Sat Nov 4 18:31:17 2023 +0100
+
+    format
+
+commit 6efbf5b49343261ae2afe2593fd7b9cb47f657f1
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Sat Nov 4 18:31:09 2023 +0100
+
+    format
+
+commit 6b7ff9020fc5d00598a3b349fd0cc7c4e4fb26a5
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Sat Nov 4 18:29:56 2023 +0100
+
+    format
+
+commit 07e616edecedcf039303cd774c956ddb22d7fa0f
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Sat Nov 4 18:29:36 2023 +0100
+
+    rapport added
+
+commit 8048a7444bdae4212979c1258dea18bc7a697863
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Sat Nov 4 17:49:27 2023 +0100
+
+    fix hough
+
+commit a479f98e6c13add66d674a7346797d64e2546011
+Author: Nicolas Naegelen <nicolas.naegelen@epita.fr>
+Date:   Sat Nov 4 13:03:51 2023 +0100
+
+    comment
+
+commit d2c430911c91ca1339b9ba4156ee0f5ecb872ccd
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Sat Nov 4 12:51:47 2023 +0100
+
+    add coms
+
+commit b973497638359ed0b984c303476e067afb71ec0b
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Sat Nov 4 12:40:49 2023 +0100
+
+    solver.h added
+
+commit fe38d9611d2fde02aaa290d8965b00803366664b
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Sat Nov 4 12:35:12 2023 +0100
+
+    commentaires
+
+commit 6414d4f8809a88a94239ddf65419187e9a31fa99
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Sat Nov 4 11:59:13 2023 +0100
+
+    update mergesimilarlines
+
+commit c8cd71a43448c5c9584451356cdd6b8cbef437e2
+Author: Nicolas Naegelen <nicolas.naegelen@epita.fr>
+Date:   Sat Nov 4 00:56:09 2023 +0100
+
+    fix Asan + ajout photo exemple
+
+commit d5595325fa6afe9ba5d66000347801b24482255c
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Sat Nov 4 00:15:34 2023 +0100
+
+    le ptn de makefile de yannnnnnn encore
+
+commit 53c312f1ce81651febd347b458030b1a64445d60
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Fri Nov 3 19:35:21 2023 +0100
+
+    rename
+
+commit 98bb1fa9eddf2718dfe86041bc41f08211cf8ebd
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Fri Nov 3 19:32:40 2023 +0100
+
+    save squares from sudoku grid
+
+commit d51585f84bb10c51c4569e3215b22562a937785a
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Thu Nov 2 23:58:17 2023 +0100
+
+    modif hough
+
+commit b8370b642008a545e484d84e64b0218b3fc27777
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Thu Nov 2 23:24:16 2023 +0100
+
+    Le ff c'est pour lucas, logique...
+
+commit 58c028aeca0ae4cd7c3134e994e7a3635c960495
+Author: Nicolas Naegelen <nicolas.naegelen@epita.fr>
+Date:   Thu Nov 2 22:53:44 2023 +0100
+
+    modif makefile
+
+commit b4ec5e890f500448b46b27b7ff7904a602e09d9e
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Thu Nov 2 14:17:07 2023 +0100
+
+    merging lines after hough transform
+
+commit 708938c99ad5e89e7212a30da82e89fd554421fd
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Thu Nov 2 12:35:23 2023 +0100
+
+    ok
+
+commit 549b1a17371fc3a93eb3acd0c02006e54041f3f5
+Author: Nicolas Naegelen <nicolas.naegelen@epita.fr>
+Date:   Wed Nov 1 20:43:58 2023 +0100
+
+    GUI but better than the last time
+
+commit 0d90b2418600b307a8340a377e0dbe27387cb95e
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Wed Nov 1 20:40:53 2023 +0100
+
+    added pixel_operations
+
+commit 65a33763ca1598a8bf70cdaf3cd1c28f8f50ce9d
+Author: Nicolas Naegelen <nicolas.naegelen@epita.fr>
+Date:   Tue Oct 31 17:40:27 2023 +0100
+
+    Cramptés UI
+
+commit 2b720c1b2036445a169278843ef40af5e2d19dd6
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Wed Sep 27 18:00:04 2023 +0200
+
+    add: save and load
+
+commit c48a0a56d76045c80f8513ad30910f4cdc07b631
+Author: Nicolas Naegelen <nicolas.naegelen@epita.fr>
+Date:   Wed Sep 27 13:03:07 2023 +0200
+
+    fix Makefile
+
+commit 4e8a707e16941270ed58598c0b6b38349688ffa3
+Author: Nicolas Naegelen <nicolas.naegelen@epita.fr>
+Date:   Tue Sep 26 10:18:00 2023 +0200
+
+    push debut GUI et makefile
+
+commit 638e39c4ec59aa0cfcdcfe74bdfd6114309e4791
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Tue Sep 26 09:52:42 2023 +0200
+
+    modif nom + makefile + coms + fix solver
+
+commit 8b1ec992e7bedec202bc970ba8be2f1c7906d714
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Tue Sep 26 09:32:09 2023 +0200
+
+    fix sudoku solver archi
+
+commit dea0ea402080191956a8fb254feb39f0a6bc9aea
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Mon Sep 25 13:28:37 2023 +0200
+
+    add AUTHORS
+
+commit 6171e9c1f67abd5b50d9f3738271024daa4919a1
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Sat Sep 23 20:47:39 2023 +0200
+
+    delete executable
+
+commit dbb254b98fe2f1974054260d551e94707d4615c5
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Sat Sep 23 15:00:04 2023 +0200
+
+    solver v1 ???????????
+
+commit 7af434da7604bf211fabb9a3428dd9d7c55c0e70
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Sat Sep 23 11:26:41 2023 +0200
+
+    The End? (XOR)
+
+commit 0c335775ae3b8c1d435b5a2250cc5bda3830c68d
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Sat Sep 23 01:34:58 2023 +0200
+
+    use matrix instead of array
+
+commit db00051dadfc403776579f9d08da4414b495ea22
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Fri Sep 22 21:13:49 2023 +0200
+
+    init neural network and forward propagation
+
+commit 16e43d44397ecfd899d73d587bfe66990017ff5d
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Fri Sep 22 21:13:14 2023 +0200
+
+    add config folders to .gitignore
+
+commit 02ac6f18ca0997d878b7da87bf0862509650425b
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Thu Sep 21 14:28:29 2023 +0200
+
+    filled the README.md file
+
+commit 288b5faab3c47dd2f4af0e9e56322a7eb83540a8
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Thu Sep 21 11:33:22 2023 +0200
+
+    add: subject.pdf
+
+commit 431ad40495d0ac474890d6151b0adb5391cc04cd
+Author: Lucas Stephan <lucas.stephan@epita.fr>
+Date:   Thu Sep 21 10:33:33 2023 +0200
+
+    create the project structure
+
+commit 71a57cb7bd4d7240571e62938fdb290928c90eea
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Fri Sep 15 15:37:28 2023 +0200
+
+    je t'ignore
+
+commit 8bae8fe1c35ca072793862beaa93d9be933bbf47
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Fri Sep 15 11:35:51 2023 +0200
+
+    arthur stop
+
+commit a7af0d296ff6027e1160bac43ac2b9ce33c367d8
+Author: Arthur Gallier <arthur.gallier@epita.fr>
+Date:   Fri Sep 15 11:33:59 2023 +0200
+
+    push ocr fini
+
+commit 6b6dc7a973b4826f7f88c4935ab6f36c20aa1813
+Author: Yqnk <yan.bertile@gmail.com>
+Date:   Fri Sep 15 11:25:59 2023 +0200
+
+    first commit
