@@ -17,4 +17,6 @@ int solver(int grid[N][N], int row, int col) ;
 
 int main_dec(char *path);
 
+int erreur(int grid[N][N]);
+
 #endif

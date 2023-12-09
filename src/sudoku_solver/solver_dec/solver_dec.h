@@ -27,4 +27,6 @@ SDL_Surface *createSudokuImage(int grid[N][N], int solvedGrid[N][N], unsigned in
 
 int **readGridFromFile(char *filename);
 
+int erreur(int grid[N][N]);
+
 #endif

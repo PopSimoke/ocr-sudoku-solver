@@ -36,7 +36,7 @@ int ask_questions() {
     path[strcspn(path, "\n")] = 0;
 
     if (access(path, F_OK) != -1) {
-        
+        printf("Processing ...\n");
         if (main_hexa(path) != 0) {
             printf("Error in main_hexa.\n");
             return 1;
@@ -45,6 +45,7 @@ int ask_questions() {
     else {
         printf("File does not exist.\n");
     }
+    printf("Done\n");
 }
     // Remove newline character at the end
     
@@ -61,7 +62,7 @@ int ask_questions() {
     path[strcspn(path, "\n")] = 0;
 
     if (access(path, F_OK) != -1) {
-        
+        printf("Processing ...\n");
         if (main_dec(path) != 0) {
             printf("Error in main_dec.\n");
             return 1;
@@ -72,6 +73,7 @@ int ask_questions() {
         printf("File does not exist.\n");
     }
   }
+  printf("Done\n");
   return 0;
 }
 
@@ -229,9 +231,48 @@ int Sudoku_Erreur(int grid[N][N], int row,
 
     return 1;
 }
+int erreur(int grid[N][N])
+{
+    for (int i = 1 ; i <= 9; i++)
+    {
+        int cpt = 0;
+        for (int j = 0 ; j<N; j++)
+        {
+            cpt = 0;
+            for (int k = 0 ; k< N ; k++)
+            {
+                if (grid[j][k]== i)
+                    cpt++;
+            }
+            if (cpt>1)
+                return 1;
+        }
+    }
+    for (int i = 1 ; i <= 9; i++)
+    {
+        int cpt = 0;
+        for (int j = 0 ; j<N; j++)
+        {
+            cpt = 0;
+            for (int k = 0 ; k< N ; k++)
+            {
+                if (grid[k][j]== i)
+                    cpt++;
+            }
+            if (cpt>1)
+                return 1;
+        }
+
+    }
+    return 0;
+}
 // Function to display the sudoku
 int solver(int grid[N][N], int row, int col)
 {
+    if (erreur(grid)==1)
+    {
+        return 0;
+    }
     if (row == N - 1 && col == N)
         return 1;
 
@@ -397,6 +438,7 @@ int main_dec(char *path)
         strcat(outputFileName, "_result");
         FILE *output;
         output = fopen(outputFileName, "w");
+
         for (int i = 0; i < N; i++) // write the solution in the file
         {
             for (int j = 0; j < N; j++)
@@ -412,7 +454,7 @@ int main_dec(char *path)
         fclose(output);
     }
     else
-        printf("No solution exists");
+        printf("No solution exists\n");
 
     return 0;
 }

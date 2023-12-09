@@ -235,7 +235,8 @@ int **readGridFromFile(char *filename)
         {
             break;
         }
-        fscanf(inputFile, "%c", &tempvalue);
+        int err =fscanf(inputFile, "%c", &tempvalue);
+        err+=1;
 
         if (tempvalue >= '1' && tempvalue <= '9')
         {
