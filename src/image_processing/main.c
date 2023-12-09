@@ -25,8 +25,6 @@ int main(int argc, char *argv[])
             printf("\t-m: Apply median filter\n");
             printf("\t-i: Invert colors\n");
             printf("\t-o: Apply otsu thresholding\n");
-            printf("\t-r: Rotate image\n");
-            printf("\t-p: Remove perspective\n");
             printf("\t-a: Apply all previous options\n");
             printf("\t-t: Apply crampthresholding\n");
             printf("\t-y: Keep only the grid\n");
@@ -75,7 +73,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        fprintf(stderr, "Usage: %s -[gclmoabs] <image_path>\n", argv[0]);
+        fprintf(stderr, "Usage: %s -[gclmioatys] <image_path>\n", argv[0]);
         return 1;
     }
 
