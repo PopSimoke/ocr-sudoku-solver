@@ -340,7 +340,9 @@ void saveSquares(SDL_Surface *sudokuImage, Color mostFrequentColor)
 
             int result = editSquare(cell, mostFrequentColor);
 
-            if (result < 150)
+            printf("(%d) -> %d\n", cellIndex, result);
+
+            if (result < 140)
             {
                 cellIndex++;
                 continue;
