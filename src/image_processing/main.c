@@ -12,18 +12,21 @@ int main(int argc, char *argv[])
     int option;
     int grayscale = 0, contrast = 0, gamma = 0, median = 0, otsu = 0, cramp = 0, gridonly = 0, all = 0, save = 0, invert = 0;
 
-    while ((option = getopt(argc, argv, "gclmoatysh")) != -1)
+    while ((option = getopt(argc, argv, "gclmioatysh")) != -1)
     {
         switch (option)
         {
         case 'h':
-            printf("Usage: %s -[gclmoatysh] <image_path>\n", argv[0]);
+            printf("Usage: %s -[gclmiorpatysh] <image_path>\n", argv[0]);
             printf("Options:\n");
             printf("\t-g: Convert image to grayscale\n");
             printf("\t-c: Apply auto contrast\n");
             printf("\t-l: Apply gamma correction\n");
             printf("\t-m: Apply median filter\n");
+            printf("\t-i: Invert colors\n");
             printf("\t-o: Apply otsu thresholding\n");
+            printf("\t-r: Rotate image\n");
+            printf("\t-p: Remove perspective\n");
             printf("\t-a: Apply all previous options\n");
             printf("\t-t: Apply crampthresholding\n");
             printf("\t-y: Keep only the grid\n");
@@ -41,6 +44,9 @@ int main(int argc, char *argv[])
             break;
         case 'm':
             median = 1;
+            break;
+        case 'i':
+            invert = 1;
             break;
         case 'o':
             otsu = 1;
