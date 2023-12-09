@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/styles.css">
+    <script defer src="scripts/movingButton.js"></script>
+    <script defer src="scripts/toggleSections.js"></script>
+</head>
+
+<body>
+    <main>
+        <section id="section1">
+            <!-- ici juste une ligne de texte au dessus des deux boutons -->
+            <h1 id="cramptext">Avez-vous les cramptés ?</h1>
+            <button class="fixedButton" id="stopButton" onclick="toggleSections()">Oui</button>
+            <button class="movingButton noHover" id="startButton" onmouseover="runAway(this)" onclick="runAway(this)">Non</button>
+        </section>
+
+        <section id="section2" class="hidden">
+            <h1 class="group-name encase">Optical Cramptés Recognition</h1>
+            <div class="chara-container">
+                <div class="chara">
+                    <img src="assets/lucas.jpg" alt="Lucas Stephan" class="avatar">
+                    <h1>Lucas STEPHAN</h1>
+                </div>
+                <div class="chara">
+                    <img src="assets/arthurnico.jpg" alt="Arthur gallier" class="avatar">
+                    <h1>Arthur GALLIER</h1>
+                </div>
+                <div class="chara">
+                    <img src="assets/arthurnico.jpg" alt="Nicola Naegelen" class="avatar">
+                    <h1>Nicolas NAEGELEN</h1>
+                </div>
+                <div class="chara">
+                    <img src="assets/yan.jpg" alt="Yan Bertile" class="avatar">
+                    <h1>Yan BERTILE</h1>
+                </div>
+            </div>
+            <div class="description">
+                <h1 class="description-title encase">
+                    Ressenti du groupe
+                </h1>
+                <h1 class="description-content encase">
+                    On se prend pas la tête avec votre sudoku on a les cramptés (et un OCR)
+                </h1>
+            </div>
+        </section>
+        
+    </main>
+</body>
+
+</html>
