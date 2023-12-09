@@ -342,7 +342,10 @@ void saveSquares(SDL_Surface *sudokuImage, Color mostFrequentColor)
 
             printf("(%d) -> %d\n", cellIndex, result);
 
-            if (result < 140)
+            // percentage of white in a cell to validate it as a number
+			double filter_threshold = 2;
+
+            if (result < (cellWidth*cellHeight / 4) * (filter_threshold/100))
             {
                 cellIndex++;
                 continue;
