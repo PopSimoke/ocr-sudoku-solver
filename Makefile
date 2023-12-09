@@ -4,13 +4,17 @@ SUBDIRS :=  ./src/GUI ./src/image_processing ./src/neural_network ./src/sudoku_s
 
 .PHONY: all $(SUBDIRS)
 
-all: $(SUBDIRS) create
+all: $(SUBDIRS) create display
 	
 create:	
 	echo -e "cd src/GUI\n./ocr_gui\ncd ../../" > start.sh
 	chmod +x start.sh
 	echo -e "cd src/neural_network\n./number_recognition\ncd ../../" > neural_network.sh
 	chmod +x neural_network.sh
+
+display:
+	clear
+	cat welcome.txt
 
 $(SUBDIRS):
 	$(MAKE) -C $@
