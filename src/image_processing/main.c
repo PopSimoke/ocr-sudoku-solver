@@ -9,7 +9,7 @@
 int main(int argc, char *argv[])
 {
     const char *imagePath = NULL;
-    int option;
+    int option = -1;
     int grayscale = 0, contrast = 0, gamma = 0, median = 0, otsu = 0, cramp = 0, gridonly = 0, all = 0, save = 0, invert = 0;
 
     while ((option = getopt(argc, argv, "gclmioatysh")) != -1)
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
             printf("\t-y: Keep only the grid\n");
             printf("\t-s: Save the squares\n");
             printf("\t-h: Display this help\n");
-
+            return 0;
         case 'g':
             grayscale = 1;
             break;
@@ -66,7 +66,6 @@ int main(int argc, char *argv[])
             return 1;
         }
     }
-
     if (optind < argc)
     {
         imagePath = argv[optind];
@@ -202,7 +201,14 @@ int main(int argc, char *argv[])
         free(intensities);
 
         // Convertir l'image prétraitée à afficher en texture
-        imageTexture = SDL_CreateTextureFromSurface(renderer, postTreatmentImage);
+        if (grayscale || contrast || gamma || median || invert || otsu || cramp || gridonly || all)
+        {
+            imageTexture = SDL_CreateTextureFromSurface(renderer, postTreatmentImage);
+        }
+        else
+        {
+            imageTexture = SDL_CreateTextureFromSurface(renderer, imageSurface);
+        }
         SDL_FreeSurface(imageSurface); // Libérer la mémoire de l'image prétraitée
         SDL_FreeSurface(postTreatmentImage);
         if (imageTexture == NULL)
