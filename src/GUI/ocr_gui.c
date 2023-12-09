@@ -221,7 +221,15 @@ void on_confirm_values(GtkWidget *widget, gpointer data)
         }
     }
 
-    solver(newgrid, 0, 0);
+    int solved = solver(newgrid, 0, 0);
+    if (solved != 1)
+    {
+        GtkWidget *dialog = gtk_message_dialog_new( // create error dialog
+            GTK_WINDOW(window), GTK_DIALOG_DESTROY_WITH_PARENT,
+            GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "The sudoku is not solvable");
+        gtk_dialog_run(GTK_DIALOG(dialog)); // run dialog
+        gtk_widget_destroy(dialog);         // destroy dialog
+    }
 
     transposeMatrix(oldgrid);
     transposeMatrix(newgrid);
@@ -246,13 +254,13 @@ void set_logo_image(GdkPixbuf *pixbuf, char *GtkimageID)
     if (width > height)
     {
         double ratio = (double)width / (double)height; // get ratio
-        width = 550;
+        width = 500;
         height = (size_t)round(width / ratio); // calculate new height
     }
     else
     {
         double ratio = (double)height / (double)width; // get ratio
-        height = 550;
+        height = 500;
         width = (size_t)round(height / ratio); // calculate new width
     }
 
@@ -783,7 +791,8 @@ void on_step_by_step(GtkWidget *widget, gpointer data)
         corners = findCorners(global_preprocess, mostFrequentColor);
         SDL_Surface *no_perspective = remove_perspective(global_preprocess, (SDL_Point *)corners);
 
-        if (no_perspective != NULL) {
+        if (no_perspective != NULL)
+        {
             realMostFrequentColor.r = mostFrequentColor.r;
             realMostFrequentColor.g = mostFrequentColor.g;
             realMostFrequentColor.b = mostFrequentColor.b;
@@ -802,7 +811,9 @@ void on_step_by_step(GtkWidget *widget, gpointer data)
             change_image(pixbuf, "result_image");
             free(corners);
             SDL_FreeSurface(no_perspective);
-        } else {
+        }
+        else
+        {
             realMostFrequentColor.r = mostFrequentColor.r;
             realMostFrequentColor.g = mostFrequentColor.g;
             realMostFrequentColor.b = mostFrequentColor.b;
@@ -842,7 +853,15 @@ void on_step_by_step(GtkWidget *widget, gpointer data)
             }
         }
 
-        solver(newgrid, 0, 0);
+        int solved = solver(newgrid, 0, 0);
+        if (solved != 1)
+        {
+            GtkWidget *dialog = gtk_message_dialog_new( // create error dialog
+                GTK_WINDOW(window), GTK_DIALOG_DESTROY_WITH_PARENT,
+                GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "The sudoku is not solvable");
+            gtk_dialog_run(GTK_DIALOG(dialog)); // run dialog
+            gtk_widget_destroy(dialog);         // destroy dialog
+        }
         transposeMatrix(oldgrid);
         transposeMatrix(newgrid);
         resolve_grid = createSudokuImage(oldgrid, newgrid, 96 * 9, "../sudoku_solver/assets/");
@@ -901,11 +920,12 @@ void skip_to_the_result(GtkWidget *widget, gpointer data)
     }
     if (state <= 10)
     {
-      free(corners);
+        free(corners);
         corners = findCorners(global_preprocess, mostFrequentColor);
         SDL_Surface *no_perspective = remove_perspective(global_preprocess, (SDL_Point *)corners);
 
-        if (no_perspective != NULL) {
+        if (no_perspective != NULL)
+        {
             realMostFrequentColor.r = mostFrequentColor.r;
             realMostFrequentColor.g = mostFrequentColor.g;
             realMostFrequentColor.b = mostFrequentColor.b;
@@ -924,7 +944,9 @@ void skip_to_the_result(GtkWidget *widget, gpointer data)
             change_image(pixbuf, "result_image");
             free(corners);
             SDL_FreeSurface(no_perspective);
-        } else {
+        }
+        else
+        {
             realMostFrequentColor.r = mostFrequentColor.r;
             realMostFrequentColor.g = mostFrequentColor.g;
             realMostFrequentColor.b = mostFrequentColor.b;
@@ -958,7 +980,15 @@ void skip_to_the_result(GtkWidget *widget, gpointer data)
             }
         }
 
-        solver(newgrid, 0, 0);
+        int solved = solver(newgrid, 0, 0);
+        if (solved != 1)
+        {
+            GtkWidget *dialog = gtk_message_dialog_new( // create error dialog
+                GTK_WINDOW(window), GTK_DIALOG_DESTROY_WITH_PARENT,
+                GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "The sudoku is not solvable");
+            gtk_dialog_run(GTK_DIALOG(dialog)); // run dialog
+            gtk_widget_destroy(dialog);         // destroy dialog
+        }
         transposeMatrix(oldgrid);
         transposeMatrix(newgrid);
         resolve_grid = createSudokuImage(oldgrid, newgrid, 96 * 9, "../sudoku_solver/assets/");
