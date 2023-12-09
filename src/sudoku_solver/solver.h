@@ -11,10 +11,10 @@ int solver_Hexa(int grid[NHEX][NHEX], int row, int col) ;
 
 int main_hexa(char *path);
 
-int Sudoku_Erreur(int grid[NHEX][NHEX], int row, int col, int num);
+int Sudoku_Erreur(int grid[N][N], int row, int col, int num);
 
-int solver(int grid[NHEX][NHEX], int row, int col) ;
+int solver(int grid[N][N], int row, int col) ;
 
-int main_Dec(char *path);
+int main_dec(char *path);
 
 #endif

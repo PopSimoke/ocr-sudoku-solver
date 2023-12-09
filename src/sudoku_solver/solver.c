@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
-
+#include "solver.h"
 
 
 
@@ -74,9 +74,6 @@ int ask_questions() {
   }
   return 0;
 }
-
-
-#define NHEX 16
 
 int Sudoku_Erreur_Hexa(int grid[NHEX][NHEX], int row, int col, int num) {
     // Checking in row
@@ -206,10 +203,6 @@ int main_hexa(char *path) {
 
     return 0;
 }
-
-
-
-#define N 9
 
 int Sudoku_Erreur(int grid[N][N], int row,
                   int col, int num)
