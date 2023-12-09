@@ -33,9 +33,50 @@ int Sudoku_Erreur(int grid[N][N], int row,
 
     return 1;
 }
+
+
+int erreur(int grid[N][N])
+{
+    for (int i = 1 ; i <= 9; i++)
+    {
+        int cpt = 0;
+        for (int j = 0 ; j<N; j++)
+        {
+            cpt = 0;
+            for (int k = 0 ; k< N ; k++)
+            {
+                if (grid[j][k]== i)
+                    cpt++;
+            }
+            if (cpt>1)
+                return 1;
+        }
+    }
+    for (int i = 1 ; i <= 9; i++)
+    {
+        int cpt = 0;
+        for (int j = 0 ; j<N; j++)
+        {
+            cpt = 0;
+            for (int k = 0 ; k< N ; k++)
+            {
+                if (grid[k][j]== i)
+                    cpt++;
+            }
+            if (cpt>1)
+                return 1;
+        }
+
+    }
+    return 0;
+}
 // Function to display the sudoku
 int solver(int grid[N][N], int row, int col)
 {
+    if (erreur(grid)==1)
+    {
+        return 0;
+    }
     if (row == N - 1 && col == N)
         return 1;
 
@@ -221,6 +262,7 @@ int **readGridFromFile(char *filename)
     fclose(inputFile);
     return grid;
 }
+
 
 // Main function
 // int main(int argc, char *argv[])
