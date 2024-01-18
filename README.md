@@ -1,7 +1,7 @@
 
 # OCR Sudoku Solver
 
-School group project that recognize and solve sudoku grids using home made OCR and sudoku solver algorithm.
+School group project that recognizes and solves sudoku grids using homemade OCR and sudoku solver algorithm.
 
 ## How does it works ?
 
